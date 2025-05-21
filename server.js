@@ -73,7 +73,7 @@ app.post('/submit-rsvp', async (req, res) => {
 
 // Get uploaded photos
 app.get('/get-photos', (req, res) => {
-    fs.readdir(uploadsDir, (err, files) => {
+    fs.readdir(ourPhotosDir, (err, files) => {
         if (err) {
             console.error('Error reading uploads directory:', err);
             return res.status(500).json({ error: 'Error reading uploads directory' });
