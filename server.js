@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -6,14 +7,14 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Email configuration
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: process.env.EMAIL_SERVICE,
     auth: {
-        user: 'athiraandgowtham@gmail.com', // Replace with your Gmail
-        pass: 'mjjm kqhp zupx jqwg'     // Replace with your app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
@@ -51,15 +52,10 @@ app.post('/submit-rsvp', async (req, res) => {
     const { name, email, attending } = req.body;
     
     const mailOptions = {
-        from: 'athiraandgowtham@gmail.com',
-        to: ['aparnarevi.nair@gmail.com'], // Replace with the email where you want to receive RSVPs
-        subject: 'New Wedding RSVP',
-        html: `
-            <h2>New RSVP Received</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Attending Dance:</strong> ${attending}</p>
-        `
+        from: process.env.EMAIL_USER,
+        to: process.env.RECIPIENT_EMAIL,
+        subject: 'New RSVP Submission',
+        text: `New RSVP from ${name}\nEmail: ${email}\nAttending Sangeet: ${attending}`
     };
 
     try {
