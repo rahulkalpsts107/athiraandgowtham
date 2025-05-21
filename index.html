@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athira Revi and Gowtham Vijaykumar's Wedding</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 class="couple-name">Athira & Gowtham</h1>
+        <nav>
+            <ul>
+                <li><a href="#invitation">Invitation</a></li>
+                <li><a href="rsvp.html">RSVP</a></li>
+                <li><a href="photos.html">Photos</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="invitation">
+        <h2>You're Invited!</h2>
+        <img src="wedding-invitation.jpg" alt="Wedding Invitation" style="max-width: 100%; height: auto;">
+        <p>We are thrilled to invite you to our wedding celebration. Join us on this occasion for a day of love, laughter, and celebration!</p>
+        <p><strong>Date:</strong> 21 August 2025</p>
+        <p><strong>Venue:</strong> Vila Kasu, Bangalore</p>
+        <p id="countdown"></p>
+    </section>
+    <script>
+        const weddingDate = new Date('2025-08-21T00:00:00');
+        const countdownElement = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const now = new Date();
+            const timeLeft = weddingDate - now;
+
+            if (timeLeft <= 0) {
+                countdownElement.textContent = "The wedding day is here!";
+                clearInterval(timerInterval);
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            countdownElement.textContent = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left!`;
+        }
+
+        const timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>

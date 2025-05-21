@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background: url('header-image.webp') no-repeat center center;
+    background-size: cover; /* Adjust the image to fill the space */
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+    height: 300px; /* Adjust the height to resize the image */
+}
+
+h1 {
+    font-family: 'Gilda Display';
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background: #444;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+section {
+    padding: 2rem;
+    text-align: center;
+}
+
+#countdown {
+    font-size: 1.5rem;
+    color: #ff6347;
+    animation: fadeIn 1s ease-in-out infinite alternate;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.hamburger-menu {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 30px;
+}
+
+.hamburger-menu div {
+    background-color: #333;
+    height: 4px;
+    width: 100%;
+    border-radius: 2px;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #444;
+    padding: 1rem;
+}
+
+#menu.hidden {
+    display: none;
+}
+
+#menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#menu ul li {
+    margin: 0.5rem 0;
+}
+
+#menu ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.couple-name {
+    font-family: 'Gilda Display', serif;
+    color: #565950
+}

@@ -1,0 +1,14 @@
+{
+  "name": "wedding-invitation",
+  "version": "1.0.0",
+  "description": "A website for wedding invitation, RSVP, and photo gallery.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "npm install express body-parser"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2"
+  }
+}
