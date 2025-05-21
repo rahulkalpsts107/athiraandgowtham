@@ -20,15 +20,16 @@ body {
 }
 
 header {
-    background: url('images/header-image.webp') no-repeat center center;
-    background-size: cover; /* Adjust the image to fill the space */
+    background: url('images/header-image.webp') no-repeat top center;
+    background-size: contain;
     color: #fff;
     padding: 1rem 0;
     text-align: center;
-    height: 600px; /* Adjust the height to resize the image */
+    height: 800px;
     margin-bottom: 80px;
     position: relative;
     width: 100%;
+    max-width: 1200px;
 }
 
 h1, h2, h3 {
