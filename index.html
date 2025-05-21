@@ -10,219 +10,274 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1 class="couple-name">Athira & Gowtham</h1>
-        <div class="wedding-details">
-            <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
-            <p id="countdown" class="countdown-text"></p>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
-                <li><a href="#" onclick="showSection('invite-image'); return false;">View Invitation</a></li>
-                <li><a href="#" onclick="showSection('story'); return false;">Our Story</a></li>
-                <li><a href="#" onclick="showSection('location'); return false;">Location</a></li>
-                <li><a href="#" onclick="showSection('rsvp'); return false;">RSVP</a></li>
-                <li><a href="#" onclick="showSection('livestream'); return false;">Watching Wedding Live</a></li>
-                <li><a href="#" onclick="showSection('photos'); return false;">Photos</a></li>
-                <li><a href="#" onclick="showSection('share'); return false;">Share Photos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div id="home" class="section">
-        <h2>Welcome!</h2>
-        <p>We are thrilled to invite you to our wedding celebration. Join us on this occasion for a day of love, laughter, and celebration!</p>
-        <div class="days-to-go">
-            <p id="countdown"></p>
-        </div>
-    </div>
-
-    <div id="invite-image" class="section hidden">
-        <div class="invitation-image-container">
-            <img src="images/wedding-invitation.jpg" alt="Wedding Invitation" class="full-invitation">
-        </div>
-    </div>
-
-    <div id="story" class="section hidden">
-        <div class="story-container">
-            <div class="about-person">
-                <h3>Athira Revi</h3>
-                <p>A passionate software engineer who brings creativity and innovation to everything she does. Originally from Kerala, Athira's journey has taken her through various adventures in technology and life.</p>
+    <div class="container">
+        <header>
+            <h1 class="couple-name">Athira & Gowtham</h1>
+            <div class="wedding-details">
+                <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
+                <p id="countdown" class="countdown-text"></p>
             </div>
-            <div class="about-person">
-                <h3>Gowtham Vijaykumar</h3>
-                <p>A dedicated professional with a love for technology and problem-solving. Gowtham's analytical mind and warm personality create the perfect balance in both his professional and personal life.</p>
-            </div>
-            <div class="our-story">
-                <h3>Our Story</h3>
-                <p>Two souls connected by destiny and brought together by our shared passion for technology and innovation. Our journey from colleagues to life partners has been filled with memorable moments, laughter, and growing love.</p>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
+                    <li><a href="#" onclick="showSection('invite-image'); return false;">View Invitation</a></li>
+                    <li><a href="#" onclick="showSection('story'); return false;">Our Story</a></li>
+                    <li><a href="#" onclick="showSection('location'); return false;">Location</a></li>
+                    <li><a href="#" onclick="showSection('rsvp'); return false;">RSVP</a></li>
+                    <li><a href="#" onclick="showSection('livestream'); return false;">Watching Wedding Live</a></li>
+                    <li><a href="#" onclick="showSection('photos'); return false;">Photos</a></li>
+                    <li><a href="#" onclick="showSection('share'); return false;">Share Photos</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div id="home" class="section">
+            <h2>Welcome!</h2>
+            <p>We are thrilled to invite you to our wedding celebration. Join us on this occasion for a day of love, laughter, and celebration!</p>
+            <div class="days-to-go">
+                <p id="countdown"></p>
             </div>
         </div>
-    </div>
 
-    <div id="location" class="section hidden">
-        <div class="location-container">
-            <h2>Wedding Venue</h2>
-            <h3>Vila Kasu</h3>
-            <p>Bangalore</p>
-            <button onclick="getDirections()" class="map-button">Get Directions</button>
-        </div>
-    </div>
-
-    <div id="rsvp" class="section hidden">
-        <h2>RSVP</h2>
-        <form id="rsvpForm" class="rsvp-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="attending">Will you attend the dance?</label>
-            <select id="attending" name="attending">
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
-            <button type="submit">Submit RSVP</button>
-            <div id="rsvpStatus"></div>
-        </form>
-    </div>
-
-    <div id="livestream" class="section hidden">
-        <div class="livestream-container">
-            <h2>Watching Wedding Live</h2>
-            <div class="video-container">
-                <iframe 
-                    width="853" 
-                    height="480" 
-                    src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID?autoplay=1&live=1" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+        <div id="invite-image" class="section hidden">
+            <div class="invitation-image-container">
+                <img src="images/wedding-invitation.jpg" alt="Wedding Invitation" class="full-invitation">
             </div>
-            <p class="stream-note">Join us virtually for our special day!</p>
         </div>
-    </div>
 
-    <div id="photos" class="section hidden">
-        <div class="slideshow-container">
-            <div id="slides-container">
-                <!-- Slides will be inserted here dynamically -->
+        <div id="story" class="section hidden">
+            <div class="story-container">
+                <div class="about-person">
+                    <h3>Athira Revi</h3>
+                    <p>A passionate software engineer who brings creativity and innovation to everything she does. Originally from Kerala, Athira's journey has taken her through various adventures in technology and life.</p>
+                </div>
+                <div class="about-person">
+                    <h3>Gowtham Vijaykumar</h3>
+                    <p>A dedicated professional with a love for technology and problem-solving. Gowtham's analytical mind and warm personality create the perfect balance in both his professional and personal life.</p>
+                </div>
+                <div class="our-story">
+                    <h3>Our Story</h3>
+                    <p>Two souls connected by destiny and brought together by our shared passion for technology and innovation. Our journey from colleagues to life partners has been filled with memorable moments, laughter, and growing love.</p>
+                </div>
             </div>
-            <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
-            <a class="next" onclick="changeSlide(1)">&#10095;</a>
         </div>
-        <div id="dots-container" class="dot-container">
-            <!-- Dots will be inserted here dynamically -->
-        </div>
-    </div>
 
-    <div id="share" class="section hidden">
-        <div class="upload-section">
-            <h3>Share Your Photos</h3>
-            <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
-                <input type="file" name="photo" accept="image/*" required>
-                <button type="submit">Upload Photo</button>
-                <div id="uploadStatus"></div>
+        <div id="location" class="section hidden">
+            <div class="location-container">
+                <h2>Wedding Venue</h2>
+                <h3>Vila Kasu</h3>
+                <p>Bangalore</p>
+                <button onclick="getDirections()" class="map-button">Get Directions</button>
+            </div>
+        </div>
+
+        <div id="rsvp" class="section hidden">
+            <h2>RSVP</h2>
+            <form id="rsvpForm" class="rsvp-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="attending">Will you attend the dance?</label>
+                <select id="attending" name="attending">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+                <button type="submit">Submit RSVP</button>
+                <div id="rsvpStatus"></div>
             </form>
         </div>
-        <div class="shared-photos-grid">
-            <!-- Photos will be loaded here -->
+
+        <div id="livestream" class="section hidden">
+            <div class="livestream-container">
+                <h2>Watching Wedding Live</h2>
+                <div class="video-container">
+                    <iframe 
+                        width="853" 
+                        height="480" 
+                        src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID?autoplay=1&live=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="stream-note">Join us virtually for our special day!</p>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-            
-            if (sectionId === 'photos') {
-                loadPhotos();
-            } else if (sectionId === 'share') {
-                loadSharedPhotos();
-            }
-        }
+        <div id="photos" class="section hidden">
+            <div class="slideshow-container">
+                <div id="slides-container">
+                    <!-- Slides will be inserted here dynamically -->
+                </div>
+                <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+                <a class="next" onclick="changeSlide(1)">&#10095;</a>
+            </div>
+            <div id="dots-container" class="dot-container">
+                <!-- Dots will be inserted here dynamically -->
+            </div>
+        </div>
 
-        // Existing countdown code
-        const weddingDate = new Date('2025-08-21T00:00:00');
-        const countdownElement = document.getElementById('countdown');
+        <div id="share" class="section hidden">
+            <div class="upload-section">
+                <h3>Share Your Photos</h3>
+                <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+                    <input type="file" name="photo" accept="image/*" required>
+                    <button type="submit">Upload Photo</button>
+                    <div id="uploadStatus"></div>
+                </form>
+            </div>
+            <div class="shared-photos-grid">
+                <!-- Photos will be loaded here -->
+            </div>
+        </div>
 
-        function updateCountdown() {
-            const now = new Date();
-            const timeLeft = weddingDate - now;
-
-            if (timeLeft <= 0) {
-                document.getElementById('countdown').textContent = "The Big Day is Here!";
-                clearInterval(timerInterval);
-                return;
-            }
-
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
-        }
-
-        const timerInterval = setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        let slideIndex = 1;
-        showSlides(slideIndex);
-
-        function changeSlide(n) {
-            showSlides(slideIndex += n);
-        }
-
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
-        }
-
-        function showSlides(n) {
-            let slides = document.getElementsByClassName("slide");
-            let dots = document.getElementsByClassName("dot");
-            
-            if (!slides.length || !dots.length) {
-                return; // Exit if no slides or dots found
-            }
-            
-            if (n > slides.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = slides.length}
-            
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            for (let i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            
-            slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " active";
-        }
-
-        // Load and display photos
-        async function loadPhotos() {
-            try {
-                console.log('Fetching photos...');
-                const response = await fetch('/get-our-photos');
-                const photos = await response.json();
-                console.log('Received photos:', photos);
+        <script>
+            function showSection(sectionId) {
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                document.getElementById(sectionId).classList.remove('hidden');
                 
-                const slidesContainer = document.getElementById('slides-container');
-                const dotsContainer = document.getElementById('dots-container');
-                
-                if (!photos || photos.length === 0) {
-                    console.log('No photos found');
-                    slidesContainer.innerHTML = '<p>No photos available</p>';
+                if (sectionId === 'photos') {
+                    loadPhotos();
+                } else if (sectionId === 'share') {
+                    loadSharedPhotos();
+                }
+            }
+
+            // Existing countdown code
+            const weddingDate = new Date('2025-08-21T00:00:00');
+            const countdownElement = document.getElementById('countdown');
+
+            function updateCountdown() {
+                const now = new Date();
+                const timeLeft = weddingDate - now;
+
+                if (timeLeft <= 0) {
+                    document.getElementById('countdown').textContent = "The Big Day is Here!";
+                    clearInterval(timerInterval);
                     return;
                 }
 
-                // Clear existing content
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
+            }
+
+            const timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            let slideIndex = 1;
+            showSlides(slideIndex);
+
+            function changeSlide(n) {
+                showSlides(slideIndex += n);
+            }
+
+            function currentSlide(n) {
+                showSlides(slideIndex = n);
+            }
+
+            function showSlides(n) {
+                let slides = document.getElementsByClassName("slide");
+                let dots = document.getElementsByClassName("dot");
+                
+                if (!slides.length || !dots.length) {
+                    return; // Exit if no slides or dots found
+                }
+                
+                if (n > slides.length) {slideIndex = 1}
+                if (n < 1) {slideIndex = slides.length}
+                
+                for (let i = 0; i < slides.length; i++) {
+                    slides[i].style.display = "none";
+                }
+                for (let i = 0; i < dots.length; i++) {
+                    dots[i].className = dots[i].className.replace(" active", "");
+                }
+                
+                slides[slideIndex-1].style.display = "block";
+                dots[slideIndex-1].className += " active";
+            }
+
+            // Load and display photos
+            async function loadPhotos() {
+                try {
+                    console.log('Fetching photos...');
+                    const response = await fetch('/get-our-photos');
+                    const photos = await response.json();
+                    console.log('Received photos:', photos);
+                    
+                    const slidesContainer = document.getElementById('slides-container');
+                    const dotsContainer = document.getElementById('dots-container');
+                    
+                    if (!photos || photos.length === 0) {
+                        console.log('No photos found');
+                        slidesContainer.innerHTML = '<p>No photos available</p>';
+                        return;
+                    }
+
+                    // Clear existing content
+                    slidesContainer.innerHTML = '';
+                    dotsContainer.innerHTML = '';
+                    
+                    // Add slides
+                    photos.forEach((photo, index) => {
+                        console.log('Adding photo:', photo);
+                        const slide = document.createElement('div');
+                        slide.className = 'slide fade';
+                        slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
+                        slidesContainer.appendChild(slide);
+                        
+                        const dot = document.createElement('span');
+                        dot.className = 'dot';
+                        dot.onclick = () => currentSlide(index + 1);
+                        dotsContainer.appendChild(dot);
+                    });
+                    
+                    // Show first slide
+                    slideIndex = 1;
+                    showSlides(slideIndex);
+                } catch (error) {
+                    console.error('Error loading photos:', error);
+                }
+            }
+
+            async function loadSharedPhotos() {
+                try {
+                    const response = await fetch('/get-shared-photos');
+                    const photos = await response.json();
+                    const gridContainer = document.querySelector('.shared-photos-grid');
+                    
+                    if (!photos || photos.length === 0) {
+                        gridContainer.innerHTML = '<p>No photos shared yet</p>';
+                        return;
+                    }
+
+                    gridContainer.innerHTML = photos
+                        .map(photo => `
+                            <div class="shared-photo">
+                                <img src="${photo}" alt="Shared photo">
+                            </div>
+                        `).join('');
+                } catch (error) {
+                    console.error('Error loading shared photos:', error);
+                }
+            }
+
+            function updateSlideshow(photos) {
+                if (!photos || photos.length === 0) {
+                    console.log('No photos found');
+                    return;
+                }
+
+                const slidesContainer = document.getElementById('slides-container');
+                const dotsContainer = document.getElementById('dots-container');
+                
                 slidesContainer.innerHTML = '';
                 dotsContainer.innerHTML = '';
                 
-                // Add slides
                 photos.forEach((photo, index) => {
-                    console.log('Adding photo:', photo);
                     const slide = document.createElement('div');
                     slide.className = 'slide fade';
                     slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
@@ -234,138 +289,85 @@
                     dotsContainer.appendChild(dot);
                 });
                 
-                // Show first slide
                 slideIndex = 1;
                 showSlides(slideIndex);
-            } catch (error) {
-                console.error('Error loading photos:', error);
             }
-        }
 
-        async function loadSharedPhotos() {
-            try {
-                const response = await fetch('/get-shared-photos');
-                const photos = await response.json();
-                const gridContainer = document.querySelector('.shared-photos-grid');
+            document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const statusDiv = document.getElementById('uploadStatus');
                 
-                if (!photos || photos.length === 0) {
-                    gridContainer.innerHTML = '<p>No photos shared yet</p>';
-                    return;
-                }
-
-                gridContainer.innerHTML = photos
-                    .map(photo => `
-                        <div class="shared-photo">
-                            <img src="${photo}" alt="Shared photo">
-                        </div>
-                    `).join('');
-            } catch (error) {
-                console.error('Error loading shared photos:', error);
-            }
-        }
-
-        function updateSlideshow(photos) {
-            if (!photos || photos.length === 0) {
-                console.log('No photos found');
-                return;
-            }
-
-            const slidesContainer = document.getElementById('slides-container');
-            const dotsContainer = document.getElementById('dots-container');
-            
-            slidesContainer.innerHTML = '';
-            dotsContainer.innerHTML = '';
-            
-            photos.forEach((photo, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'slide fade';
-                slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
-                slidesContainer.appendChild(slide);
-                
-                const dot = document.createElement('span');
-                dot.className = 'dot';
-                dot.onclick = () => currentSlide(index + 1);
-                dotsContainer.appendChild(dot);
-            });
-            
-            slideIndex = 1;
-            showSlides(slideIndex);
-        }
-
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const statusDiv = document.getElementById('uploadStatus');
-            
-            try {
-                statusDiv.textContent = 'Uploading...';
-                const response = await fetch('/upload-photo', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.textContent = 'Upload successful!';
-                    this.reset();
-                    loadSharedPhotos();
-                } else {
-                    statusDiv.textContent = result.message || 'Upload failed';
-                }
-            } catch (error) {
-                console.error('Error uploading photo:', error);
-                statusDiv.textContent = 'Upload failed. Please try again.';
-            }
-        });
-
-        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('rsvpStatus');
-            const formData = new FormData(this);
-            
-            try {
-                statusDiv.textContent = 'Sending RSVP...';
-                const response = await fetch('/submit-rsvp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(formData)
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
-                    this.reset();
-                } else {
-                    statusDiv.textContent = result.message || 'Failed to send RSVP';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                statusDiv.textContent = 'Failed to send RSVP. Please try again.';
-            }
-        });
-
-        function getDirections() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const destination = "12.943282201837807, 77.68108148357153";
-                        const currentLocation = `${position.coords.latitude},${position.coords.longitude}`;
-                        const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation}&destination=${destination}&travelmode=driving`;
-                        window.open(directionsUrl, '_blank');
-                    },
-                    () => {
-                        alert("Please allow location access to get directions");
+                try {
+                    statusDiv.textContent = 'Uploading...';
+                    const response = await fetch('/upload-photo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        statusDiv.textContent = 'Upload successful!';
+                        this.reset();
+                        loadSharedPhotos();
+                    } else {
+                        statusDiv.textContent = result.message || 'Upload failed';
                     }
-                );
-            } else {
-                alert("Geolocation is not supported by your browser");
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                    statusDiv.textContent = 'Upload failed. Please try again.';
+                }
+            });
+
+            document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const statusDiv = document.getElementById('rsvpStatus');
+                const formData = new FormData(this);
+                
+                try {
+                    statusDiv.textContent = 'Sending RSVP...';
+                    const response = await fetch('/submit-rsvp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(formData)
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
+                        this.reset();
+                    } else {
+                        statusDiv.textContent = result.message || 'Failed to send RSVP';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    statusDiv.textContent = 'Failed to send RSVP. Please try again.';
+                }
+            });
+
+            function getDirections() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const destination = "12.943282201837807, 77.68108148357153";
+                            const currentLocation = `${position.coords.latitude},${position.coords.longitude}`;
+                            const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation}&destination=${destination}&travelmode=driving`;
+                            window.open(directionsUrl, '_blank');
+                        },
+                        () => {
+                            alert("Please allow location access to get directions");
+                        }
+                    );
+                } else {
+                    alert("Geolocation is not supported by your browser");
+                }
             }
-        }
-    </script>
-    <footer class="footer">
-        © Anvi Corp 2025
-    </footer>
+        </script>
+        <footer class="footer">
+            © Anvi Corp 2025
+        </footer>
+    </div>
 </body>
 </html>
