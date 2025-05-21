@@ -43,7 +43,7 @@ nav {
     right: 0;
     margin: 0 auto;
     max-width: 1200px;
-    background: #066067;
+    background: transparent;
     z-index: 100;
     padding: 10px 0;
 }
@@ -53,7 +53,7 @@ nav ul {
     padding: 0;
     display: flex;
     justify-content: center;
-    background: #066067;
+    background: transparent;
 }
 
 nav ul li {
@@ -61,8 +61,17 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #fff;
+    color: #617939;
     text-decoration: none;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
 }
 
 section {
@@ -541,102 +550,39 @@ form input, form select, form button {
 
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
-    .container {
-        width: 100%;
-        padding: 0 10px;
-    }
-
     header {
-        height: 500px;
+        height: 550px;
         background-size: contain;
         background-position: top center;
-        margin-bottom: 20px;
     }
 
     .couple-name {
         font-size: 40px;
-        padding-top: 280px;
+        transform: translateY(230px);
+        position: relative;
+        padding-top: 0;
     }
 
     .wedding-details {
-        top: 280px;
+        top: 220px;
+        position: absolute !important;
     }
 
-    .date-location {
-        font-size: 1.2em;
-        padding-top: 40px;
+    .countdown-text {
+        margin-bottom: 80px;
     }
 
     nav {
-        bottom: 50px;
+        bottom: -100px;
     }
 
     nav ul {
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 5px;
+        padding: 0 10px;
     }
 
     nav ul li {
-        margin: 5px;
-    }
-
-    nav ul li a {
-        font-size: 14px;
-    }
-
-    .slideshow-container {
-        max-width: 100%;
-    }
-
-    .slide {
-        height: 300px;
-    }
-
-    .shared-photos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        padding: 10px;
-    }
-
-    .shared-photo {
-        height: 200px;
-    }
-
-    .location-container,
-    .story-container,
-    .livestream-container {
-        padding: 10px;
-    }
-
-    form {
-        padding: 0 15px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .couple-name {
-        font-size: 32px;
-        padding-top: 250px;
-    }
-
-    .date-location {
-        font-size: 1em;
-        padding-top: 30px;
-    }
-
-    nav {
-        bottom: 30px;
-    }
-
-    nav ul li {
-        margin: 3px;
-    }
-
-    nav ul li a {
-        font-size: 12px;
-    }
-
-    .slide {
-        height: 250px;
+        margin: 2px;
     }
 }
