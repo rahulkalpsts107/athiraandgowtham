@@ -36,12 +36,17 @@ The site will be available at `http://localhost:3000`
 
 This project is configured for deployment on Render.com:
 
-1. Push code to GitHub
-2. Connect repository to Render.com
+1. Create a Render account at https://render.com
+2. Connect your GitHub repository
 3. Create a new Web Service
-4. Configure build settings:
+4. Use these settings:
    - Build Command: `npm install`
-   - Start Command: `node server.js`
+   - Start Command: `npm start`
+   - Environment: Node
+   - Branch: main
+   - Environment Variables: None required
+
+The site will be available at `your-app-name.onrender.com`
 
 ## Structure
 
