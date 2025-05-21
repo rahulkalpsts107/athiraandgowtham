@@ -538,3 +538,105 @@ form input, form select, form button {
     font-weight: 500;
     margin-top: 10px;
 }
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    header {
+        height: 500px;
+        background-size: contain;
+        background-position: top center;
+        margin-bottom: 20px;
+    }
+
+    .couple-name {
+        font-size: 40px;
+        padding-top: 280px;
+    }
+
+    .wedding-details {
+        top: 280px;
+    }
+
+    .date-location {
+        font-size: 1.2em;
+        padding-top: 40px;
+    }
+
+    nav {
+        bottom: 50px;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    nav ul li {
+        margin: 5px;
+    }
+
+    nav ul li a {
+        font-size: 14px;
+    }
+
+    .slideshow-container {
+        max-width: 100%;
+    }
+
+    .slide {
+        height: 300px;
+    }
+
+    .shared-photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .shared-photo {
+        height: 200px;
+    }
+
+    .location-container,
+    .story-container,
+    .livestream-container {
+        padding: 10px;
+    }
+
+    form {
+        padding: 0 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .couple-name {
+        font-size: 32px;
+        padding-top: 250px;
+    }
+
+    .date-location {
+        font-size: 1em;
+        padding-top: 30px;
+    }
+
+    nav {
+        bottom: 30px;
+    }
+
+    nav ul li {
+        margin: 3px;
+    }
+
+    nav ul li a {
+        font-size: 12px;
+    }
+
+    .slide {
+        height: 250px;
+    }
+}
