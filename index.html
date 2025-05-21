@@ -64,10 +64,16 @@
 
         <div id="location" class="section hidden">
             <div class="location-container">
-                <h2>Wedding Venue</h2>
-                <h3>Vila Kasu</h3>
-                <p>Bangalore</p>
-                <button onclick="getDirections()" class="map-button">Get Directions</button>
+                <div class="location-details">
+                    <h2>Wedding Venue Address</h2>
+                    <p>Vila Kasu</p>
+                    <p></p>1, Kariyammana Agrahara Rd, Yemalur, Post 560037</p>
+                    <p>Bengaluru</p>
+                    <button onclick="getDirections()" class="map-button">Get Directions</button>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497.0636465835447!2d77.68107261907736!3d12.943290418221457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU2JzM1LjgiTiA3N8KwNDAnNTEuOSJF!5e0!3m2!1sen!2sin!4v1629789012345!5m2!1sen!2sin" allowfullscreen></iframe>
+                </div>
             </div>
         </div>
 
@@ -349,19 +355,13 @@
 
             function getDirections() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const destination = "12.943282201837807, 77.68108148357153";
-                            const currentLocation = `${position.coords.latitude},${position.coords.longitude}`;
-                            const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation}&destination=${destination}&travelmode=driving`;
-                            window.open(directionsUrl, '_blank');
-                        },
-                        () => {
-                            alert("Please allow location access to get directions");
-                        }
-                    );
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const destination = '12.943290418221457,77.68107261907736';
+                        const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&origin=${position.coords.latitude},${position.coords.longitude}`;
+                        window.open(url, '_blank');
+                    });
                 } else {
-                    alert("Geolocation is not supported by your browser");
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=12.943290418221457,77.68107261907736`, '_blank');
                 }
             }
         </script>
