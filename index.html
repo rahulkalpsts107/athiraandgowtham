@@ -6,29 +6,41 @@
     <title>Athira Revi and Gowtham Vijaykumar's Wedding</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <h1 class="couple-name">Athira & Gowtham</h1>
+        <div class="wedding-details">
+            <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
+            <p id="countdown" class="countdown-text"></p>
+        </div>
         <nav>
             <ul>
-                <li><a href="#" onclick="showSection('invitation'); return false;">Invitation</a></li>
+                <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
+                <li><a href="#" onclick="showSection('invite-image'); return false;">View Invitation</a></li>
                 <li><a href="#" onclick="showSection('story'); return false;">Our Story</a></li>
                 <li><a href="#" onclick="showSection('location'); return false;">Location</a></li>
                 <li><a href="#" onclick="showSection('rsvp'); return false;">RSVP</a></li>
-                <li><a href="#" onclick="showSection('livestream'); return false;">Live Stream</a></li>
+                <li><a href="#" onclick="showSection('livestream'); return false;">Watching Wedding Live</a></li>
                 <li><a href="#" onclick="showSection('photos'); return false;">Photos</a></li>
                 <li><a href="#" onclick="showSection('share'); return false;">Share Photos</a></li>
             </ul>
         </nav>
     </header>
 
-    <div id="invitation" class="section">
-        <h2>You're Invited!</h2>
-        <img src="images/wedding-invitation.jpg" alt="Wedding Invitation" style="max-width: 100%; height: auto;">
+    <div id="home" class="section">
+        <h2>Welcome!</h2>
         <p>We are thrilled to invite you to our wedding celebration. Join us on this occasion for a day of love, laughter, and celebration!</p>
-        <div class="countdown-circle">
+        <div class="days-to-go">
             <p id="countdown"></p>
+        </div>
+    </div>
+
+    <div id="invite-image" class="section hidden">
+        <div class="invitation-image-container">
+            <img src="images/wedding-invitation.jpg" alt="Wedding Invitation" class="full-invitation">
         </div>
     </div>
 
@@ -77,7 +89,7 @@
 
     <div id="livestream" class="section hidden">
         <div class="livestream-container">
-            <h2>Wedding Live Stream</h2>
+            <h2>Watching Wedding Live</h2>
             <div class="video-container">
                 <iframe 
                     width="853" 
@@ -142,17 +154,13 @@
             const timeLeft = weddingDate - now;
 
             if (timeLeft <= 0) {
-                countdownElement.textContent = "The Big Day!";
+                document.getElementById('countdown').textContent = "The Big Day is Here!";
                 clearInterval(timerInterval);
                 return;
             }
 
             const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-            countdownElement.innerHTML = `${days} days<br>${hours}h ${minutes}m<br>${seconds}s`;
+            document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
         }
 
         const timerInterval = setInterval(updateCountdown, 1000);
@@ -194,11 +202,43 @@
         // Load and display photos
         async function loadPhotos() {
             try {
+                console.log('Fetching photos...');
                 const response = await fetch('/get-our-photos');
                 const photos = await response.json();
-                updateSlideshow(photos);
+                console.log('Received photos:', photos);
+                
+                const slidesContainer = document.getElementById('slides-container');
+                const dotsContainer = document.getElementById('dots-container');
+                
+                if (!photos || photos.length === 0) {
+                    console.log('No photos found');
+                    slidesContainer.innerHTML = '<p>No photos available</p>';
+                    return;
+                }
+
+                // Clear existing content
+                slidesContainer.innerHTML = '';
+                dotsContainer.innerHTML = '';
+                
+                // Add slides
+                photos.forEach((photo, index) => {
+                    console.log('Adding photo:', photo);
+                    const slide = document.createElement('div');
+                    slide.className = 'slide fade';
+                    slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
+                    slidesContainer.appendChild(slide);
+                    
+                    const dot = document.createElement('span');
+                    dot.className = 'dot';
+                    dot.onclick = () => currentSlide(index + 1);
+                    dotsContainer.appendChild(dot);
+                });
+                
+                // Show first slide
+                slideIndex = 1;
+                showSlides(slideIndex);
             } catch (error) {
-                console.error('Error loading our photos:', error);
+                console.error('Error loading photos:', error);
             }
         }
 
@@ -310,7 +350,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const destination = "12.94335903728854,77.68141057680211";
+                        const destination = "12.943282201837807, 77.68108148357153";
                         const currentLocation = `${position.coords.latitude},${position.coords.longitude}`;
                         const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation}&destination=${destination}&travelmode=driving`;
                         window.open(directionsUrl, '_blank');
@@ -324,5 +364,8 @@
             }
         }
     </script>
+    <footer class="footer">
+        © Anvi Corp 2025
+    </footer>
 </body>
 </html>
