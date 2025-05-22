@@ -354,28 +354,6 @@ form input, form select, form button {
     text-align: center;
 }
 
-.location-details::before {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    border: 1px solid #617939;
-    pointer-events: none;
-}
-
-.location-details::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
-    border: 1px solid #617939;
-    pointer-events: none;
-}
-
 .map-container {
     width: 100%;
     height: 400px;
