@@ -1,13 +1,37 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
 const multer = require('multer');
-const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
+
+// Logger function
+function log(type, message, data = {}) {
+    const timestamp = new Date().toISOString();
+    console.log(JSON.stringify({
+        timestamp,
+        type,
+        message,
+        ...data
+    }));
+}
+
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ourPhotosDir = path.join(__dirname, 'images/uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(ourPhotosDir)) {
+    fs.mkdirSync(ourPhotosDir, { recursive: true });
+}
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -18,30 +42,12 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Create required directories
-const uploadsDir = path.join(__dirname, 'images/uploads');
-const ourPhotosDir = path.join(__dirname, 'images/ourphotos');
-if (!fs.existsSync(uploadsDir)){
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-if (!fs.existsSync(ourPhotosDir)){
-    fs.mkdirSync(ourPhotosDir, { recursive: true });
-}
-
 // Configure multer for file upload
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadsDir)
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
-    }
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Middleware to parse form data
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
@@ -50,6 +56,7 @@ app.use('/images/uploads', express.static(path.join(__dirname, 'images/uploads')
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
     const { name, email, attending } = req.body;
+    log('info', 'RSVP submission received', { name, email, attending });
     
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -60,72 +67,99 @@ app.post('/submit-rsvp', async (req, res) => {
 
     try {
         await transporter.sendMail(mailOptions);
+        log('success', 'RSVP email sent successfully', { name, email });
         res.json({ success: true, message: 'RSVP sent successfully!' });
     } catch (error) {
-        console.error('Error sending email:', error);
+        log('error', 'Failed to send RSVP email', { error: error.message, name, email });
         res.status(500).json({ success: false, message: 'Failed to send RSVP' });
     }
 });
 
-// Get uploaded photos
-app.get('/get-photos', (req, res) => {
-    fs.readdir(ourPhotosDir, (err, files) => {
-        if (err) {
-            console.error('Error reading uploads directory:', err);
-            return res.status(500).json({ error: 'Error reading uploads directory' });
-        }
-        
-        if (!files || files.length === 0) {
-            console.log('No files found in uploads directory');
-            return res.json([]);
-        }
-
-        const photos = files
-            .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
-            .map(file => '/images/uploads/' + file);
-            
-        console.log('Found photos:', photos);
-        res.json(photos);
-    });
-});
-
 // Handle photo upload
-app.post('/upload-photo', upload.single('photo'), (req, res) => {
+app.post('/upload-photo', upload.single('photo'), async (req, res) => {
     if (!req.file) {
+        log('error', 'Photo upload failed - no file provided');
         return res.status(400).json({ success: false, message: 'No file uploaded.' });
     }
-    res.json({ success: true, message: 'File uploaded successfully' });
+
+    try {
+        const b64 = Buffer.from(req.file.buffer).toString('base64');
+        const dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+        
+        log('info', 'Attempting to upload photo to Cloudinary', { mimetype: req.file.mimetype });
+        const result = await cloudinary.uploader.upload(dataURI, {
+            folder: 'shared-photos'
+        });
+
+        log('success', 'Photo uploaded successfully', { publicId: result.public_id });
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ 
+            success: true, 
+            message: 'File uploaded successfully',
+            url: result.secure_url,
+            publicId: result.public_id
+        });
+    } catch (error) {
+        log('error', 'Photo upload failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Upload failed' });
+    }
 });
 
 // Get our photos
-app.get('/get-our-photos', (req, res) => {
-    fs.readdir(path.join(__dirname, 'images/ourphotos'), (err, files) => {
-        if (err) {
-            console.error('Error reading ourphotos directory:', err);
-            return res.json([]);
-        }
-        const photos = files
-            .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
-            .map(file => '/images/ourphotos/' + file);
+app.get('/get-our-photos', async (req, res) => {
+    try {
+        log('info', 'Fetching our photos from Cloudinary');
+        const result = await cloudinary.search
+            .expression('folder:our-photos')
+            .sort_by('created_at', 'desc')
+            .max_results(30)
+            .execute();
+        
+        const photos = result.resources.map(photo => photo.secure_url);
+        log('success', 'Successfully fetched our photos', { count: photos.length });
         res.json(photos);
-    });
+    } catch (error) {
+        log('error', 'Failed to fetch our photos', { error: error.message });
+        res.status(500).json({ error: 'Failed to fetch photos' });
+    }
 });
 
-// Get shared photos
-app.get('/get-shared-photos', (req, res) => {
-    fs.readdir(path.join(__dirname, 'images/uploads'), (err, files) => {
-        if (err) {
-            console.error('Error reading uploads directory:', err);
-            return res.json([]);
-        }
-        const photos = files
-            .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
-            .map(file => '/images/uploads/' + file);
-        res.json(photos);
-    });
+// Get shared photos with pagination
+app.get('/get-shared-photos', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 12;
+        
+        log('info', 'Fetching shared photos from Cloudinary', { page, limit });
+        const result = await cloudinary.search
+            .expression('folder:shared-photos')
+            .sort_by('created_at', 'desc')
+            .max_results(100)
+            .execute();
+        
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const photos = result.resources.slice(startIndex, endIndex).map(photo => photo.secure_url);
+        
+        log('success', 'Successfully fetched shared photos', { 
+            page, 
+            totalPhotos: result.resources.length,
+            returnedPhotos: photos.length 
+        });
+        
+        res.json({
+            photos,
+            currentPage: page,
+            totalPages: Math.ceil(result.resources.length / limit),
+            hasMore: endIndex < result.resources.length
+        });
+    } catch (error) {
+        log('error', 'Failed to fetch shared photos', { error: error.message });
+        res.status(500).json({ error: 'Failed to fetch photos' });
+    }
 });
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    log('info', `Server started`, { port: PORT });
 });

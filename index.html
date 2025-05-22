@@ -133,9 +133,8 @@
                     <div id="uploadStatus"></div>
                 </form>
             </div>
-            <div class="shared-photos-grid">
-                <!-- Photos will be loaded here -->
-            </div>
+            <div class="shared-photos-grid"></div>
+            <div id="loading-spinner" class="loading-spinner hidden">Loading more photos...</div>
         </div>
 
         <script>
@@ -145,10 +144,10 @@
                 });
                 document.getElementById(sectionId).classList.remove('hidden');
                 
-                if (sectionId === 'photos') {
-                    loadPhotos();
-                } else if (sectionId === 'share') {
+                if (sectionId === 'share') {
                     loadSharedPhotos();
+                } else if (sectionId === 'photos') {
+                    loadOurPhotos();
                 }
             }
 
@@ -173,6 +172,7 @@
             const timerInterval = setInterval(updateCountdown, 1000);
             updateCountdown();
 
+            // Remove unused photos-related functions
             let slideIndex = 1;
             showSlides(slideIndex);
 
@@ -189,7 +189,7 @@
                 let dots = document.getElementsByClassName("dot");
                 
                 if (!slides.length || !dots.length) {
-                    return; // Exit if no slides or dots found
+                    return;
                 }
                 
                 if (n > slides.length) {slideIndex = 1}
@@ -206,97 +206,116 @@
                 dots[slideIndex-1].className += " active";
             }
 
-            // Load and display photos
-            async function loadPhotos() {
+            let isLoading = false;
+            let hasMore = true;
+            let currentPage = 1;
+
+            async function loadSharedPhotos(page = 1, append = false) {
+                if (isLoading || (!append && !hasMore)) return;
+                
                 try {
-                    console.log('Fetching photos...');
+                    isLoading = true;
+                    document.getElementById('loading-spinner').classList.remove('hidden');
+                    
+                    const response = await fetch(`/get-shared-photos?page=${page}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch photos');
+                    }
+                    const data = await response.json();
+                    
+                    const gridContainer = document.querySelector('.shared-photos-grid');
+                    if (!data.photos || data.photos.length === 0) {
+                        if (!append) {
+                            gridContainer.innerHTML = '<p>No photos shared yet</p>';
+                        }
+                        hasMore = false;
+                        return;
+                    }
+
+                    const photoHtml = data.photos
+                        .map(photoUrl => {
+                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
+                            return `
+                                <div class="shared-photo loading">
+                                    <img src="${optimizedUrl}" 
+                                        alt="Shared photo" 
+                                        loading="lazy"
+                                        onload="this.parentElement.classList.remove('loading')">
+                                </div>
+                            `;
+                        }).join('');
+
+                    if (append) {
+                        gridContainer.insertAdjacentHTML('beforeend', photoHtml);
+                    } else {
+                        gridContainer.innerHTML = photoHtml;
+                    }
+
+                    hasMore = data.hasMore;
+                    currentPage = data.currentPage;
+                } catch (error) {
+                    console.error('Error loading shared photos:', error);
+                    if (!append) {
+                        document.querySelector('.shared-photos-grid').innerHTML = 
+                            '<p>Error loading photos. Please try again later.</p>';
+                    }
+                } finally {
+                    isLoading = false;
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                }
+            }
+
+            // Initialize intersection observer for infinite scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && hasMore && !isLoading) {
+                        loadSharedPhotos(currentPage + 1, true);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            // Observe the loading spinner
+            document.addEventListener('DOMContentLoaded', () => {
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) {
+                    observer.observe(spinner);
+                }
+            });
+
+            async function loadOurPhotos() {
+                try {
                     const response = await fetch('/get-our-photos');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch photos');
+                    }
                     const photos = await response.json();
-                    console.log('Received photos:', photos);
                     
                     const slidesContainer = document.getElementById('slides-container');
                     const dotsContainer = document.getElementById('dots-container');
                     
                     if (!photos || photos.length === 0) {
-                        console.log('No photos found');
                         slidesContainer.innerHTML = '<p>No photos available</p>';
                         return;
                     }
 
-                    // Clear existing content
-                    slidesContainer.innerHTML = '';
-                    dotsContainer.innerHTML = '';
-                    
-                    // Add slides
-                    photos.forEach((photo, index) => {
-                        console.log('Adding photo:', photo);
-                        const slide = document.createElement('div');
-                        slide.className = 'slide fade';
-                        slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
-                        slidesContainer.appendChild(slide);
-                        
-                        const dot = document.createElement('span');
-                        dot.className = 'dot';
-                        dot.onclick = () => currentSlide(index + 1);
-                        dotsContainer.appendChild(dot);
-                    });
-                    
-                    // Show first slide
-                    slideIndex = 1;
-                    showSlides(slideIndex);
-                } catch (error) {
-                    console.error('Error loading photos:', error);
-                }
-            }
-
-            async function loadSharedPhotos() {
-                try {
-                    const response = await fetch('/get-shared-photos');
-                    const photos = await response.json();
-                    const gridContainer = document.querySelector('.shared-photos-grid');
-                    
-                    if (!photos || photos.length === 0) {
-                        gridContainer.innerHTML = '<p>No photos shared yet</p>';
-                        return;
-                    }
-
-                    gridContainer.innerHTML = photos
-                        .map(photo => `
-                            <div class="shared-photo">
-                                <img src="${photo}" alt="Shared photo">
+                    slidesContainer.innerHTML = photos
+                        .map((photoUrl, index) => `
+                            <div class="slide fade">
+                                <img src="${photoUrl}" alt="Our photo ${index + 1}">
                             </div>
                         `).join('');
+
+                    dotsContainer.innerHTML = photos
+                        .map((_, index) => `
+                            <span class="dot" onclick="currentSlide(${index + 1})"></span>
+                        `).join('');
+
+                    showSlides(1);
                 } catch (error) {
-                    console.error('Error loading shared photos:', error);
+                    console.error('Error loading our photos:', error);
+                    document.getElementById('slides-container').innerHTML = 
+                        '<p>Error loading photos. Please try again later.</p>';
                 }
-            }
-
-            function updateSlideshow(photos) {
-                if (!photos || photos.length === 0) {
-                    console.log('No photos found');
-                    return;
-                }
-
-                const slidesContainer = document.getElementById('slides-container');
-                const dotsContainer = document.getElementById('dots-container');
-                
-                slidesContainer.innerHTML = '';
-                dotsContainer.innerHTML = '';
-                
-                photos.forEach((photo, index) => {
-                    const slide = document.createElement('div');
-                    slide.className = 'slide fade';
-                    slide.innerHTML = `<img src="${photo}" alt="Photo ${index + 1}">`;
-                    slidesContainer.appendChild(slide);
-                    
-                    const dot = document.createElement('span');
-                    dot.className = 'dot';
-                    dot.onclick = () => currentSlide(index + 1);
-                    dotsContainer.appendChild(dot);
-                });
-                
-                slideIndex = 1;
-                showSlides(slideIndex);
             }
 
             document.getElementById('uploadForm').addEventListener('submit', async function(e) {
@@ -315,7 +334,25 @@
                     if (result.success) {
                         statusDiv.textContent = 'Upload successful!';
                         this.reset();
-                        loadSharedPhotos();
+                        
+                        // Add the new photo to the grid immediately
+                        const gridContainer = document.querySelector('.shared-photos-grid');
+                        const optimizedUrl = result.url.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
+                        const newPhotoHtml = `
+                            <div class="shared-photo loading">
+                                <img src="${optimizedUrl}" 
+                                    alt="Shared photo" 
+                                    loading="lazy"
+                                    onload="this.parentElement.classList.remove('loading')">
+                            </div>
+                        `;
+                        
+                        // Insert at the beginning of the grid
+                        if (gridContainer.firstChild) {
+                            gridContainer.insertAdjacentHTML('afterbegin', newPhotoHtml);
+                        } else {
+                            gridContainer.innerHTML = newPhotoHtml;
+                        }
                     } else {
                         statusDiv.textContent = result.message || 'Upload failed';
                     }
