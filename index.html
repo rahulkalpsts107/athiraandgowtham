@@ -23,7 +23,11 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '<%= process.env.GOOGLE_ANALYTICS_ID %>');
+        gtag('config', '<%= process.env.GOOGLE_ANALYTICS_ID %>', {
+            page_title: 'Wedding Invitation',
+            page_location: window.location.href,
+            page_path: window.location.pathname
+        });
     </script>
     
     <link rel="stylesheet" href="styles.css">
@@ -215,12 +219,19 @@
                 });
                 document.getElementById(sectionId).classList.remove('hidden');
                 
-                // Track section view in Google Analytics
-                gtag('event', 'view_section', {
-                    'section_name': sectionId,
-                    'section_title': getSectionTitle(sectionId)
+                // Enhanced Google Analytics tracking
+                gtag('event', 'page_view', {
+                    page_title: `${sectionId} - Wedding Invitation`,
+                    page_location: window.location.href,
+                    page_path: `/${sectionId}`
                 });
                 
+                gtag('event', 'view_section', {
+                    event_category: 'Section Navigation',
+                    event_label: sectionId,
+                    value: 1
+                });
+
                 // Update URL without page reload
                 const url = new URL(window.location);
                 url.searchParams.set('section', sectionId);
