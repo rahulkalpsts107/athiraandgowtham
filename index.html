@@ -322,13 +322,15 @@
 
                     const photoHtml = data.photos
                         .map(photoUrl => {
-                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
+                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,c_scale,f_auto,q_auto/');
                             return `
                                 <div class="shared-photo loading">
                                     <img src="${optimizedUrl}" 
                                         alt="Shared photo" 
                                         loading="lazy"
-                                        onload="this.parentElement.classList.remove('loading')">
+                                        decoding="async"
+                                        onload="this.parentElement.classList.remove('loading')"
+                                        onerror="this.parentElement.classList.add('error')">
                                 </div>
                             `;
                         }).join('');
@@ -372,27 +374,38 @@
 
             async function loadOurPhotos() {
                 try {
+                    const slidesContainer = document.getElementById('slides-container');
+                    slidesContainer.innerHTML = '<div class="loading-message">Loading photos...</div>';
+                    
                     const response = await fetch('/get-our-photos');
                     if (!response.ok) {
                         throw new Error('Failed to fetch photos');
                     }
                     const photos = await response.json();
                     
-                    const slidesContainer = document.getElementById('slides-container');
-                    const dotsContainer = document.getElementById('dots-container');
-                    
                     if (!photos || photos.length === 0) {
                         slidesContainer.innerHTML = '<p>No photos available</p>';
                         return;
                     }
 
-                    slidesContainer.innerHTML = photos
-                        .map((photoUrl, index) => `
-                            <div class="slide fade">
-                                <img src="${photoUrl}" alt="Our photo ${index + 1}">
-                            </div>
-                        `).join('');
+                    const photoHtml = photos
+                        .map((photoUrl, index) => {
+                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_800,c_scale,f_auto,q_auto/');
+                            return `
+                                <div class="slide fade loading">
+                                    <img src="${optimizedUrl}" 
+                                        alt="Our photo ${index + 1}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onload="this.parentElement.classList.remove('loading')"
+                                        onerror="this.parentElement.classList.add('error')">
+                                </div>
+                            `;
+                        }).join('');
 
+                    slidesContainer.innerHTML = photoHtml;
+                    
+                    const dotsContainer = document.getElementById('dots-container');
                     dotsContainer.innerHTML = photos
                         .map((_, index) => `
                             <span class="dot" onclick="currentSlide(${index + 1})"></span>
