@@ -17,6 +17,7 @@ body {
     width: 100%;
     margin: 0 auto;
     position: relative;
+    padding-top: 50px;
 }
 
 header {
@@ -193,7 +194,7 @@ section {
     text-transform: none;
     letter-spacing: 6px;
     font-weight: 600;
-    padding-top: 240px;
+    padding-top: 280px;
     padding-bottom: 30px;
 }
 
@@ -821,6 +822,39 @@ form input, form select, form button {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 247, 225, 0.98);
+    z-index: 1000;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hamburger-menu {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+.small-brand {
+    font-family: 'Abhaya Libre', serif;
+    color: #617939;
+    font-size: 18px;
+    letter-spacing: 6px;
+    font-weight: 600;
+    text-align: center;
+    margin-right: 25px;
+}
+
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
     header {
@@ -832,9 +866,11 @@ form input, form select, form button {
     }
 
     .couple-name {
-        font-size: 40px;
-        padding-top: 15vh;
+        padding-top: 140px;
         margin-bottom: 0;
+        font-size: 32px;
+        letter-spacing: 1;
+        white-space: nowrap;
     }
 
     .wedding-details {
@@ -926,5 +962,95 @@ form input, form select, form button {
     .footer {
         margin-top: 40px;
         padding: 20px 15px;
+    }
+
+    .hamburger-menu {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        cursor: pointer;
+        z-index: 1000;
+        background: rgba(255, 247, 225, 0.9);
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .hamburger-menu span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #617939;
+        margin: 5px 0;
+        transition: 0.4s;
+    }
+
+    .hamburger-menu.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+
+    .hamburger-menu.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger-menu.active span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+    }
+
+    .nav-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 247, 225, 0.98);
+        padding: 80px 20px 20px;
+        z-index: 900;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .nav-menu.active {
+        display: block;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    .top-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 247, 225, 0.98);
+        z-index: 1000;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hamburger-menu {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0;
+        padding: 0;
+        background: transparent;
+    }
+
+    .small-brand {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .container {
+        padding-top: 45px;
     }
 }

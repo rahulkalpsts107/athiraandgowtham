@@ -25,21 +25,29 @@
 <body>
     <div class="container">
         <header>
+            <div class="top-header">
+                <div class="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="small-brand">a & g</div>
+            </div>
             <h1 class="couple-name">Athira & Gowtham</h1>
             <div class="wedding-details">
                 <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
                 <p id="countdown" class="countdown-text"></p>
             </div>
             <nav>
-                <ul>
+                <ul class="nav-menu">
                     <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
                     <li><a href="#" onclick="showSection('invite-image'); return false;">View Invitation</a></li>
                     <li><a href="#" onclick="showSection('story'); return false;">Our Story</a></li>
                     <li><a href="#" onclick="showSection('location'); return false;">Location</a></li>
                     <li><a href="#" onclick="showSection('rsvp'); return false;">RSVP</a></li>
-                    <li><a href="#" onclick="showSection('livestream'); return false;">Watching Wedding Live</a></li>
+                    <li><a href="#" onclick="showSection('livestream'); return false;">Live Stream</a></li>
                     <li><a href="#" onclick="showSection('photos'); return false;">Photos</a></li>
-                    <li><a href="#" onclick="showSection('share'); return false;">Shared Photos</a></li>
+                    <li><a href="#" onclick="showSection('share'); return false;">Share Photos</a></li>
                 </ul>
             </nav>
         </header>
@@ -155,13 +163,38 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const hamburger = document.querySelector('.hamburger-menu');
+                const navMenu = document.querySelector('.nav-menu');
+                
+                hamburger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+
+                // Close menu when clicking a link
+                document.querySelectorAll('nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('nav')) {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    }
+                });
+
+                // Existing URL params code
                 const urlParams = new URLSearchParams(window.location.search);
                 const section = urlParams.get('section');
                 if (section) {
                     showSection(section);
                     setActiveLink(section);
                 } else {
-                    // Set home as active by default
                     showSection('home');
                     setActiveLink('home');
                 }
@@ -178,8 +211,14 @@
                 url.searchParams.set('section', sectionId);
                 window.history.pushState({}, '', url);
                 
-                // Update active link
+                // Update active link and close mobile menu
                 setActiveLink(sectionId);
+                const hamburger = document.querySelector('.hamburger-menu');
+                const navMenu = document.querySelector('.nav-menu');
+                if (hamburger && navMenu) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
                 
                 if (sectionId === 'share') {
                     loadSharedPhotos();
