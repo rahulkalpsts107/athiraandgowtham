@@ -174,369 +174,21 @@
             <div id="loading-spinner" class="loading-spinner hidden">Loading more photos...</div>
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const hamburger = document.querySelector('.hamburger-menu');
-                const navMenu = document.querySelector('.nav-menu');
-                
-                hamburger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    hamburger.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-                });
-
-                // Close menu when clicking a link
-                document.querySelectorAll('nav a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        hamburger.classList.remove('active');
-                        navMenu.classList.remove('active');
-                    });
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('nav')) {
-                        hamburger.classList.remove('active');
-                        navMenu.classList.remove('active');
-                    }
-                });
-
-                // Existing URL params code
-                const urlParams = new URLSearchParams(window.location.search);
-                const section = urlParams.get('section');
-                if (section) {
-                    showSection(section);
-                    setActiveLink(section);
-                } else {
-                    showSection('home');
-                    setActiveLink('home');
-                }
-            });
-
-            function showSection(sectionId) {
-                document.querySelectorAll('.section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-                document.getElementById(sectionId).classList.remove('hidden');
-                
-                // Enhanced Google Analytics tracking
-                gtag('event', 'page_view', {
-                    page_title: `${sectionId} - Wedding Invitation`,
-                    page_location: window.location.href,
-                    page_path: `/${sectionId}`
-                });
-                
-                gtag('event', 'view_section', {
-                    event_category: 'Section Navigation',
-                    event_label: sectionId,
-                    value: 1
-                });
-
-                // Update URL without page reload
-                const url = new URL(window.location);
-                url.searchParams.set('section', sectionId);
-                window.history.pushState({}, '', url);
-                
-                // Update active link and close mobile menu
-                setActiveLink(sectionId);
-                const hamburger = document.querySelector('.hamburger-menu');
-                const navMenu = document.querySelector('.nav-menu');
-                if (hamburger && navMenu) {
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }
-                
-                if (sectionId === 'share') {
-                    loadSharedPhotos();
-                } else if (sectionId === 'photos') {
-                    loadOurPhotos();
-                }
-            }
-
-            function getSectionTitle(sectionId) {
-                switch(sectionId) {
-                    case 'home': return 'Home';
-                    case 'invite-image': return 'View Invitation';
-                    case 'story': return 'Our Story';
-                    case 'location': return 'Location';
-                    case 'rsvp': return 'RSVP';
-                    case 'livestream': return 'Live Stream';
-                    case 'photos': return 'Photos';
-                    case 'share': return 'Share Photos';
-                    default: return 'Unknown Section';
-                }
-            }
-
-            function setActiveLink(sectionId) {
-                // Remove active class from all links
-                document.querySelectorAll('nav a').forEach(link => {
-                    link.classList.remove('active');
-                });
-                // Add active class to current section link
-                const activeLink = document.querySelector(`nav a[onclick*="${sectionId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
-            }
-
-            // Existing countdown code
-            const weddingDate = new Date('2025-08-21T00:00:00');
-            const countdownElement = document.getElementById('countdown');
-
-            function updateCountdown() {
-                const now = new Date();
-                const timeLeft = weddingDate - now;
-
-                if (timeLeft <= 0) {
-                    document.getElementById('countdown').textContent = "The Big Day is Here!";
-                    clearInterval(timerInterval);
-                    return;
-                }
-
-                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
-            }
-
-            const timerInterval = setInterval(updateCountdown, 1000);
-            updateCountdown();
-
-            // Remove unused photos-related functions
-            let slideIndex = 1;
-            showSlides(slideIndex);
-
-            function changeSlide(n) {
-                showSlides(slideIndex += n);
-            }
-
-            function currentSlide(n) {
-                showSlides(slideIndex = n);
-            }
-
-            function showSlides(n) {
-                let slides = document.getElementsByClassName("slide");
-                let dots = document.getElementsByClassName("dot");
-                
-                if (!slides.length || !dots.length) {
-                    return;
-                }
-                
-                if (n > slides.length) {slideIndex = 1}
-                if (n < 1) {slideIndex = slides.length}
-                
-                for (let i = 0; i < slides.length; i++) {
-                    slides[i].style.display = "none";
-                }
-                for (let i = 0; i < dots.length; i++) {
-                    dots[i].className = dots[i].className.replace(" active", "");
-                }
-                
-                slides[slideIndex-1].style.display = "block";
-                dots[slideIndex-1].className += " active";
-            }
-
-            let isLoading = false;
-            let hasMore = true;
-            let currentPage = 1;
-
-            async function loadSharedPhotos(page = 1, append = false) {
-                if (isLoading || (!append && !hasMore)) return;
-                
-                try {
-                    isLoading = true;
-                    document.getElementById('loading-spinner').classList.remove('hidden');
-                    
-                    const response = await fetch(`/get-shared-photos?page=${page}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch photos');
-                    }
-                    const data = await response.json();
-                    
-                    const gridContainer = document.querySelector('.shared-photos-grid');
-                    if (!data.photos || data.photos.length === 0) {
-                        if (!append) {
-                            gridContainer.innerHTML = '<p>No photos shared yet</p>';
-                        }
-                        hasMore = false;
-                        return;
-                    }
-
-                    const photoHtml = data.photos
-                        .map(photoUrl => {
-                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,c_scale,f_auto,q_auto/');
-                            return `
-                                <div class="shared-photo loading">
-                                    <img src="${optimizedUrl}" 
-                                        alt="Shared photo" 
-                                        loading="lazy"
-                                        decoding="async"
-                                        onload="this.parentElement.classList.remove('loading')"
-                                        onerror="this.parentElement.classList.add('error')">
-                                </div>
-                            `;
-                        }).join('');
-
-                    if (append) {
-                        gridContainer.insertAdjacentHTML('beforeend', photoHtml);
-                    } else {
-                        gridContainer.innerHTML = photoHtml;
-                    }
-
-                    hasMore = data.hasMore;
-                    currentPage = data.currentPage;
-                } catch (error) {
-                    console.error('Error loading shared photos:', error);
-                    if (!append) {
-                        document.querySelector('.shared-photos-grid').innerHTML = 
-                            '<p>Error loading photos. Please try again later.</p>';
-                    }
-                } finally {
-                    isLoading = false;
-                    document.getElementById('loading-spinner').classList.add('hidden');
-                }
-            }
-
-            // Initialize intersection observer for infinite scroll
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && hasMore && !isLoading) {
-                        loadSharedPhotos(currentPage + 1, true);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            // Observe the loading spinner
-            document.addEventListener('DOMContentLoaded', () => {
-                const spinner = document.getElementById('loading-spinner');
-                if (spinner) {
-                    observer.observe(spinner);
-                }
-            });
-
-            async function loadOurPhotos() {
-                try {
-                    const slidesContainer = document.getElementById('slides-container');
-                    slidesContainer.innerHTML = '<div class="loading-message">Loading photos...</div>';
-                    
-                    const response = await fetch('/get-our-photos');
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch photos');
-                    }
-                    const photos = await response.json();
-                    
-                    if (!photos || photos.length === 0) {
-                        slidesContainer.innerHTML = '<p>No photos available</p>';
-                        return;
-                    }
-
-                    const photoHtml = photos
-                        .map((photoUrl, index) => {
-                            const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_800,c_scale,f_auto,q_auto/');
-                            return `
-                                <div class="slide fade loading">
-                                    <img src="${optimizedUrl}" 
-                                        alt="Our photo ${index + 1}"
-                                        loading="lazy"
-                                        decoding="async"
-                                        onload="this.parentElement.classList.remove('loading')"
-                                        onerror="this.parentElement.classList.add('error')">
-                                </div>
-                            `;
-                        }).join('');
-
-                    slidesContainer.innerHTML = photoHtml;
-                    
-                    const dotsContainer = document.getElementById('dots-container');
-                    dotsContainer.innerHTML = photos
-                        .map((_, index) => `
-                            <span class="dot" onclick="currentSlide(${index + 1})"></span>
-                        `).join('');
-
-                    showSlides(1);
-                } catch (error) {
-                    console.error('Error loading our photos:', error);
-                    document.getElementById('slides-container').innerHTML = 
-                        '<p>Error loading photos. Please try again later.</p>';
-                }
-            }
-
-            document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const statusDiv = document.getElementById('uploadStatus');
-                
-                try {
-                    statusDiv.textContent = 'Uploading...';
-                    const response = await fetch('/upload-photo', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        statusDiv.textContent = 'Upload successful!';
-                        this.reset();
-                        
-                        // Add the new photo to the grid immediately
-                        const gridContainer = document.querySelector('.shared-photos-grid');
-                        const optimizedUrl = result.url.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
-                        const newPhotoHtml = `
-                            <div class="shared-photo loading">
-                                <img src="${optimizedUrl}" 
-                                    alt="Shared photo" 
-                                    loading="lazy"
-                                    onload="this.parentElement.classList.remove('loading')">
-                            </div>
-                        `;
-                        
-                        // Insert at the beginning of the grid
-                        if (gridContainer.firstChild) {
-                            gridContainer.insertAdjacentHTML('afterbegin', newPhotoHtml);
-                        } else {
-                            gridContainer.innerHTML = newPhotoHtml;
-                        }
-                    } else {
-                        statusDiv.textContent = result.message || 'Upload failed';
-                    }
-                } catch (error) {
-                    console.error('Error uploading photo:', error);
-                    statusDiv.textContent = 'Upload failed. Please try again.';
-                }
-            });
-
-            document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const statusDiv = document.getElementById('rsvpStatus');
-                const formData = new FormData(this);
-                
-                try {
-                    statusDiv.textContent = 'Sending RSVP...';
-                    const response = await fetch('/submit-rsvp', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams(formData)
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
-                        this.reset();
-                    } else {
-                        statusDiv.textContent = result.message || 'Failed to send RSVP';
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    statusDiv.textContent = 'Failed to send RSVP. Please try again.';
-                }
-            });
-
-            function getDirections() {
-                const destination = '12.943319832193993,77.68109909325422';
-                const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
-                window.open(mapUrl, '_blank');
-            }
-        </script>
+        <div class="contact-popup" id="contactPopup">
+            <div class="popup-content">
+                <span class="close-popup">&times;</span>
+                <h3>Contact Us</h3>
+                <p class="contact-intro">We'd love to hear from you! Share your kind words, feedback, or reach out if you need any information about our website.</p>
+                <form id="contactForm">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your message, wishes, or questions..." required></textarea>
+                    <button type="submit">Send Message</button>
+                    <div id="contactStatus"></div>
+                </form>
+            </div>
+        </div>
+        <button id="contactButton" class="contact-button">Contact Us</button>
         <footer class="footer">
             <div class="brand">A & G</div>
             <div class="footer-separator"></div>
@@ -544,5 +196,405 @@
             <div class="copyright">© Anvi Corp 2025</div>
         </footer>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger-menu');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // Close menu when clicking a link
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('nav')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // Existing URL params code
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            if (section) {
+                showSection(section);
+                setActiveLink(section);
+            } else {
+                showSection('home');
+                setActiveLink('home');
+            }
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Enhanced Google Analytics tracking
+            gtag('event', 'page_view', {
+                page_title: `${sectionId} - Wedding Invitation`,
+                page_location: window.location.href,
+                page_path: `/${sectionId}`
+            });
+            
+            gtag('event', 'view_section', {
+                event_category: 'Section Navigation',
+                event_label: sectionId,
+                value: 1
+            });
+
+            // Update URL without page reload
+            const url = new URL(window.location);
+            url.searchParams.set('section', sectionId);
+            window.history.pushState({}, '', url);
+            
+            // Update active link and close mobile menu
+            setActiveLink(sectionId);
+            const hamburger = document.querySelector('.hamburger-menu');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger && navMenu) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+            
+            if (sectionId === 'share') {
+                loadSharedPhotos();
+            } else if (sectionId === 'photos') {
+                loadOurPhotos();
+            }
+        }
+
+        function getSectionTitle(sectionId) {
+            switch(sectionId) {
+                case 'home': return 'Home';
+                case 'invite-image': return 'View Invitation';
+                case 'story': return 'Our Story';
+                case 'location': return 'Location';
+                case 'rsvp': return 'RSVP';
+                case 'livestream': return 'Live Stream';
+                case 'photos': return 'Photos';
+                case 'share': return 'Share Photos';
+                default: return 'Unknown Section';
+            }
+        }
+
+        function setActiveLink(sectionId) {
+            // Remove active class from all links
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            // Add active class to current section link
+            const activeLink = document.querySelector(`nav a[onclick*="${sectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        // Existing countdown code
+        const weddingDate = new Date('2025-08-21T00:00:00');
+        const countdownElement = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const now = new Date();
+            const timeLeft = weddingDate - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById('countdown').textContent = "The Big Day is Here!";
+                clearInterval(timerInterval);
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
+        }
+
+        const timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Remove unused photos-related functions
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function changeSlide(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let slides = document.getElementsByClassName("slide");
+            let dots = document.getElementsByClassName("dot");
+            
+            if (!slides.length || !dots.length) {
+                return;
+            }
+            
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            
+            slides[slideIndex-1].style.display = "block";
+            dots[slideIndex-1].className += " active";
+        }
+
+        let isLoading = false;
+        let hasMore = true;
+        let currentPage = 1;
+
+        async function loadSharedPhotos(page = 1, append = false) {
+            if (isLoading || (!append && !hasMore)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading-spinner').classList.remove('hidden');
+                
+                const response = await fetch(`/get-shared-photos?page=${page}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch photos');
+                }
+                const data = await response.json();
+                
+                const gridContainer = document.querySelector('.shared-photos-grid');
+                if (!data.photos || data.photos.length === 0) {
+                    if (!append) {
+                        gridContainer.innerHTML = '<p>No photos shared yet</p>';
+                    }
+                    hasMore = false;
+                    return;
+                }
+
+                const photoHtml = data.photos
+                    .map(photoUrl => {
+                        const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,c_scale,f_auto,q_auto/');
+                        return `
+                            <div class="shared-photo loading">
+                                <img src="${optimizedUrl}" 
+                                    alt="Shared photo" 
+                                    loading="lazy"
+                                    decoding="async"
+                                    onload="this.parentElement.classList.remove('loading')"
+                                    onerror="this.parentElement.classList.add('error')">
+                            </div>
+                        `;
+                    }).join('');
+
+                if (append) {
+                    gridContainer.insertAdjacentHTML('beforeend', photoHtml);
+                } else {
+                    gridContainer.innerHTML = photoHtml;
+                }
+
+                hasMore = data.hasMore;
+                currentPage = data.currentPage;
+            } catch (error) {
+                console.error('Error loading shared photos:', error);
+                if (!append) {
+                    document.querySelector('.shared-photos-grid').innerHTML = 
+                        '<p>Error loading photos. Please try again later.</p>';
+                }
+            } finally {
+                isLoading = false;
+                document.getElementById('loading-spinner').classList.add('hidden');
+            }
+        }
+
+        // Initialize intersection observer for infinite scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && hasMore && !isLoading) {
+                    loadSharedPhotos(currentPage + 1, true);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observe the loading spinner
+        document.addEventListener('DOMContentLoaded', () => {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                observer.observe(spinner);
+            }
+        });
+
+        async function loadOurPhotos() {
+            try {
+                const slidesContainer = document.getElementById('slides-container');
+                slidesContainer.innerHTML = '<div class="loading-message">Loading photos...</div>';
+                
+                const response = await fetch('/get-our-photos');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch photos');
+                }
+                const photos = await response.json();
+                
+                if (!photos || photos.length === 0) {
+                    slidesContainer.innerHTML = '<p>No photos available</p>';
+                    return;
+                }
+
+                const photoHtml = photos
+                    .map((photoUrl, index) => {
+                        const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_800,c_scale,f_auto,q_auto/');
+                        return `
+                            <div class="slide fade loading">
+                                <img src="${optimizedUrl}" 
+                                    alt="Our photo ${index + 1}"
+                                    loading="lazy"
+                                    decoding="async"
+                                    onload="this.parentElement.classList.remove('loading')"
+                                    onerror="this.parentElement.classList.add('error')">
+                            </div>
+                        `;
+                    }).join('');
+
+                slidesContainer.innerHTML = photoHtml;
+                
+                const dotsContainer = document.getElementById('dots-container');
+                dotsContainer.innerHTML = photos
+                    .map((_, index) => `
+                        <span class="dot" onclick="currentSlide(${index + 1})"></span>
+                    `).join('');
+
+                showSlides(1);
+            } catch (error) {
+                console.error('Error loading our photos:', error);
+                document.getElementById('slides-container').innerHTML = 
+                    '<p>Error loading photos. Please try again later.</p>';
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            try {
+                statusDiv.textContent = 'Uploading...';
+                const response = await fetch('/upload-photo', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.textContent = 'Upload successful!';
+                    this.reset();
+                    
+                    // Add the new photo to the grid immediately
+                    const gridContainer = document.querySelector('.shared-photos-grid');
+                    const optimizedUrl = result.url.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
+                    const newPhotoHtml = `
+                        <div class="shared-photo loading">
+                            <img src="${optimizedUrl}" 
+                                alt="Shared photo" 
+                                loading="lazy"
+                                onload="this.parentElement.classList.remove('loading')">
+                        </div>
+                    `;
+                    
+                    // Insert at the beginning of the grid
+                    if (gridContainer.firstChild) {
+                        gridContainer.insertAdjacentHTML('afterbegin', newPhotoHtml);
+                    } else {
+                        gridContainer.innerHTML = newPhotoHtml;
+                    }
+                } else {
+                    statusDiv.textContent = result.message || 'Upload failed';
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                statusDiv.textContent = 'Upload failed. Please try again.';
+            }
+        });
+
+        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('rsvpStatus');
+            const formData = new FormData(this);
+            
+            try {
+                statusDiv.textContent = 'Sending RSVP...';
+                const response = await fetch('/submit-rsvp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
+                    this.reset();
+                } else {
+                    statusDiv.textContent = result.message || 'Failed to send RSVP';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.textContent = 'Failed to send RSVP. Please try again.';
+            }
+        });
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('contactStatus');
+            const formData = new FormData(this);
+            
+            try {
+                statusDiv.textContent = 'Sending message...';
+                const response = await fetch('/submit-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.textContent = 'Thank you! Your message has been sent.';
+                    this.reset();
+                } else {
+                    statusDiv.textContent = result.message || 'Failed to send message';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.textContent = 'Failed to send message. Please try again.';
+            }
+        });
+
+        document.getElementById('contactButton').addEventListener('click', function() {
+            document.getElementById('contactPopup').classList.add('active');
+        });
+
+        document.querySelector('.close-popup').addEventListener('click', function() {
+            document.getElementById('contactPopup').classList.remove('active');
+        });
+
+        function getDirections() {
+            const destination = '12.943319832193993,77.68109909325422';
+            const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+            window.open(mapUrl, '_blank');
+        }
+    </script>
 </body>
 </html>

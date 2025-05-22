@@ -193,6 +193,33 @@ app.get('/', (req, res) => {
     });
 });
 
+// Handle contact form submission
+app.post('/submit-contact', async (req, res) => {
+    const { name, email, message } = req.body;
+    
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: ['rahulkalpsts107@gmail.com', 'aparnarevi.nair@gmail.com'],
+            subject: `Wedding Website Contact Form - Message from ${name}`,
+            text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+            html: `
+                <h3>New Contact Form Submission</h3>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Message:</strong> ${message}</p>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.json({ success: true });
+    } catch (error) {
+        log('error', 'Failed to send contact form email', { error: error.message, name, email });
+        Sentry.captureException(error);
+        res.status(500).json({ success: false, message: 'Failed to send message' });
+    }
+});
+
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 
