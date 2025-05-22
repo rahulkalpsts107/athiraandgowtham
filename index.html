@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Athira Revi and Gowtham Vijaykumar's Wedding</title>
+    <title>Athira & Gowtham's Wedding Invitation</title>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://athiraandgowtham.onrender.com/?section=invite-image">
+    <meta property="og:title" content="Athira & Gowtham's Wedding Invitation">
+    <meta property="og:description" content="You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru">
+    <meta property="og:image" content="https://athiraandgowtham.onrender.com/images/wedding-invitation.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- WhatsApp specific -->
+    <meta property="og:image:secure_url" content="https://athiraandgowtham.onrender.com/images/wedding-invitation.jpg">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +25,7 @@
 <body>
     <div class="container">
         <header>
+            <div class="initials">A & G</div>
             <h1 class="couple-name">Athira & Gowtham</h1>
             <div class="wedding-details">
                 <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
@@ -138,16 +152,49 @@
         </div>
 
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const section = urlParams.get('section');
+                if (section) {
+                    showSection(section);
+                    setActiveLink(section);
+                } else {
+                    // Set home as active by default
+                    showSection('home');
+                    setActiveLink('home');
+                }
+            });
+
             function showSection(sectionId) {
                 document.querySelectorAll('.section').forEach(section => {
                     section.classList.add('hidden');
                 });
                 document.getElementById(sectionId).classList.remove('hidden');
                 
+                // Update URL without page reload
+                const url = new URL(window.location);
+                url.searchParams.set('section', sectionId);
+                window.history.pushState({}, '', url);
+                
+                // Update active link
+                setActiveLink(sectionId);
+                
                 if (sectionId === 'share') {
                     loadSharedPhotos();
                 } else if (sectionId === 'photos') {
                     loadOurPhotos();
+                }
+            }
+
+            function setActiveLink(sectionId) {
+                // Remove active class from all links
+                document.querySelectorAll('nav a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                // Add active class to current section link
+                const activeLink = document.querySelector(`nav a[onclick*="${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
                 }
             }
 

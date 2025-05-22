@@ -71,21 +71,25 @@ nav ul li a {
     position: relative;
 }
 
+nav ul li a:hover, nav ul li a.active {
+    color: #617939;
+    background: transparent;
+}
+
 nav ul li a::after {
     content: '';
     position: absolute;
     width: 100%;
-    height: 1px;
-    bottom: -2px;
+    height: 2px;
+    bottom: -4px;
     left: 0;
     background-color: #617939;
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: opacity 0.3s ease;
 }
 
 nav ul li a.active::after,
-nav ul li a:hover::after,
-nav ul li a:focus::after {
+nav ul li a:hover::after {
     opacity: 1;
 }
 
@@ -117,12 +121,11 @@ section {
 }
 
 #countdown {
-    font-size: 1.5rem;
-    color: #ff6347;
-    animation: fadeIn 1s ease-in-out infinite alternate;
+    color: #617939;
+    animation: fadeInOut 2s ease-in-out infinite alternate;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInOut {
     from {
         opacity: 0.5;
     }
@@ -177,14 +180,14 @@ section {
 .couple-name {
     line-height: 1;
     margin: 16px auto;
-    font-family: Abhaya Libre;
+    font-family: 'Abhaya Libre', serif;
     color: #617939;
     font-size: 60px;
     text-transform: none;
     letter-spacing: 6px;
     font-weight: 600;
     padding-top: 380px;
-    padding-bottom: 15px;
+    padding-bottom: 80px;
 }
 
 .hidden {
@@ -497,7 +500,7 @@ form input, form select, form button {
 
 .upload-form button {
     padding: 10px 20px;
-    background-color: #4caf50;
+    background-color: #617939;
     color: white;
     border: none;
     border-radius: 4px;
@@ -506,7 +509,7 @@ form input, form select, form button {
 }
 
 .upload-form button:hover {
-    background-color: #45a049;
+    background-color: #4a5e2c;
 }
 
 .shared-photos-grid {
@@ -631,19 +634,24 @@ form input, form select, form button {
 }
 
 .date-location, .countdown-text {
-    font-family: 'Roboto', sans-serif;
+    margin: 8px 0;
+    font-family: Roboto;
+    letter-spacing: 2px;
     color: #617939;
+    font-size: 18px;
+    font-weight: 400;
     text-transform: uppercase;
+    line-height: 1.25rem;
 }
 
 .date-location {
-    font-size: 1.4em;
-    margin-bottom: 30px;
-    padding-top: 65px;
-    color: #617939;
+    padding-top: 120px;
 }
 
 .countdown-text {
+    font-family: 'Roboto', sans-serif;
+    color: #617939;
+    text-transform: uppercase;
     font-size: 1.6em;
     font-weight: 500;
     margin-top: 10px;
@@ -707,6 +715,33 @@ form input, form select, form button {
 
 .loading-spinner.hidden {
     display: none;
+}
+
+.initials {
+    font-family: 'Abhaya Libre', serif;
+    color: #617939;
+    font-size: 120px;
+    text-transform: none;
+    letter-spacing: 6px;
+    font-weight: 600;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 200px;
+}
+
+.rsvp-form button {
+    padding: 10px 20px;
+    background-color: #617939;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rsvp-form button:hover {
+    background-color: #4a5e2c;
 }
 
 /* Mobile Responsive Styles */
@@ -786,5 +821,10 @@ form input, form select, form button {
 
     .map-container {
         height: 300px;
+    }
+
+    .initials {
+        font-size: 80px;
+        top: 100px;
     }
 }
