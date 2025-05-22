@@ -17,6 +17,15 @@
     <!-- WhatsApp specific -->
     <meta property="og:image:secure_url" content="https://athiraandgowtham.onrender.com/images/wedding-invitation.jpg">
     
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= process.env.GOOGLE_ANALYTICS_ID %>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '<%= process.env.GOOGLE_ANALYTICS_ID %>');
+    </script>
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -206,6 +215,12 @@
                 });
                 document.getElementById(sectionId).classList.remove('hidden');
                 
+                // Track section view in Google Analytics
+                gtag('event', 'view_section', {
+                    'section_name': sectionId,
+                    'section_title': getSectionTitle(sectionId)
+                });
+                
                 // Update URL without page reload
                 const url = new URL(window.location);
                 url.searchParams.set('section', sectionId);
@@ -224,6 +239,20 @@
                     loadSharedPhotos();
                 } else if (sectionId === 'photos') {
                     loadOurPhotos();
+                }
+            }
+
+            function getSectionTitle(sectionId) {
+                switch(sectionId) {
+                    case 'home': return 'Home';
+                    case 'invite-image': return 'View Invitation';
+                    case 'story': return 'Our Story';
+                    case 'location': return 'Location';
+                    case 'rsvp': return 'RSVP';
+                    case 'livestream': return 'Live Stream';
+                    case 'photos': return 'Photos';
+                    case 'share': return 'Share Photos';
+                    default: return 'Unknown Section';
                 }
             }
 

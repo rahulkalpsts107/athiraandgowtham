@@ -159,6 +159,20 @@ app.get('/get-shared-photos', async (req, res) => {
     }
 });
 
+// Render the index page
+app.get('/', (req, res) => {
+    fs.readFile(path.join(__dirname, 'index.html'), 'utf8', (err, data) => {
+        if (err) {
+            log('error', 'Failed to read index.html', { error: err.message });
+            return res.status(500).send('Error loading page');
+        }
+        
+        // Replace placeholder with actual Google Analytics ID
+        const html = data.replace(/<%=\s*process\.env\.GOOGLE_ANALYTICS_ID\s*%>/g, process.env.GOOGLE_ANALYTICS_ID);
+        res.send(html);
+    });
+});
+
 // Start the server
 app.listen(PORT, () => {
     log('info', `Server started`, { port: PORT });
