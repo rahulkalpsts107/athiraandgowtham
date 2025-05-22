@@ -193,7 +193,7 @@ section {
     text-transform: none;
     letter-spacing: 6px;
     font-weight: 600;
-    padding-top: 380px;
+    padding-top: 300px;
     padding-bottom: 80px;
 }
 
@@ -720,7 +720,6 @@ form input, form select, form button {
     letter-spacing: 2px;
     font-size: 18px;
     font-weight: 400;
-    text-transform: uppercase;
     line-height: 1.25rem;
 }
 
@@ -732,7 +731,6 @@ form input, form select, form button {
     color: #617939 !important;
     font-size: 14px !important;
     font-weight: 400 !important;
-    text-transform: uppercase !important;
     line-height: 1.25rem !important;
     text-align: center !important;
 }
@@ -798,7 +796,6 @@ form input, form select, form button {
     color: #617939;
     font-size: 12px;
     font-weight: 400;
-    text-transform: uppercase;
     line-height: 1.25rem;
 }
 
@@ -809,7 +806,6 @@ form input, form select, form button {
     color: #617939;
     font-size: 12px;
     font-weight: 100;
-    text-transform: uppercase;
     line-height: 1.25rem;
 }
 
