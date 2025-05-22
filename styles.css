@@ -123,11 +123,18 @@ section {
 #countdown {
     color: #617939;
     animation: fadeInOut 2s ease-in-out infinite alternate;
+    margin: 8px 0;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    font-size: 18px;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.25rem;
 }
 
 @keyframes fadeInOut {
     from {
-        opacity: 0.5;
+        opacity: 0.7;
     }
     to {
         opacity: 1;
@@ -611,7 +618,32 @@ form input, form select, form button {
     margin-top: 50px;
     color: #666;
     font-size: 0.9em;
-    border-top: 1px solid #eee;
+}
+
+.footer .brand {
+    font-family: 'Abhaya Libre', serif;
+    color: #617939;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer .date {
+    font-family: 'Roboto', sans-serif;
+    color: #617939;
+    font-size: 16px;
+    margin: 5px 0;
+    letter-spacing: 2px;
+}
+
+.footer-separator {
+    width: 100px;
+    height: 1px;
+    background-color: #617939;
+    margin: 10px auto;
+}
+
+.footer .copyright {
+    margin-top: 10px;
 }
 
 .days-to-go {
@@ -670,11 +702,39 @@ form input, form select, form button {
     color: #617939;
 }
 
+#home h2 {
+    margin: 8px 0;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    color: #617939;
+    font-size: 18px;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.25rem;
+    text-align: center;
+}
+
 #home p {
-    font-size: 1.2em;
-    line-height: 1.8;
-    margin-bottom: 25px;
-    color: #333;
+    color: #617939;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    font-size: 18px;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.25rem;
+}
+
+#home .welcome-text,
+#home .welcome-text-msg {
+    margin: 8px 0;
+    font-family: Roboto !important;
+    letter-spacing: 2px !important;
+    color: #617939 !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    line-height: 1.25rem !important;
+    text-align: center !important;
 }
 
 #photos, #share {
@@ -717,19 +777,6 @@ form input, form select, form button {
     display: none;
 }
 
-.initials {
-    font-family: 'Abhaya Libre', serif;
-    color: #617939;
-    font-size: 120px;
-    text-transform: none;
-    letter-spacing: 6px;
-    font-weight: 600;
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 200px;
-}
-
 .rsvp-form button {
     padding: 10px 20px;
     background-color: #617939;
@@ -742,6 +789,40 @@ form input, form select, form button {
 
 .rsvp-form button:hover {
     background-color: #4a5e2c;
+}
+
+.welcome-text {
+    margin: 8px 0;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    color: #617939;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.25rem;
+}
+
+.welcome-text-msg {
+    margin: 8px 0;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    color: #617939;
+    font-size: 12px;
+    font-weight: 100;
+    text-transform: uppercase;
+    line-height: 1.25rem;
+}
+
+.family-photo {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.family-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile Responsive Styles */
@@ -821,10 +902,5 @@ form input, form select, form button {
 
     .map-container {
         height: 300px;
-    }
-
-    .initials {
-        font-size: 80px;
-        top: 100px;
     }
 }
