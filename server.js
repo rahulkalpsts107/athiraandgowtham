@@ -5,6 +5,8 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
+const Sentry = require('@sentry/node');
+const { ProfilingIntegration } = require('@sentry/profiling-node');
 
 // Logger function
 function log(type, message, data = {}) {
@@ -27,6 +29,18 @@ cloudinary.config({
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ourPhotosDir = path.join(__dirname, 'images/uploads');
+
+// Initialize Sentry
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+        new Sentry.Integrations.Http({ tracing: true }),
+        new Sentry.Integrations.Express({ app }),
+        new ProfilingIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    profilesSampleRate: 1.0,
+});
 
 // Ensure uploads directory exists
 if (!fs.existsSync(ourPhotosDir)) {
@@ -52,6 +66,12 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 app.use('/images/uploads', express.static(path.join(__dirname, 'images/uploads')));
+
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
+
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler());
 
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
@@ -171,6 +191,16 @@ app.get('/', (req, res) => {
         const html = data.replace(/<%=\s*process\.env\.GOOGLE_ANALYTICS_ID\s*%>/g, process.env.GOOGLE_ANALYTICS_ID);
         res.send(html);
     });
+});
+
+// The error handler must be registered before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
+
+// Optional fallthrough error handler
+app.use(function onError(err, req, res, next) {
+    log('error', 'Server error', { error: err.message });
+    res.statusCode = 500;
+    res.end('Internal Server Error');
 });
 
 // Start the server

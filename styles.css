@@ -64,7 +64,7 @@ nav ul li {
 nav ul li a {
     color: #617939;
     text-decoration: none;
-    font-family: Roboto;
+    font-family: "Abhaya Libre", serif;
     font-size: 14px;
     font-weight: normal;
     text-transform: uppercase;
@@ -123,14 +123,15 @@ section {
 
 #countdown {
     color: #617939;
-    animation: fadeInOut 2s ease-in-out infinite alternate;
+    /* animation: fadeInOut 2s ease-in-out infinite alternate; */
     margin: 8px 0;
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
     letter-spacing: 2px;
     font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
     line-height: 1.25rem;
+    font-size: calc(18px * 0.85);
 }
 
 @keyframes fadeInOut {
@@ -677,17 +678,18 @@ form input, form select, form button {
 
 .date-location, .countdown-text {
     margin: 8px 0;
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
     letter-spacing: 2px;
     color: #617939;
-    font-size: 18px;
+    /* font-size: 18px; */
     font-weight: 400;
     text-transform: uppercase;
     line-height: 1.25rem;
+    font-size: calc(18px * 0.85);
 }
 
 .date-location {
-    padding-top: 120px;
+    padding-top: 90px;
 }
 
 .countdown-text {
@@ -697,6 +699,7 @@ form input, form select, form button {
     font-size: 1.6em;
     font-weight: 500;
     margin-top: 10px;
+    font-size: calc(18px * 0.85);
 }
 
 #home {
@@ -714,7 +717,7 @@ form input, form select, form button {
 
 #home h2 {
     margin: 8px 0;
-    font-family: Roboto;
+    font-family: "Abhaya Libre", serif;
     letter-spacing: 2px;
     color: #617939;
     font-size: 18px;
@@ -726,7 +729,7 @@ form input, form select, form button {
 
 #home p {
     color: #617939;
-    font-family: Roboto;
+    font-family: "Abhaya Libre", serif;
     letter-spacing: 2px;
     font-size: 18px;
     font-weight: 400;
@@ -736,7 +739,7 @@ form input, form select, form button {
 #home .welcome-text,
 #home .welcome-text-msg {
     margin: 8px 0;
-    font-family: Roboto !important;
+    font-family: "Abhaya Libre", serif !important;
     letter-spacing: 2px !important;
     color: #617939 !important;
     font-size: 14px !important;
@@ -801,7 +804,7 @@ form input, form select, form button {
 
 .welcome-text {
     margin: 8px 0;
-    font-family: Roboto;
+    font-family: "Abhaya Libre", serif;
     letter-spacing: 2px;
     color: #617939;
     font-size: 12px;
@@ -811,7 +814,7 @@ form input, form select, form button {
 
 .welcome-text-msg {
     margin: 8px 0;
-    font-family: Roboto;
+    font-family: "Abhaya Libre", serif;
     letter-spacing: 2px;
     color: #617939;
     font-size: 12px;
@@ -857,8 +860,8 @@ form input, form select, form button {
 .small-brand {
     font-family: 'Abhaya Libre', serif;
     color: #617939;
-    font-size: 18px;
-    letter-spacing: 6px;
+    font-size: 24px;
+    letter-spacing: 0px;
     font-weight: 600;
     text-align: center;
     margin-right: 25px;
@@ -900,17 +903,17 @@ form input, form select, form button {
 
     nav ul li a {
         font-size: 12px;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
         padding: 5px 8px;
     }
 
     nav ul li a {
         color: #617939;
         text-decoration: none;
-        font-family: Roboto;
+        font-family: "Abhaya Libre", serif;
         font-size: 14px;
         font-weight: normal;
-        text-transform: uppercase;
+        /* text-transform: uppercase; */
         letter-spacing: 2px;
         position: relative;
     }
@@ -1045,7 +1048,7 @@ form input, form select, form button {
     }
 
     .small-brand {
-        font-size: 16px;
+        font-size: 24px;
         margin: 0;
     }
 
