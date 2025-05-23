@@ -18,12 +18,12 @@
     <meta property="og:image:secure_url" content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747936598/ba497ebf-bee7-4849-831b-e00ec76173b2_qo1oyc.jpg">
     
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= process.env.GOOGLE_ANALYTICS_ID %>"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%- process.env.GOOGLE_ANALYTICS_ID %>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '<%= process.env.GOOGLE_ANALYTICS_ID %>', {
+        gtag('config', '<%- process.env.GOOGLE_ANALYTICS_ID %>', {
             page_title: 'Wedding Invitation',
             page_location: window.location.href,
             page_path: window.location.pathname

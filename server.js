@@ -7,6 +7,7 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const Sentry = require('@sentry/node');
 const { ProfilingIntegration } = require('@sentry/profiling-node');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Logger function
 function log(type, message, data = {}) {
@@ -23,12 +24,20 @@ function log(type, message, data = {}) {
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+    logging: false
 });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ourPhotosDir = path.join(__dirname, 'images/uploads');
+
+// Disable Express logging in production
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+    console.log = console.warn = console.info = () => {}; // Suppress all console output except errors
+}
 
 // Initialize Sentry
 Sentry.init({
@@ -40,7 +49,12 @@ Sentry.init({
     ],
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
+    debug: false, // Disable Sentry debug logs
 });
+
+// Setup EJS templating
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 // Ensure uploads directory exists
 if (!fs.existsSync(ourPhotosDir)) {
@@ -57,14 +71,24 @@ const transporter = nodemailer.createTransport({
 });
 
 // Configure multer for file upload
-const upload = multer({ storage: multer.memoryStorage() });
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'wedding-photos',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif']
+    }
+});
+
+const upload = multer({ storage: storage });
 
 // Middleware to parse form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
+// Serve static files (but exclude index.html since we render it with EJS)
+app.use(express.static(path.join(__dirname), {
+    index: false // Don't serve index.html as static file
+}));
 app.use('/images/uploads', express.static(path.join(__dirname, 'images/uploads')));
 
 // The request handler must be the first middleware on the app
@@ -72,6 +96,18 @@ app.use(Sentry.Handlers.requestHandler());
 
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
+
+// Log all requests
+app.use((req, res, next) => {
+    log('request', 'Incoming request', {
+        method: req.method,
+        url: req.url,
+        userAgent: req.get('User-Agent'),
+        ip: req.ip || req.connection.remoteAddress,
+        timestamp: new Date().toISOString()
+    });
+    next();
+});
 
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
@@ -91,6 +127,7 @@ app.post('/submit-rsvp', async (req, res) => {
         res.json({ success: true, message: 'RSVP sent successfully!' });
     } catch (error) {
         log('error', 'Failed to send RSVP email', { error: error.message, name, email });
+        Sentry.captureException(error);
         res.status(500).json({ success: false, message: 'Failed to send RSVP' });
     }
 });
@@ -179,23 +216,21 @@ app.get('/get-shared-photos', async (req, res) => {
     }
 });
 
-// Render the index page
+// Render the index page - this should be BEFORE any catch-all routes
 app.get('/', (req, res) => {
-    fs.readFile(path.join(__dirname, 'index.html'), 'utf8', (err, data) => {
-        if (err) {
-            log('error', 'Failed to read index.html', { error: err.message });
-            return res.status(500).send('Error loading page');
+    res.render(path.join(__dirname, 'index.html'), {
+        process: {
+            env: {
+                GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || ''
+            }
         }
-        
-        // Replace placeholder with actual Google Analytics ID
-        const html = data.replace(/<%=\s*process\.env\.GOOGLE_ANALYTICS_ID\s*%>/g, process.env.GOOGLE_ANALYTICS_ID);
-        res.send(html);
     });
 });
 
 // Handle contact form submission
 app.post('/submit-contact', async (req, res) => {
     const { name, email, message } = req.body;
+    log('info', 'Contact form submission received', { name, email });
     
     try {
         const mailOptions = {
@@ -212,6 +247,7 @@ app.post('/submit-contact', async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
+        log('success', 'Contact email sent successfully', { name, email });
         res.json({ success: true });
     } catch (error) {
         log('error', 'Failed to send contact form email', { error: error.message, name, email });
