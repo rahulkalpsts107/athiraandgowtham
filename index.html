@@ -327,6 +327,11 @@
             });
             document.getElementById(sectionId).classList.remove('hidden');
             
+            // Stop YouTube video if leaving the invitation section
+            if (sectionId !== 'invite-image' && youtubePlayer) {
+                youtubePlayer.stopVideo();
+            }
+            
             // Enhanced Google Analytics tracking
             gtag('event', 'page_view', {
                 page_title: `${sectionId} - Wedding Invitation`,
