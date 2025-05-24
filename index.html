@@ -337,15 +337,30 @@
         });
 
         function showSection(sectionId) {
+            // Hide all sections first
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
-            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Show the selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
             
             // Stop YouTube video if leaving the invitation section
             if (sectionId !== 'invite-image' && youtubePlayer) {
                 youtubePlayer.stopVideo();
             }
+
+            // Update active link state
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                const linkSection = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
+                if (linkSection === sectionId) {
+                    link.classList.add('active');
+                }
+            });
 
             // Enhanced Google Analytics tracking
             gtag('event', 'page_view', {
@@ -365,8 +380,7 @@
             url.searchParams.set('section', sectionId);
             window.history.pushState({}, '', url);
             
-            // Update active link and close mobile menu
-            setActiveLink(sectionId);
+            // Close mobile menu
             const hamburger = document.querySelector('.hamburger-menu');
             const navMenu = document.querySelector('.nav-menu');
             if (hamburger && navMenu) {
