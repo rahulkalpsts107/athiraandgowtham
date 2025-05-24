@@ -30,6 +30,21 @@
         });
     </script>
     
+    <!-- Sentry Error Tracking -->
+    <script src="https://browser.sentry-cdn.com/7.101.1/bundle.min.js"></script>
+    <script>
+        Sentry.init({
+            dsn: "<%- process.env.SENTRY_DSN %>", // Make sure to add SENTRY_DSN to your environment variables
+            integrations: [
+                new Sentry.BrowserTracing(),
+                new Sentry.Replay()
+            ],
+            tracesSampleRate: 1.0,
+            replaysSessionSampleRate: 0.1,
+            replaysOnErrorSampleRate: 1.0,
+        });
+    </script>
+
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -331,7 +346,7 @@
             if (sectionId !== 'invite-image' && youtubePlayer) {
                 youtubePlayer.stopVideo();
             }
-            
+
             // Enhanced Google Analytics tracking
             gtag('event', 'page_view', {
                 page_title: `${sectionId} - Wedding Invitation`,
