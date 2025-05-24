@@ -354,6 +354,16 @@
         function showSection(sectionId) {
             if (!sectionId) return;
             
+            // Update active state in navigation first
+            document.querySelectorAll('nav a').forEach(link => {
+                const linkSectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
+                if (linkSectionId === sectionId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
             // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
@@ -364,7 +374,7 @@
             if (selectedSection) {
                 selectedSection.classList.remove('hidden');
                 
-                // Update URL first to ensure consistent state
+                // Update URL and history state
                 const url = new URL(window.location);
                 url.searchParams.set('section', sectionId);
                 window.history.pushState({sectionId}, '', url);
@@ -383,14 +393,6 @@
                     youtubePlayer.stopVideo();
                 }
             }
-
-            // Update navigation state
-            document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('onclick')?.includes(`'${sectionId}'`)) {
-                    link.classList.add('active');
-                }
-            });
 
             // Track page view
             gtag('event', 'page_view', {
