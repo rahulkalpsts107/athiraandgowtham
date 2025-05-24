@@ -302,6 +302,7 @@
             const hamburger = document.querySelector('.hamburger-menu');
             const navMenu = document.querySelector('.nav-menu');
             
+            // Handle mobile menu
             hamburger.addEventListener('click', (e) => {
                 e.stopPropagation();
                 hamburger.classList.toggle('active');
@@ -310,7 +311,12 @@
 
             // Close menu when clicking a link
             document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
+                    if (sectionId) {
+                        showSection(sectionId);
+                    }
                     hamburger.classList.remove('active');
                     navMenu.classList.remove('active');
                 });
@@ -324,20 +330,22 @@
                 }
             });
 
-            // Existing URL params code
+            // Handle initial section from URL
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section');
-            if (section) {
-                showSection(section);
-                setActiveLink(section);
-            } else {
-                showSection('home');
-                setActiveLink('home');
+            showSection(section || 'home');
+
+            // Observe the loading spinner for infinite scroll
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                observer.observe(spinner);
             }
         });
 
         function showSection(sectionId) {
-            // Hide all sections first
+            if (!sectionId) return;
+            
+            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
@@ -351,6 +359,11 @@
             // Stop YouTube video if leaving the invitation section
             if (sectionId !== 'invite-image' && youtubePlayer) {
                 youtubePlayer.stopVideo();
+            }
+
+            // Initialize YouTube player if showing invitation
+            if (sectionId === 'invite-image') {
+                setTimeout(initializeYouTubePlayer, 500);
             }
 
             // Update active link state
@@ -380,14 +393,7 @@
             url.searchParams.set('section', sectionId);
             window.history.pushState({}, '', url);
             
-            // Close mobile menu
-            const hamburger = document.querySelector('.hamburger-menu');
-            const navMenu = document.querySelector('.nav-menu');
-            if (hamburger && navMenu) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-            
+            // Load section-specific content
             if (sectionId === 'share') {
                 loadSharedPhotos();
             } else if (sectionId === 'photos') {

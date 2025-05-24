@@ -221,6 +221,7 @@ form input, form select, form button {
     position: relative;
     margin: auto;
     background-color: #FFF7E1;
+    min-height: 500px;
 }
 
 .slide {
@@ -1167,4 +1168,18 @@ form input, form select, form button {
     .container {
         padding-top: 45px;
     }
+}
+
+.loading-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #617939;
+    font-family: 'Abhaya Libre', serif;
+    font-size: 1.2em;
+    background-color: rgba(255, 247, 225, 0.9);
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    z-index: 10;
 }
