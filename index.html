@@ -309,33 +309,42 @@
                 navMenu.classList.toggle('active');
             });
 
-            // Close menu when clicking a link
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
-                    if (sectionId) {
-                        showSection(sectionId);
-                    }
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                });
-            });
-
             // Close menu when clicking outside
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('nav')) {
+                if (!e.target.closest('nav') && !e.target.closest('.hamburger-menu')) {
                     hamburger.classList.remove('active');
                     navMenu.classList.remove('active');
                 }
             });
 
+            // Add event listeners to nav links
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
+                    if (sectionId) {
+                        // Close mobile menu before showing section
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        
+                        // Small delay to allow menu to close smoothly
+                        setTimeout(() => {
+                            showSection(sectionId);
+                        }, 100);
+                    }
+                });
+            });
+
             // Handle initial section from URL
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section');
-            showSection(section || 'home');
+            if (section) {
+                showSection(section);
+            } else {
+                showSection('home');
+            }
 
-            // Observe the loading spinner for infinite scroll
+            // Initialize intersection observer for infinite scroll
             const spinner = document.getElementById('loading-spinner');
             if (spinner) {
                 observer.observe(spinner);
@@ -354,28 +363,36 @@
             const selectedSection = document.getElementById(sectionId);
             if (selectedSection) {
                 selectedSection.classList.remove('hidden');
-            }
-            
-            // Stop YouTube video if leaving the invitation section
-            if (sectionId !== 'invite-image' && youtubePlayer) {
-                youtubePlayer.stopVideo();
+                
+                // Update URL first to ensure consistent state
+                const url = new URL(window.location);
+                url.searchParams.set('section', sectionId);
+                window.history.pushState({sectionId}, '', url);
+                
+                // Load section-specific content
+                if (sectionId === 'photos') {
+                    setTimeout(() => loadOurPhotos(), 100);
+                } else if (sectionId === 'share') {
+                    setTimeout(() => loadSharedPhotos(), 100);
+                } else if (sectionId === 'invite-image') {
+                    setTimeout(() => initializeYouTubePlayer(), 500);
+                }
+                
+                // Stop YouTube video if leaving the invitation section
+                if (sectionId !== 'invite-image' && youtubePlayer) {
+                    youtubePlayer.stopVideo();
+                }
             }
 
-            // Initialize YouTube player if showing invitation
-            if (sectionId === 'invite-image') {
-                setTimeout(initializeYouTubePlayer, 500);
-            }
-
-            // Update active link state
+            // Update navigation state
             document.querySelectorAll('nav a').forEach(link => {
                 link.classList.remove('active');
-                const linkSection = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
-                if (linkSection === sectionId) {
+                if (link.getAttribute('onclick')?.includes(`'${sectionId}'`)) {
                     link.classList.add('active');
                 }
             });
 
-            // Enhanced Google Analytics tracking
+            // Track page view
             gtag('event', 'page_view', {
                 page_title: `${sectionId} - Wedding Invitation`,
                 page_location: window.location.href,
@@ -387,46 +404,14 @@
                 event_label: sectionId,
                 value: 1
             });
-
-            // Update URL without page reload
-            const url = new URL(window.location);
-            url.searchParams.set('section', sectionId);
-            window.history.pushState({}, '', url);
-            
-            // Load section-specific content
-            if (sectionId === 'share') {
-                loadSharedPhotos();
-            } else if (sectionId === 'photos') {
-                loadOurPhotos();
-            }
         }
 
-        function getSectionTitle(sectionId) {
-            switch(sectionId) {
-                case 'home': return 'Home';
-                case 'invite-image': return 'View Invitation';
-                case 'story': return 'Our Story';
-                case 'location': return 'Location';
-                case 'rsvp': return 'RSVP';
-                case 'livestream': return 'Live Stream';
-                case 'photos': return 'Photos';
-                case 'share': return 'Share Photos';
-                default: return 'Unknown Section';
-            }
-        }
-
-        function setActiveLink(sectionId) {
-            // Remove active class from all links
-            document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove('active');
-            });
-            // Add active class to current section link
-            const activeLink = document.querySelector(`nav a[onclick*="${sectionId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
-        }
-
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            const section = event.state?.sectionId || new URLSearchParams(window.location.search).get('section') || 'home';
+            showSection(section);
+        });
+        
         // Existing countdown code
         const weddingDate = new Date('2025-08-21T00:00:00');
         const countdownElement = document.getElementById('countdown');

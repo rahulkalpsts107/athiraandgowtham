@@ -144,18 +144,36 @@ section {
 }
 
 .hamburger-menu {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 30px;
+    z-index: 1000;
+    background: rgba(255, 247, 225, 0.9);
+    padding: 10px;
+    border-radius: 5px;
 }
 
-.hamburger-menu div {
-    background-color: #333;
-    height: 4px;
-    width: 100%;
-    border-radius: 2px;
+.hamburger-menu span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #617939;
+    margin: 5px 0;
+    transition: 0.4s;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
 }
 
 #menu {
@@ -1015,9 +1033,58 @@ form input, form select, form button {
     }
 
     nav ul li a {
+        color: #617939;
+        text-decoration: none;
+        font-family: "Abhaya Libre", serif;
         font-size: 12px;
+        font-weight: normal;
+        text-transform: uppercase;
         letter-spacing: 2px;
-        padding: 5px 8px;
+        position: relative;
+        padding: 10px;
+    }
+
+    nav ul li a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: 4px;
+        left: 0;
+        background-color: #617939;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    nav ul li a.active::after {
+        opacity: 1;
+    }
+
+    .nav-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 247, 225, 0.98);
+        padding: 80px 20px 20px;
+        z-index: 900;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .nav-menu.active {
+        display: block;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+        width: 100%;
+        text-align: center;
     }
 
     nav ul li a {
@@ -1026,57 +1093,44 @@ form input, form select, form button {
         font-family: "Abhaya Libre", serif;
         font-size: 14px;
         font-weight: normal;
-        /* text-transform: uppercase; */
+        text-transform: uppercase;
         letter-spacing: 2px;
         position: relative;
     }
-
-    #home {
-        margin-top: 0;
+    
+    nav ul li a:hover, nav ul li a.active {
+        color: #617939;
+        background: transparent;
+    }
+    
+    nav ul li a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: #617939;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    nav ul li a.active::after,
+    nav ul li a:hover::after {
+        opacity: 1;
     }
 
-    #home h1 {
-        font-size: 2em;
-    }
-
-    #home p {
-        font-size: 1.1em;
-        line-height: 1.6;
-    }
-
-    .location-container {
-        grid-template-columns: 1fr;
-        padding: 20px;
-    }
-
-    .map-container {
-        height: 300px;
-    }
-
-    .section {
-        margin-top: 0;
-        padding: 10px 15px;
-    }
-
-    .welcome-text {
-        margin: 20px 0;
-        font-size: 18px;
-    }
-
-    .welcome-text-msg {
-        margin: 20px 0;
-        font-size: 14px;
-        line-height: 1.8;
-        padding: 0 20px;
-    }
-
-    .location-container, .story-container, .rsvp-form {
-        padding: 20px 15px;
-    }
-
-    .footer {
-        margin-top: 40px;
-        padding: 20px 15px;
+    .top-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 247, 225, 0.98);
+        z-index: 1000;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .hamburger-menu {
@@ -1135,6 +1189,46 @@ form input, form select, form button {
 
     nav ul li {
         margin: 10px 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul li a {
+        font-size: 12px;
+        letter-spacing: 2px;
+        padding: 5px 8px;
+    }
+
+    nav ul li a {
+        color: #617939;
+        text-decoration: none;
+        font-family: "Abhaya Libre", serif;
+        font-size: 14px;
+        font-weight: normal;
+        /* text-transform: uppercase; */
+        letter-spacing: 2px;
+        position: relative;
+    }
+
+    nav ul li a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: #617939;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    nav ul li a.active::after,
+    nav ul li a:hover::after {
+        opacity: 1;
+    }
+
+    nav ul li a.active {
+        background-color: rgba(97, 121, 57, 0.1);
+        font-weight: bold;
     }
 
     .top-header {
