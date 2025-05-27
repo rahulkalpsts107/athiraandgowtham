@@ -1337,3 +1337,95 @@ form button {
   font-size: 14px;
   z-index: 100;
 }
+
+.instagram-hashtag-section {
+  background: linear-gradient(135deg, #617939 0%, #7a9147 50%, #8fa955 100%);
+  border-radius: 15px;
+  padding: 30px;
+  margin: 30px 0;
+  text-align: center;
+  color: white;
+  box-shadow: 0 8px 25px rgba(97, 121, 57, 0.3);
+}
+
+.instagram-hashtag-section h3 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+.hashtag-display p {
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.hashtag-box {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 15px 25px;
+  margin: 20px 0;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+}
+
+.hashtag-subtext {
+  font-size: 0.95em;
+  opacity: 0.9;
+  margin-bottom: 20px !important;
+}
+
+.instagram-link {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.instagram-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.instagram-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.instagram-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: #E4405F;
+}
+
+.instagram-hashtag-section h3:hover .instagram-icon svg {
+  fill: #C13584;
+}
+
+@media (max-width: 768px) {
+  .instagram-hashtag-section {
+    padding: 20px;
+    margin: 20px 0;
+  }
+  
+  .hashtag-box {
+    font-size: 1.4em;
+    padding: 12px 20px;
+  }
+  
+  .instagram-link {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+}
