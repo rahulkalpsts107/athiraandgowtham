@@ -1413,19 +1413,76 @@ form button {
   fill: #C13584;
 }
 
-@media (max-width: 768px) {
-  .instagram-hashtag-section {
-    padding: 20px;
-    margin: 20px 0;
-  }
-  
-  .hashtag-box {
-    font-size: 1.4em;
-    padding: 12px 20px;
-  }
-  
-  .instagram-link {
-    padding: 10px 20px;
-    font-size: 0.9em;
-  }
+/* Weather Widget Styles */
+.weather-widget {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid #617939;
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+  background-color: #fff7e1;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.weather-widget h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #617939;
+  font-family: 'Gilda Display', serif;
+}
+
+.weather-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.weather-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(97, 121, 57, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  color: #333;
+}
+
+.weather-main {
+  font-size: 1.1em;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.weather-temp {
+  font-size: 2em;
+  font-weight: bold;
+  color: #617939;
+}
+
+.weather-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.weather-loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.weather-error {
+  text-align: center;
+  padding: 20px;
+  background: rgba(97, 121, 57, 0.1);
+  border-radius: 8px;
+  color: #666;
 }
