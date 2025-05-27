@@ -1,56 +1,113 @@
-# Invito - Wedding Invitation Website
+# Wedding Invitation Website
 
-A modern, responsive wedding invitation website built with Node.js and Express, featuring real-time photo sharing, RSVP management, and live streaming integration.
+A beautiful, interactive wedding invitation website built with Node.js, Express, and vanilla JavaScript.
 
 ## Features
 
-- 📱 Responsive design for all devices
-- 🎨 Modern, elegant UI with smooth animations
-- 📸 Photo gallery with Cloudinary integration
-- 📍 Interactive venue location with Google Maps
-- ✉️ RSVP management system
-- 🔄 Real-time photo sharing
-- 📹 Live streaming support
-- 📊 Google Analytics integration
-- 🐛 Error tracking with Sentry
+- **Interactive Video Invitation** - YouTube video with custom mute controls
+- **Photo Gallery** - Slideshow of wedding photos with lazy loading
+- **Photo Sharing** - Guests can upload and share photos
+- **RSVP System** - Online RSVP form with email notifications
+- **Live Streaming** - Wedding day live stream section
+- **Mobile Responsive** - Works seamlessly on all devices
+- **Contact Form** - Easy way for guests to get in touch
 
 ## Tech Stack
 
-- Node.js
-- Express
-- Cloudinary
-- Nodemailer
-- Google Analytics
-- Sentry
-
-## Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-EMAIL_SERVICE=your-email-service
-EMAIL_USER=your-email
-EMAIL_PASS=your-email-password
-RECIPIENT_EMAIL=recipient-email
-PORT=3000
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-GOOGLE_ANALYTICS_ID=your-ga-id
-SENTRY_DSN=your-sentry-dsn
-```
+- **Backend**: Node.js, Express.js
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3
+- **Database**: Cloudinary for image storage
+- **Email**: Nodemailer for notifications
+- **Analytics**: Google Analytics integration
+- **Error Tracking**: Sentry integration
 
 ## Installation
 
 1. Clone the repository
-2. Install dependencies: `npm install`
-3. Create `.env` file with required variables
-4. Start the server: `npm start`
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file with the following variables:
+   ```
+   PORT=3000
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_app_password
+   GOOGLE_ANALYTICS_ID=your_ga_id
+   SENTRY_DSN=your_sentry_dsn
+   ```
 
 ## Development
 
-The server will start on `http://localhost:3000`
+### Available Scripts
+
+- `npm start` - Start the production server
+- `npm run dev` - Start the development server
+- `npm run lint` - Check code for linting issues
+- `npm run lint:fix` - Automatically fix linting issues
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check if code is properly formatted
+
+### Code Quality
+
+This project uses:
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **HTML plugin** for linting JavaScript in HTML files
+
+## Deployment
+
+The application is configured for deployment on Render.com with automatic deploys from the main branch.
+
+## Project Structure
+
+```
+├── server.js           # Main server file
+├── index.html          # Main HTML file
+├── styles.css          # Main stylesheet
+├── package.json        # Dependencies and scripts
+├── .eslintrc.json      # ESLint configuration
+├── .prettierrc.json    # Prettier configuration
+└── README.md           # This file
+```
+
+## Features in Detail
+
+### YouTube Video Integration
+- Custom mute button with state synchronization
+- Autoplay and loop functionality
+- Responsive video player
+
+### Photo Management
+- Batch loading for performance
+- Cloudinary integration for optimization
+- Infinite scroll for shared photos
+
+### RSVP System
+- Form validation and submission
+- Email notifications to couple
+- Status feedback for users
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `PORT` | Server port (default: 3000) |
+| `CLOUDINARY_*` | Cloudinary configuration for image storage |
+| `EMAIL_*` | Gmail configuration for notifications |
+| `GOOGLE_ANALYTICS_ID` | Google Analytics tracking ID |
+| `SENTRY_DSN` | Sentry error tracking DSN |
+
+## Contributing
+
+1. Run linting before committing: `npm run lint`
+2. Format code: `npm run format`
+3. Test thoroughly on mobile devices
 
 ## License
 
-© Anvi Corp 2025
+Private project for wedding use.
