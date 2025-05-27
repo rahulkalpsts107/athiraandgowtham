@@ -1266,14 +1266,13 @@ form input, form select, form button {
 
 .loading-message {
     position: absolute;
-    top: 50%;
+    bottom: 10px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    color: #617939;
-    font-family: 'Abhaya Libre', serif;
-    font-size: 1.2em;
-    background-color: rgba(255, 247, 225, 0.9);
-    padding: 1rem 2rem;
+    transform: translateX(-50%);
+    background: rgba(97, 121, 57, 0.9);
+    color: white;
+    padding: 8px 16px;
     border-radius: 4px;
-    z-index: 10;
+    font-size: 14px;
+    z-index: 100;
 }

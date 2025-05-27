@@ -256,6 +256,39 @@ app.post('/submit-contact', async (req, res) => {
     }
 });
 
+// Get our photos with pagination
+app.get('/our-photos', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        
+        console.log(`[Our Photos] Loading page ${page} with limit ${limit}`);
+        
+        const result = await cloudinary.search
+            .expression('folder:our-photos')
+            .sort_by('created_at', 'desc')
+            .max_results(100)
+            .execute();
+            
+        const totalPhotos = result.resources;
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, totalPhotos.length);
+        const photos = totalPhotos.slice(startIndex, endIndex).map(photo => photo.secure_url);
+        
+        console.log(`[Our Photos] Sending ${photos.length} photos for page ${page}`);
+        
+        res.json({
+            photos,
+            currentPage: page,
+            totalPhotos: totalPhotos.length,
+            hasMore: endIndex < totalPhotos.length
+        });
+    } catch (error) {
+        console.error('[Our Photos Error]:', error);
+        res.status(500).json({ error: 'Failed to fetch photos' });
+    }
+});
+
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 

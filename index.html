@@ -177,14 +177,14 @@
 
         <div id="photos" class="section hidden">
             <div class="slideshow-container">
-                <div id="slides-container">
-                    <!-- Slides will be inserted here dynamically -->
+                <div id="slides-container" class="slides-container">
+                    <!-- Photos will load here -->
                 </div>
                 <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
                 <a class="next" onclick="changeSlide(1)">&#10095;</a>
             </div>
             <div id="dots-container" class="dot-container">
-                <!-- Dots will be inserted here dynamically -->
+                <!-- Dots will be added here -->
             </div>
         </div>
 
@@ -435,38 +435,147 @@
         const timerInterval = setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Remove unused photos-related functions
+        // Update 'Our Photos' section to load images in batches of 5
         let slideIndex = 1;
-        showSlides(slideIndex);
+        let isLoadingPhotos = false;
+        let allPhotos = [];
+        let totalPhotos = 0;
+        let currentPhotoPage = 1;
+        const photosPerBatch = 5;
+
+        function log(message, data = {}) {
+            const timestamp = new Date().toISOString();
+            console.log(JSON.stringify({
+                timestamp,
+                message,
+                ...data
+            }));
+        }
+
+        async function loadOurPhotos(page = 1) {
+            const slidesContainer = document.getElementById('slides-container');
+            try {
+                if (page === 1) {
+                    slidesContainer.innerHTML = '<div class="loading">Loading photos...</div>';
+                } else {
+                    // Show loading indicator for subsequent batches
+                    const loadingIndicator = document.createElement('div');
+                    loadingIndicator.className = 'loading-message';
+                    loadingIndicator.textContent = `Loading more photos... (${allPhotos.length} of ${totalPhotos})`;
+                    slidesContainer.appendChild(loadingIndicator);
+                }
+
+                const response = await fetch(`/our-photos?page=${page}&limit=${photosPerBatch}`);
+                if (!response.ok) throw new Error('Failed to fetch photos');
+                const data = await response.json();
+                
+                if (page === 1) {
+                    allPhotos = [];
+                    totalPhotos = data.totalPhotos;
+                }
+                
+                // Add new photos to the collection
+                allPhotos = [...allPhotos, ...data.photos];
+                
+                // Update the slideshow with ALL loaded photos
+                const photoHtml = allPhotos.map((photo, index) => `
+                    <div class="slide fade">
+                        <img src="${photo}" alt="Our Photo ${index + 1}" loading="lazy">
+                    </div>
+                `).join('');
+
+                slidesContainer.innerHTML = photoHtml;
+
+                // Add or update photo counter
+                let photoCounter = document.querySelector('.photo-counter');
+                if (!photoCounter) {
+                    photoCounter = document.createElement('div');
+                    photoCounter.className = 'photo-counter';
+                    slidesContainer.parentElement.insertBefore(photoCounter, slidesContainer);
+                }
+                photoCounter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
+
+                // Update dots for all photos
+                const dotsContainer = document.getElementById('dots-container');
+                dotsContainer.innerHTML = Array(totalPhotos).fill(0).map((_, index) => `
+                    <span class="dot" onclick="currentSlide(${index + 1})"></span>
+                `).join('');
+
+                // Keep current slide visible
+                showSlides(slideIndex);
+
+                // If there are more photos and we're close to the end, load next batch
+                if (data.hasMore && slideIndex + 2 >= allPhotos.length) {
+                    await loadOurPhotos(page + 1);
+                }
+
+                // Remove loading indicator if it exists
+                const loadingIndicator = slidesContainer.querySelector('.loading-message');
+                if (loadingIndicator) {
+                    loadingIndicator.remove();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (page === 1) {
+                    slidesContainer.innerHTML = '<p>Error loading photos. Please try again.</p>';
+                }
+            }
+        }
+
+        function showSlides(n) {
+            const slides = document.getElementsByClassName("slide");
+            const dots = document.getElementsByClassName("dot");
+            
+            if (!slides.length) return;
+
+            // Reset to first slide if we go past the end
+            if (n > totalPhotos) {
+                slideIndex = 1;
+            } else if (n < 1) {
+                slideIndex = totalPhotos;
+            } else {
+                slideIndex = n;
+            }
+            
+            const currentIndex = slideIndex - 1;
+            
+            // Load more photos if needed and we're not at the end
+            if (currentIndex >= allPhotos.length - 2 && allPhotos.length < totalPhotos) {
+                const nextPage = Math.floor(allPhotos.length / photosPerBatch) + 1;
+                loadOurPhotos(nextPage);
+            }
+
+            // Update slides display
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            
+            // Update dots
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+
+            // Show current slide and dot
+            if (slides[currentIndex]) {
+                slides[currentIndex].style.display = "block";
+                if (dots[currentIndex]) {
+                    dots[currentIndex].className += " active";
+                }
+            }
+
+            // Update counter
+            const counter = document.querySelector('.photo-counter');
+            if (counter && slideIndex <= totalPhotos) {
+                counter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
+            }
+        }
 
         function changeSlide(n) {
-            showSlides(slideIndex += n);
+            showSlides(slideIndex + n);
         }
 
         function currentSlide(n) {
             showSlides(slideIndex = n);
-        }
-
-        function showSlides(n) {
-            let slides = document.getElementsByClassName("slide");
-            let dots = document.getElementsByClassName("dot");
-            
-            if (!slides.length || !dots.length) {
-                return;
-            }
-            
-            if (n > slides.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = slides.length}
-            
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            for (let i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            
-            slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " active";
         }
 
         let isLoading = false;
@@ -546,53 +655,6 @@
                 observer.observe(spinner);
             }
         });
-
-        async function loadOurPhotos() {
-            try {
-                const slidesContainer = document.getElementById('slides-container');
-                slidesContainer.innerHTML = '<div class="loading-message">Loading photos...</div>';
-                
-                const response = await fetch('/get-our-photos');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch photos');
-                }
-                const photos = await response.json();
-                
-                if (!photos || photos.length === 0) {
-                    slidesContainer.innerHTML = '<p>No photos available</p>';
-                    return;
-                }
-
-                const photoHtml = photos
-                    .map((photoUrl, index) => {
-                        const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_800,c_scale,f_auto,q_auto/');
-                        return `
-                            <div class="slide fade loading">
-                                <img src="${optimizedUrl}" 
-                                    alt="Our photo ${index + 1}"
-                                    loading="lazy"
-                                    decoding="async"
-                                    onload="this.parentElement.classList.remove('loading')"
-                                    onerror="this.parentElement.classList.add('error')">
-                            </div>
-                        `;
-                    }).join('');
-
-                slidesContainer.innerHTML = photoHtml;
-                
-                const dotsContainer = document.getElementById('dots-container');
-                dotsContainer.innerHTML = photos
-                    .map((_, index) => `
-                        <span class="dot" onclick="currentSlide(${index + 1})"></span>
-                    `).join('');
-
-                showSlides(1);
-            } catch (error) {
-                console.error('Error loading our photos:', error);
-                document.getElementById('slides-container').innerHTML = 
-                    '<p>Error loading photos. Please try again later.</p>';
-            }
-        }
 
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
