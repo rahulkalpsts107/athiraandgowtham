@@ -1,629 +1,780 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Athira & Gowtham's Wedding Invitation</title>
-    
+
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://athiraandgowtham.onrender.com/">
-    <meta property="og:title" content="Athira & Gowtham's Wedding Invitation">
-    <meta property="og:description" content="You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru">
-    <meta property="og:image" content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747936598/ba497ebf-bee7-4849-831b-e00ec76173b2_qo1oyc.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://athiraandgowtham.onrender.com/" />
+    <meta property="og:title" content="Athira & Gowtham's Wedding Invitation" />
+    <meta
+      property="og:description"
+      content="You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru"
+    />
+    <meta
+      property="og:image"
+      content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747936598/ba497ebf-bee7-4849-831b-e00ec76173b2_qo1oyc.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- WhatsApp specific -->
-    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747936598/ba497ebf-bee7-4849-831b-e00ec76173b2_qo1oyc.jpg">
-    
+    <meta
+      property="og:image:secure_url"
+      content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747936598/ba497ebf-bee7-4849-831b-e00ec76173b2_qo1oyc.jpg"
+    />
+
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%- process.env.GOOGLE_ANALYTICS_ID %>"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=<%- process.env.GOOGLE_ANALYTICS_ID %>"
+    ></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '<%- process.env.GOOGLE_ANALYTICS_ID %>', {
-            page_title: 'Wedding Invitation',
-            page_location: window.location.href,
-            page_path: window.location.pathname
-        });
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', '<%- process.env.GOOGLE_ANALYTICS_ID %>', {
+        page_title: 'Wedding Invitation',
+        page_location: window.location.href,
+        page_path: window.location.pathname,
+      });
     </script>
-    
+
     <!-- Sentry Error Tracking -->
     <script src="https://browser.sentry-cdn.com/7.101.1/bundle.min.js"></script>
     <script>
-        Sentry.init({
-            dsn: "<%- process.env.SENTRY_DSN %>", // Make sure to add SENTRY_DSN to your environment variables
-            integrations: [
-                new Sentry.BrowserTracing(),
-                new Sentry.Replay()
-            ],
-            tracesSampleRate: 1.0,
-            replaysSessionSampleRate: 0.1,
-            replaysOnErrorSampleRate: 1.0,
-        });
+      Sentry.init({
+        dsn: '<%- process.env.SENTRY_DSN %>', // Make sure to add SENTRY_DSN to your environment variables
+        integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+      });
     </script>
 
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <div class="top-header">
-                <div class="hamburger-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <div class="small-brand" onclick="showSection('home'); return false;" style="cursor: pointer;">a & g</div>
-            </div>
-            <h1 class="couple-name">Athira & Gowtham</h1>
-            <div class="wedding-details">
-                <p class="date-location">Thursday, August 21, 2025 • Bengaluru, Karnataka, India</p>
-                <p id="countdown" class="countdown-text"></p>
-            </div>
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
-                    <li><a href="#" onclick="showSection('invite-image'); return false;">View Invitation</a></li>
-                    <li><a href="#" onclick="showSection('story'); return false;">Our Story</a></li>
-                    <li><a href="#" onclick="showSection('location'); return false;">Location</a></li>
-                    <li><a href="#" onclick="showSection('rsvp'); return false;">RSVP</a></li>
-                    <li><a href="#" onclick="showSection('livestream'); return false;">Live Stream</a></li>
-                    <li><a href="#" onclick="showSection('photos'); return false;">Photos</a></li>
-                    <li><a href="#" onclick="showSection('share'); return false;">Share Photos</a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <div id="home" class="section">
-            <p class="welcome-text">Welcome!</p>
-            <p class="welcome-text-msg">We are thrilled to invite you to our wedding celebration. Join us on this occasion for a day of love, laughter, and celebration!</p>
-            <div class="family-photo">
-                <img src= "https://res.cloudinary.com/dl4p1qeva/image/upload/v1747922795/family-pic_et4r6x_totjjk.jpg" alt="Family Photo">
-            </div>
-            <div class="days-to-go">
-                <p id="countdown"></p>
-            </div>
+      <header>
+        <div class="top-header">
+          <div class="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div
+            class="small-brand"
+            onclick="showSection('home'); return false;"
+            style="cursor: pointer"
+          >
+            a & g
+          </div>
         </div>
-
-        <div id="invite-image" class="section hidden">
-            <div class="invitation-video-container">
-                <iframe 
-                    width="100%" 
-                    height="800" 
-                    src="https://www.youtube.com/embed/xXNUHY5jMPU?autoplay=1&mute=1&playsinline=1&controls=1&loop=1&playlist=xXNUHY5jMPU&rel=0&modestbranding=1&enablejsapi=1" 
-                    title="Wedding Invitation" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen
-                    id="invitationVideo">
-                </iframe>
-            </div>
+        <h1 class="couple-name">Athira & Gowtham</h1>
+        <div class="wedding-details">
+          <p class="date-location">
+            Thursday, August 21, 2025 • Bengaluru, Karnataka, India
+          </p>
+          <p id="countdown" class="countdown-text"></p>
         </div>
+        <nav>
+          <ul class="nav-menu">
+            <li>
+              <a href="#" onclick="showSection('home'); return false;">Home</a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('invite-image'); return false;"
+                >View Invitation</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('story'); return false;"
+                >Our Story</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('location'); return false;"
+                >Location</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('rsvp'); return false;">RSVP</a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('livestream'); return false;"
+                >Live Stream</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('photos'); return false;"
+                >Photos</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('share'); return false;"
+                >Share Photos</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </header>
 
-        <div id="story" class="section hidden">
-            <div class="story-container">
-                <div class="about-person">
-                    <h3>Athira Revi</h3>
-                    <p>Athira is a dynamic and innovative Product Owner with a passion for bringing creativity into every aspect of her work. Originally from Kerala, her journey has been shaped by diverse experiences in both technology and life. Outside of work, Athira expresses her artistic side through drawing and painting, and she brings the same energy to her social life—always ready for new adventures, including her love for ice skating.</p>
-                </div>
-                <div class="about-person">
-                    <h3>Gowtham Vijaykumar</h3>
-                    <p>Gowtham is a dedicated finance professional with a strong passion for technology and a knack for problem-solving. His sharp analytical skills, paired with a warm and approachable personality, create a well-rounded presence. A true sports enthusiast, Gowtham is an avid football fan and proudly supports Manchester United.</p>
-                </div>
-                <div class="our-story">
-                    <h3>Our Story</h3>
-                    <p>Brought together by destiny and bonded over a shared love for technology, travel, and food, our journey began as friends and gradually blossomed into a lifelong partnership. Along the way, we've created unforgettable memories, shared endless laughter, and watched our love deepen with every experience we’ve shared.</p>
-                </div>
-            </div>
+      <div id="home" class="section">
+        <p class="welcome-text">Welcome!</p>
+        <p class="welcome-text-msg">
+          We are thrilled to invite you to our wedding celebration. Join us on
+          this occasion for a day of love, laughter, and celebration!
+        </p>
+        <div class="family-photo">
+          <img
+            src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747922795/family-pic_et4r6x_totjjk.jpg"
+            alt="Family Photo"
+          />
         </div>
+        <div class="days-to-go">
+          <p id="countdown"></p>
+        </div>
+      </div>
 
-        <div id="location" class="section hidden">
-            <div class="location-container">
-                <div class="location-details">
-                    <h2>Wedding Venue Address</h2>
-                    <p>Vila Kasu</p>
-                    <p></p>1, Kariyammana Agrahara Rd, Yemalur, Post 560037</p>
-                    <p>Bengaluru</p>
-                    <button onclick="getDirections()" class="map-button">Get Directions</button>
-                </div>
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497.06334761916324!2d77.68109909325422!3d12.943319832193993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU2JzM2LjQiTiA3N8KwNDAnNTEuOSJF!5e0!3m2!1sen!2sin!4v1629789012345!5m2!1sen!2sin" allowfullscreen></iframe>
-                </div>
-            </div>
+      <div id="invite-image" class="section hidden">
+        <div class="invitation-video-container">
+          <iframe
+            width="100%"
+            height="800"
+            src="https://www.youtube.com/embed/xXNUHY5jMPU?autoplay=1&mute=1&playsinline=1&controls=1&loop=1&playlist=xXNUHY5jMPU&rel=0&modestbranding=1&enablejsapi=1"
+            title="Wedding Invitation"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            id="invitationVideo"
+          >
+          </iframe>
         </div>
+      </div>
 
-        <div id="rsvp" class="section hidden">
-            <h2>RSVP</h2>
-            <form id="rsvpForm" class="rsvp-form">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="attending">Will you attend the sangeet?</label>
-                <select id="attending" name="attending">
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-                <button type="submit">Submit RSVP</button>
-                <div id="rsvpStatus"></div>
-            </form>
+      <div id="story" class="section hidden">
+        <div class="story-container">
+          <div class="about-person">
+            <h3>Athira Revi</h3>
+            <p>
+              Athira is a dynamic and innovative Product Owner with a passion
+              for bringing creativity into every aspect of her work. Originally
+              from Kerala, her journey has been shaped by diverse experiences in
+              both technology and life. Outside of work, Athira expresses her
+              artistic side through drawing and painting, and she brings the
+              same energy to her social life—always ready for new adventures,
+              including her love for ice skating.
+            </p>
+          </div>
+          <div class="about-person">
+            <h3>Gowtham Vijaykumar</h3>
+            <p>
+              Gowtham is a dedicated finance professional with a strong passion
+              for technology and a knack for problem-solving. His sharp
+              analytical skills, paired with a warm and approachable
+              personality, create a well-rounded presence. A true sports
+              enthusiast, Gowtham is an avid football fan and proudly supports
+              Manchester United.
+            </p>
+          </div>
+          <div class="our-story">
+            <h3>Our Story</h3>
+            <p>
+              Brought together by destiny and bonded over a shared love for
+              technology, travel, and food, our journey began as friends and
+              gradually blossomed into a lifelong partnership. Along the way,
+              we've created unforgettable memories, shared endless laughter, and
+              watched our love deepen with every experience we’ve shared.
+            </p>
+          </div>
         </div>
+      </div>
 
-        <div id="livestream" class="section hidden">
-            <div class="livestream-container">
-                <h2>Watching Wedding Live</h2>
-                <div class="video-container">
-                    <iframe 
-                        width="853" 
-                        height="480" 
-                        src="https://www.youtube.com/embed/6rVi9NBLpEc?autoplay=1&live=1" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <p class="stream-note">Join us virtually for our special day!</p>
-            </div>
+      <div id="location" class="section hidden">
+        <div class="location-container">
+          <div class="location-details">
+            <h2>Wedding Venue Address</h2>
+            <p>Vila Kasu</p>
+            <p>1, Kariyammana Agrahara Rd, Yemalur, Post 560037</p>
+            <p>Bengaluru</p>
+            <button onclick="getDirections()" class="map-button">
+              Get Directions
+            </button>
+          </div>
+          <div class="map-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497.06334761916324!2d77.68109909325422!3d12.943319832193993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU2JzM2LjQiTiA3N8KwNDAnNTEuOSJF!5e0!3m2!1sen!2sin!4v1629789012345!5m2!1sen!2sin"
+              allowfullscreen
+            ></iframe>
+          </div>
         </div>
+      </div>
 
-        <div id="photos" class="section hidden">
-            <div class="slideshow-container">
-                <div id="slides-container" class="slides-container">
-                    <!-- Photos will load here -->
-                </div>
-                <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
-                <a class="next" onclick="changeSlide(1)">&#10095;</a>
-            </div>
-            <div id="dots-container" class="dot-container">
-                <!-- Dots will be added here -->
-            </div>
-        </div>
+      <div id="rsvp" class="section hidden">
+        <h2>RSVP</h2>
+        <form id="rsvpForm" class="rsvp-form">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required />
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+          <label for="attending">Will you attend the sangeet?</label>
+          <select id="attending" name="attending">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+          <button type="submit">Submit RSVP</button>
+          <div id="rsvpStatus"></div>
+        </form>
+      </div>
 
-        <div id="share" class="section hidden">
-            <div class="upload-section">
-                <h3>Share Your Photos!</h3>
-                <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
-                    <input type="file" name="photo" accept="image/*" required>
-                    <button type="submit">Upload Photo</button>
-                    <div id="uploadStatus"></div>
-                </form>
-            </div>
-            <div class="shared-photos-grid"></div>
-            <div id="loading-spinner" class="loading-spinner hidden">Loading more photos...</div>
+      <div id="livestream" class="section hidden">
+        <div class="livestream-container">
+          <h2>Watching Wedding Live</h2>
+          <div class="video-container">
+            <iframe
+              width="853"
+              height="480"
+              src="https://www.youtube.com/embed/6rVi9NBLpEc?autoplay=1&live=1"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            >
+            </iframe>
+          </div>
+          <p class="stream-note">Join us virtually for our special day!</p>
         </div>
+      </div>
 
-        <div class="contact-popup" id="contactPopup">
-            <div class="popup-content">
-                <span class="close-popup">&times;</span>
-                <h3>Contact Us</h3>
-                <p class="contact-intro">We'd love to hear from you! Share your kind words, feedback, or reach out if you need any information about our website.</p>
-                <form id="contactForm">
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
-                    <textarea name="message" placeholder="Your message, wishes, or questions..." required></textarea>
-                    <button type="submit">Send Message</button>
-                    <div id="contactStatus"></div>
-                </form>
-            </div>
+      <div id="photos" class="section hidden">
+        <div class="slideshow-container">
+          <div id="slides-container" class="slides-container">
+            <!-- Photos will load here -->
+          </div>
+          <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+          <a class="next" onclick="changeSlide(1)">&#10095;</a>
         </div>
-        <button id="contactButton" class="contact-button">Contact Us</button>
-        <button id="muteButton" class="mute-button">
-            <span class="mute-icon">🔈</span>
-        </button>
-        <footer class="footer">
-            <div class="brand">A & G</div>
-            <div class="footer-separator"></div>
-            <div class="date">21.08.2025</div>
-            <div class="copyright">© Anvi Corp 2025</div>
-        </footer>
+        <div id="dots-container" class="dot-container">
+          <!-- Dots will be added here -->
+        </div>
+      </div>
+
+      <div id="share" class="section hidden">
+        <div class="upload-section">
+          <h3>Share Your Photos!</h3>
+          <form
+            id="uploadForm"
+            class="upload-form"
+            enctype="multipart/form-data"
+          >
+            <input type="file" name="photo" accept="image/*" required />
+            <button type="submit">Upload Photo</button>
+            <div id="uploadStatus"></div>
+          </form>
+        </div>
+        <div class="shared-photos-grid"></div>
+        <div id="loading-spinner" class="loading-spinner hidden">
+          Loading more photos...
+        </div>
+      </div>
+
+      <div class="contact-popup" id="contactPopup">
+        <div class="popup-content">
+          <span class="close-popup">&times;</span>
+          <h3>Contact Us</h3>
+          <p class="contact-intro">
+            We'd love to hear from you! Share your kind words, feedback, or
+            reach out if you need any information about our website.
+          </p>
+          <form id="contactForm">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              required
+            />
+            <textarea
+              name="message"
+              placeholder="Your message, wishes, or questions..."
+              required
+            ></textarea>
+            <button type="submit">Send Message</button>
+            <div id="contactStatus"></div>
+          </form>
+        </div>
+      </div>
+      <button id="contactButton" class="contact-button">Contact Us</button>
+      <button id="muteButton" class="mute-button">
+        <span class="mute-icon">🔈</span>
+      </button>
+      <footer class="footer">
+        <div class="brand">A & G</div>
+        <div class="footer-separator"></div>
+        <div class="date">21.08.2025</div>
+        <div class="copyright">© Anvi Corp 2025</div>
+      </footer>
     </div>
     <script>
-        // YouTube player control
-        let youtubePlayer;
-        let isMuted = true;
+      // YouTube player control
+      let invitationPlayer;
+      const isMuted = true;
 
-        function updateMuteButton() {
-            const muteButton = document.getElementById('muteButton');
-            if (muteButton) {
-                if (youtubePlayer) {
-                    muteButton.disabled = false;
-                    muteButton.classList.remove('disabled');
-                    try {
-                        const isMuted = youtubePlayer.isMuted();
-                        muteButton.querySelector('.mute-icon').textContent = isMuted ? '🔇' : '🔊';
-                        console.log('Mute state updated:', isMuted);
-                    } catch (error) {
-                        console.log('Player not ready yet, using fallback');
-                        muteButton.querySelector('.mute-icon').textContent = '🔇';
-                    }
-                } else {
-                    muteButton.disabled = true;
-                    muteButton.classList.add('disabled');
-                    muteButton.querySelector('.mute-icon').textContent = '🔇';
-                }
+      function updateMuteButton() {
+        const muteButton = document.getElementById('muteButton');
+        if (muteButton) {
+          if (invitationPlayer) {
+            muteButton.disabled = false;
+            muteButton.classList.remove('disabled');
+            try {
+              const isMuted = invitationPlayer.isMuted();
+              muteButton.querySelector('.mute-icon').textContent = isMuted
+                ? '🔇'
+                : '🔊';
+              console.log('Mute state updated:', isMuted);
+            } catch (error) {
+              console.log('Player not ready yet, using fallback');
+              muteButton.querySelector('.mute-icon').textContent = '🔇';
             }
+          } else {
+            muteButton.disabled = true;
+            muteButton.classList.add('disabled');
+            muteButton.querySelector('.mute-icon').textContent = '🔇';
+          }
         }
+      }
 
-        function initializeYouTubePlayer() {
-            if (youtubePlayer) return;
-            
-            // Replace the iframe with a div for the API
-            const iframe = document.getElementById('invitationVideo');
-            const playerDiv = document.createElement('div');
-            playerDiv.id = 'youtube-player';
-            iframe.parentNode.replaceChild(playerDiv, iframe);
-            
-            youtubePlayer = new YT.Player('youtube-player', {
-                height: '800',
-                width: '100%',
-                videoId: 'xXNUHY5jMPU',
-                playerVars: {
-                    'autoplay': 1,
-                    'mute': 1,
-                    'playsinline': 1,
-                    'controls': 1,
-                    'loop': 1,
-                    'playlist': 'xXNUHY5jMPU',
-                    'rel': 0,
-                    'modestbranding': 1
-                },
-                events: {
-                    'onReady': function(event) {
-                        console.log('Player ready');
-                        event.target.playVideo();
-                        event.target.mute();
-                        setTimeout(() => updateMuteButton(), 500);
-                    },
-                    'onStateChange': function(event) {
-                        if (event.data === YT.PlayerState.PLAYING) {
-                            setTimeout(() => updateMuteButton(), 100);
-                        } else if (event.data === YT.PlayerState.ENDED) {
-                            event.target.playVideo();
-                        }
-                    }
-                }
-            });
-        }
+      function initializeYouTubePlayer() {
+        if (invitationPlayer) return;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const muteButton = document.getElementById('muteButton');
-            if (muteButton) {
-                // Initialize as disabled
-                updateMuteButton();
-                
-                muteButton.addEventListener('click', function() {
-                    if (youtubePlayer && typeof youtubePlayer.isMuted === 'function' && !muteButton.disabled) {
-                        try {
-                            if (youtubePlayer.isMuted()) {
-                                youtubePlayer.unMute();
-                                youtubePlayer.setVolume(100);
-                            } else {
-                                youtubePlayer.mute();
-                            }
-                            setTimeout(() => updateMuteButton(), 100);
-                        } catch (error) {
-                            console.error('Error toggling mute:', error);
-                        }
-                    }
-                });
-            }
+        // Replace the iframe with a div for the API
+        const iframe = document.getElementById('invitationVideo');
+        const playerDiv = document.createElement('div');
+        playerDiv.id = 'youtube-player';
+        iframe.parentNode.replaceChild(playerDiv, iframe);
 
-            // Initialize if directly loading invitation section
-            const urlParams = new URLSearchParams(window.location.search);
-            const section = urlParams.get('section');
-            if (section === 'invite-image') {
-                setTimeout(initializeYouTubePlayer, 1000);
-            }
+        invitationPlayer = new YT.Player('youtube-player', {
+          height: '800',
+          width: '100%',
+          videoId: 'xXNUHY5jMPU',
+          playerVars: {
+            autoplay: 1,
+            mute: 1,
+            playsinline: 1,
+            controls: 1,
+            loop: 1,
+            playlist: 'xXNUHY5jMPU',
+            rel: 0,
+            modestbranding: 1,
+          },
+          events: {
+            onReady: function (event) {
+              console.log('Invitation player ready');
+              event.target.playVideo();
+              event.target.mute();
+              setTimeout(() => updateMuteButton(), 500);
+            },
+            onStateChange: function (event) {
+              if (event.data === YT.PlayerState.PLAYING) {
+                setTimeout(() => updateMuteButton(), 100);
+              } else if (event.data === YT.PlayerState.ENDED) {
+                event.target.playVideo();
+              }
+            },
+          },
         });
-        
-        // Handle direct loading of invitation section
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const muteButton = document.getElementById('muteButton');
+        if (muteButton) {
+          // Initialize as disabled
+          updateMuteButton();
+
+          muteButton.addEventListener('click', function () {
+            if (
+              invitationPlayer &&
+              typeof invitationPlayer.isMuted === 'function' &&
+              !muteButton.disabled
+            ) {
+              try {
+                if (invitationPlayer.isMuted()) {
+                  invitationPlayer.unMute();
+                  invitationPlayer.setVolume(100);
+                } else {
+                  invitationPlayer.mute();
+                }
+                setTimeout(() => updateMuteButton(), 100);
+              } catch (error) {
+                console.error('Error toggling mute:', error);
+              }
+            }
+          });
+        }
+
+        // Initialize if directly loading invitation section
         const urlParams = new URLSearchParams(window.location.search);
         const section = urlParams.get('section');
         if (section === 'invite-image') {
-            setTimeout(initializeYouTubePlayer, 1000);
+          setTimeout(initializeYouTubePlayer, 1000);
         }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.querySelector('.hamburger-menu');
-            const navMenu = document.querySelector('.nav-menu');
-            
-            // Handle mobile menu
-            hamburger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                hamburger.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
+      });
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('nav') && !e.target.closest('.hamburger-menu')) {
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }
-            });
+      // Handle direct loading of invitation section
+      const urlParams = new URLSearchParams(window.location.search);
+      const section = urlParams.get('section');
+      if (section === 'invite-image') {
+        setTimeout(initializeYouTubePlayer, 1000);
+      }
 
-            // Add event listeners to nav links
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
-                    if (sectionId) {
-                        // Close mobile menu before showing section
-                        hamburger.classList.remove('active');
-                        navMenu.classList.remove('active');
-                        
-                        // Small delay to allow menu to close smoothly
-                        setTimeout(() => {
-                            showSection(sectionId);
-                        }, 100);
-                    }
-                });
-            });
+      document.addEventListener('DOMContentLoaded', function () {
+        const hamburger = document.querySelector('.hamburger-menu');
+        const navMenu = document.querySelector('.nav-menu');
 
-            // Handle initial section from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const section = urlParams.get('section');
-            if (section) {
-                showSection(section);
-            } else {
-                showSection('home');
-            }
-
-            // Initialize intersection observer for infinite scroll
-            const spinner = document.getElementById('loading-spinner');
-            if (spinner) {
-                observer.observe(spinner);
-            }
+        // Handle mobile menu
+        hamburger.addEventListener('click', e => {
+          e.stopPropagation();
+          hamburger.classList.toggle('active');
+          navMenu.classList.toggle('active');
         });
 
-        function showSection(sectionId) {
-            if (!sectionId) return;
-            
-            document.querySelectorAll('nav a').forEach(link => {
-                const linkSectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
-                if (linkSectionId === sectionId) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-            
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.classList.remove('hidden');
-                
-                const url = new URL(window.location);
-                url.searchParams.set('section', sectionId);
-                window.history.pushState({sectionId}, '', url);
-                
-                if (sectionId === 'photos') {
-                    setTimeout(() => loadOurPhotos(), 100);
-                } else if (sectionId === 'share') {
-                    setTimeout(() => loadSharedPhotos(), 100);
-                } else if (sectionId === 'invite-image' && !youtubePlayer) {
-                    setTimeout(() => initializeYouTubePlayer(), 500);
-                }
-                
-                gtag('event', 'view_section', {
-                    event_category: 'Section Navigation',
-                    event_label: sectionId
-                });
-            }
-        }
-
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', function(event) {
-            const section = event.state?.sectionId || new URLSearchParams(window.location.search).get('section') || 'home';
-            showSection(section);
+        // Close menu when clicking outside
+        document.addEventListener('click', e => {
+          if (
+            !e.target.closest('nav') &&
+            !e.target.closest('.hamburger-menu')
+          ) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
         });
-        
-        // Existing countdown code
-        const weddingDate = new Date('2025-08-21T00:00:00');
-        const countdownElement = document.getElementById('countdown');
 
-        function updateCountdown() {
-            const now = new Date();
-            const timeLeft = weddingDate - now;
+        // Add event listeners to nav links
+        document.querySelectorAll('nav a').forEach(link => {
+          link.addEventListener('click', e => {
+            e.preventDefault();
+            const sectionId = link
+              .getAttribute('onclick')
+              ?.match(/showSection\('(.+?)'\)/)?.[1];
+            if (sectionId) {
+              // Close mobile menu before showing section
+              hamburger.classList.remove('active');
+              navMenu.classList.remove('active');
 
-            if (timeLeft <= 0) {
-                document.getElementById('countdown').textContent = "The Big Day is Here!";
-                clearInterval(timerInterval);
-                return;
+              // Small delay to allow menu to close smoothly
+              setTimeout(() => {
+                showSection(sectionId);
+              }, 100);
             }
+          });
+        });
 
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            document.getElementById('countdown').textContent = `${days} DAYS TO GO!`;
+        // Handle initial section from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        if (section) {
+          showSection(section);
+        } else {
+          showSection('home');
         }
 
-        const timerInterval = setInterval(updateCountdown, 1000);
-        updateCountdown();
+        // Initialize intersection observer for infinite scroll
+        const spinner = document.getElementById('loading-spinner');
+        if (spinner) {
+          observer.observe(spinner);
+        }
+      });
 
-        // Update 'Our Photos' section to load images in batches of 5
-        let slideIndex = 1;
-        let isLoadingPhotos = false;
-        let allPhotos = [];
-        let totalPhotos = 0;
-        let currentPhotoPage = 1;
-        const photosPerBatch = 5;
+      function showSection(sectionId) {
+        if (!sectionId) return;
 
-        function log(message, data = {}) {
-            const timestamp = new Date().toISOString();
-            console.log(JSON.stringify({
-                timestamp,
-                message,
-                ...data
-            }));
+        document.querySelectorAll('nav a').forEach(link => {
+          const linkSectionId = link
+            .getAttribute('onclick')
+            ?.match(/showSection\('(.+?)'\)/)?.[1];
+          if (linkSectionId === sectionId) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.add('hidden');
+        });
+
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+          selectedSection.classList.remove('hidden');
+
+          const url = new URL(window.location);
+          url.searchParams.set('section', sectionId);
+          window.history.pushState({ sectionId }, '', url);
+
+          if (sectionId === 'photos') {
+            setTimeout(() => loadOurPhotos(), 100);
+          } else if (sectionId === 'share') {
+            setTimeout(() => loadSharedPhotos(), 100);
+          } else if (sectionId === 'invite-image' && !invitationPlayer) {
+            setTimeout(() => initializeYouTubePlayer(), 500);
+          }
+
+          gtag('event', 'view_section', {
+            event_category: 'Section Navigation',
+            event_label: sectionId,
+          });
+        }
+      }
+
+      // Handle browser back/forward buttons
+      window.addEventListener('popstate', function (event) {
+        const section =
+          event.state?.sectionId ||
+          new URLSearchParams(window.location.search).get('section') ||
+          'home';
+        showSection(section);
+      });
+
+      // Existing countdown code
+      const weddingDate = new Date('2025-08-21T00:00:00');
+      const countdownElement = document.getElementById('countdown');
+
+      function updateCountdown() {
+        const now = new Date();
+        const timeLeft = weddingDate - now;
+
+        if (timeLeft <= 0) {
+          document.getElementById('countdown').textContent =
+            'The Big Day is Here!';
+          clearInterval(timerInterval);
+          return;
         }
 
-        async function loadOurPhotos(page = 1) {
-            const slidesContainer = document.getElementById('slides-container');
-            try {
-                if (page === 1) {
-                    slidesContainer.innerHTML = '<div class="loading">Loading photos...</div>';
-                } else {
-                    // Show loading indicator for subsequent batches
-                    const loadingIndicator = document.createElement('div');
-                    loadingIndicator.className = 'loading-message';
-                    loadingIndicator.textContent = `Loading more photos... (${allPhotos.length} of ${totalPhotos})`;
-                    slidesContainer.appendChild(loadingIndicator);
-                }
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        document.getElementById('countdown').textContent =
+          `${days} DAYS TO GO!`;
+      }
 
-                const response = await fetch(`/our-photos?page=${page}&limit=${photosPerBatch}`);
-                if (!response.ok) throw new Error('Failed to fetch photos');
-                const data = await response.json();
-                
-                if (page === 1) {
-                    allPhotos = [];
-                    totalPhotos = data.totalPhotos;
-                }
-                
-                // Add new photos to the collection
-                allPhotos = [...allPhotos, ...data.photos];
-                
-                // Update the slideshow with ALL loaded photos
-                const photoHtml = allPhotos.map((photo, index) => `
+      const timerInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+
+      // Update 'Our Photos' section to load images in batches of 5
+      let slideIndex = 1;
+      const isLoadingPhotos = false;
+      let allPhotos = [];
+      let totalPhotos = 0;
+      const currentPhotoPage = 1;
+      const photosPerBatch = 5;
+
+      function log(message, data = {}) {
+        const timestamp = new Date().toISOString();
+        console.log(
+          JSON.stringify({
+            timestamp,
+            message,
+            ...data,
+          })
+        );
+      }
+
+      async function loadOurPhotos(page = 1) {
+        const slidesContainer = document.getElementById('slides-container');
+        try {
+          if (page === 1) {
+            slidesContainer.innerHTML =
+              '<div class="loading">Loading photos...</div>';
+          } else {
+            // Show loading indicator for subsequent batches
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'loading-message';
+            loadingIndicator.textContent = `Loading more photos... (${allPhotos.length} of ${totalPhotos})`;
+            slidesContainer.appendChild(loadingIndicator);
+          }
+
+          const response = await fetch(
+            `/our-photos?page=${page}&limit=${photosPerBatch}`
+          );
+          if (!response.ok) throw new Error('Failed to fetch photos');
+          const data = await response.json();
+
+          if (page === 1) {
+            allPhotos = [];
+            totalPhotos = data.totalPhotos;
+          }
+
+          // Add new photos to the collection
+          allPhotos = [...allPhotos, ...data.photos];
+
+          // Update the slideshow with ALL loaded photos
+          const photoHtml = allPhotos
+            .map(
+              (photo, index) => `
                     <div class="slide fade">
                         <img src="${photo}" alt="Our Photo ${index + 1}" loading="lazy">
                     </div>
-                `).join('');
+                `
+            )
+            .join('');
 
-                slidesContainer.innerHTML = photoHtml;
+          slidesContainer.innerHTML = photoHtml;
 
-                // Add or update photo counter
-                let photoCounter = document.querySelector('.photo-counter');
-                if (!photoCounter) {
-                    photoCounter = document.createElement('div');
-                    photoCounter.className = 'photo-counter';
-                    slidesContainer.parentElement.insertBefore(photoCounter, slidesContainer);
-                }
-                photoCounter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
+          // Add or update photo counter
+          let photoCounter = document.querySelector('.photo-counter');
+          if (!photoCounter) {
+            photoCounter = document.createElement('div');
+            photoCounter.className = 'photo-counter';
+            slidesContainer.parentElement.insertBefore(
+              photoCounter,
+              slidesContainer
+            );
+          }
+          photoCounter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
 
-                // Update dots for all photos
-                const dotsContainer = document.getElementById('dots-container');
-                dotsContainer.innerHTML = Array(totalPhotos).fill(0).map((_, index) => `
+          // Update dots for all photos
+          const dotsContainer = document.getElementById('dots-container');
+          dotsContainer.innerHTML = Array(totalPhotos)
+            .fill(0)
+            .map(
+              (_, index) => `
                     <span class="dot" onclick="currentSlide(${index + 1})"></span>
-                `).join('');
+                `
+            )
+            .join('');
 
-                // Keep current slide visible
-                showSlides(slideIndex);
+          // Keep current slide visible
+          showSlides(slideIndex);
 
-                // If there are more photos and we're close to the end, load next batch
-                if (data.hasMore && slideIndex + 2 >= allPhotos.length) {
-                    await loadOurPhotos(page + 1);
-                }
+          // If there are more photos and we're close to the end, load next batch
+          if (data.hasMore && slideIndex + 2 >= allPhotos.length) {
+            await loadOurPhotos(page + 1);
+          }
 
-                // Remove loading indicator if it exists
-                const loadingIndicator = slidesContainer.querySelector('.loading-message');
-                if (loadingIndicator) {
-                    loadingIndicator.remove();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                if (page === 1) {
-                    slidesContainer.innerHTML = '<p>Error loading photos. Please try again.</p>';
-                }
-            }
+          // Remove loading indicator if it exists
+          const loadingIndicator =
+            slidesContainer.querySelector('.loading-message');
+          if (loadingIndicator) {
+            loadingIndicator.remove();
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          if (page === 1) {
+            slidesContainer.innerHTML =
+              '<p>Error loading photos. Please try again.</p>';
+          }
+        }
+      }
+
+      function showSlides(n) {
+        const slides = document.getElementsByClassName('slide');
+        const dots = document.getElementsByClassName('dot');
+
+        if (!slides.length) return;
+
+        // Reset to first slide if we go past the end
+        if (n > totalPhotos) {
+          slideIndex = 1;
+        } else if (n < 1) {
+          slideIndex = totalPhotos;
+        } else {
+          slideIndex = n;
         }
 
-        function showSlides(n) {
-            const slides = document.getElementsByClassName("slide");
-            const dots = document.getElementsByClassName("dot");
-            
-            if (!slides.length) return;
+        const currentIndex = slideIndex - 1;
 
-            // Reset to first slide if we go past the end
-            if (n > totalPhotos) {
-                slideIndex = 1;
-            } else if (n < 1) {
-                slideIndex = totalPhotos;
-            } else {
-                slideIndex = n;
-            }
-            
-            const currentIndex = slideIndex - 1;
-            
-            // Load more photos if needed and we're not at the end
-            if (currentIndex >= allPhotos.length - 2 && allPhotos.length < totalPhotos) {
-                const nextPage = Math.floor(allPhotos.length / photosPerBatch) + 1;
-                loadOurPhotos(nextPage);
-            }
-
-            // Update slides display
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            
-            // Update dots
-            for (let i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-
-            // Show current slide and dot
-            if (slides[currentIndex]) {
-                slides[currentIndex].style.display = "block";
-                if (dots[currentIndex]) {
-                    dots[currentIndex].className += " active";
-                }
-            }
-
-            // Update counter
-            const counter = document.querySelector('.photo-counter');
-            if (counter && slideIndex <= totalPhotos) {
-                counter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
-            }
+        // Load more photos if needed and we're not at the end
+        if (
+          currentIndex >= allPhotos.length - 2 &&
+          allPhotos.length < totalPhotos
+        ) {
+          const nextPage = Math.floor(allPhotos.length / photosPerBatch) + 1;
+          loadOurPhotos(nextPage);
         }
 
-        function changeSlide(n) {
-            showSlides(slideIndex + n);
+        // Update slides display
+        for (let i = 0; i < slides.length; i++) {
+          slides[i].style.display = 'none';
         }
 
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
+        // Update dots
+        for (let i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].className.replace(' active', '');
         }
 
-        let isLoading = false;
-        let hasMore = true;
-        let currentPage = 1;
+        // Show current slide and dot
+        if (slides[currentIndex]) {
+          slides[currentIndex].style.display = 'block';
+          if (dots[currentIndex]) {
+            dots[currentIndex].className += ' active';
+          }
+        }
 
-        async function loadSharedPhotos(page = 1, append = false) {
-            if (isLoading || (!append && !hasMore)) return;
-            
-            try {
-                isLoading = true;
-                document.getElementById('loading-spinner').classList.remove('hidden');
-                
-                const response = await fetch(`/get-shared-photos?page=${page}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch photos');
-                }
-                const data = await response.json();
-                
-                const gridContainer = document.querySelector('.shared-photos-grid');
-                if (!data.photos || data.photos.length === 0) {
-                    if (!append) {
-                        gridContainer.innerHTML = '<p>No photos shared yet</p>';
-                    }
-                    hasMore = false;
-                    return;
-                }
+        // Update counter
+        const counter = document.querySelector('.photo-counter');
+        if (counter && slideIndex <= totalPhotos) {
+          counter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
+        }
+      }
 
-                const photoHtml = data.photos
-                    .map(photoUrl => {
-                        const optimizedUrl = photoUrl.replace('/upload/', '/upload/w_400,c_scale,f_auto,q_auto/');
-                        return `
+      function changeSlide(n) {
+        showSlides(slideIndex + n);
+      }
+
+      function currentSlide(n) {
+        showSlides((slideIndex = n));
+      }
+
+      let isLoading = false;
+      let hasMore = true;
+      let currentPage = 1;
+
+      async function loadSharedPhotos(page = 1, append = false) {
+        if (isLoading || (!append && !hasMore)) return;
+
+        try {
+          isLoading = true;
+          document.getElementById('loading-spinner').classList.remove('hidden');
+
+          const response = await fetch(`/get-shared-photos?page=${page}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch photos');
+          }
+          const data = await response.json();
+
+          const gridContainer = document.querySelector('.shared-photos-grid');
+          if (!data.photos || data.photos.length === 0) {
+            if (!append) {
+              gridContainer.innerHTML = '<p>No photos shared yet</p>';
+            }
+            hasMore = false;
+            return;
+          }
+
+          const photoHtml = data.photos
+            .map(photoUrl => {
+              const optimizedUrl = photoUrl.replace(
+                '/upload/',
+                '/upload/w_400,c_scale,f_auto,q_auto/'
+              );
+              return `
                             <div class="shared-photo loading">
                                 <img src="${optimizedUrl}" 
                                     alt="Shared photo" 
@@ -633,66 +784,77 @@
                                     onerror="this.parentElement.classList.add('error')">
                             </div>
                         `;
-                    }).join('');
+            })
+            .join('');
 
-                if (append) {
-                    gridContainer.insertAdjacentHTML('beforeend', photoHtml);
-                } else {
-                    gridContainer.innerHTML = photoHtml;
-                }
+          if (append) {
+            gridContainer.insertAdjacentHTML('beforeend', photoHtml);
+          } else {
+            gridContainer.innerHTML = photoHtml;
+          }
 
-                hasMore = data.hasMore;
-                currentPage = data.currentPage;
-            } catch (error) {
-                console.error('Error loading shared photos:', error);
-                if (!append) {
-                    document.querySelector('.shared-photos-grid').innerHTML = 
-                        '<p>Error loading photos. Please try again later.</p>';
-                }
-            } finally {
-                isLoading = false;
-                document.getElementById('loading-spinner').classList.add('hidden');
-            }
+          hasMore = data.hasMore;
+          currentPage = data.currentPage;
+        } catch (error) {
+          console.error('Error loading shared photos:', error);
+          if (!append) {
+            document.querySelector('.shared-photos-grid').innerHTML =
+              '<p>Error loading photos. Please try again later.</p>';
+          }
+        } finally {
+          isLoading = false;
+          document.getElementById('loading-spinner').classList.add('hidden');
         }
+      }
 
-        // Initialize intersection observer for infinite scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && hasMore && !isLoading) {
-                    loadSharedPhotos(currentPage + 1, true);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        // Observe the loading spinner
-        document.addEventListener('DOMContentLoaded', () => {
-            const spinner = document.getElementById('loading-spinner');
-            if (spinner) {
-                observer.observe(spinner);
+      // Initialize intersection observer for infinite scroll
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && hasMore && !isLoading) {
+              loadSharedPhotos(currentPage + 1, true);
             }
-        });
+          });
+        },
+        { threshold: 0.5 }
+      );
 
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const statusDiv = document.getElementById('uploadStatus');
-            
-            try {
-                statusDiv.textContent = 'Uploading...';
-                const response = await fetch('/upload-photo', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.textContent = 'Upload successful!';
-                    this.reset();
-                    
-                    // Add the new photo to the grid immediately
-                    const gridContainer = document.querySelector('.shared-photos-grid');
-                    const optimizedUrl = result.url.replace('/upload/', '/upload/w_400,f_auto,q_auto/');
-                    const newPhotoHtml = `
+      // Observe the loading spinner
+      document.addEventListener('DOMContentLoaded', () => {
+        const spinner = document.getElementById('loading-spinner');
+        if (spinner) {
+          observer.observe(spinner);
+        }
+      });
+
+      document
+        .getElementById('uploadForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const statusDiv = document.getElementById('uploadStatus');
+
+          try {
+            statusDiv.textContent = 'Uploading...';
+            const response = await fetch('/upload-photo', {
+              method: 'POST',
+              body: formData,
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              statusDiv.textContent = 'Upload successful!';
+              this.reset();
+
+              // Add the new photo to the grid immediately
+              const gridContainer = document.querySelector(
+                '.shared-photos-grid'
+              );
+              const optimizedUrl = result.url.replace(
+                '/upload/',
+                '/upload/w_400,f_auto,q_auto/'
+              );
+              const newPhotoHtml = `
                         <div class="shared-photo loading">
                             <img src="${optimizedUrl}" 
                                 alt="Shared photo" 
@@ -700,92 +862,101 @@
                                 onload="this.parentElement.classList.remove('loading')">
                         </div>
                     `;
-                    
-                    // Insert at the beginning of the grid
-                    if (gridContainer.firstChild) {
-                        gridContainer.insertAdjacentHTML('afterbegin', newPhotoHtml);
-                    } else {
-                        gridContainer.innerHTML = newPhotoHtml;
-                    }
-                } else {
-                    statusDiv.textContent = result.message || 'Upload failed';
-                }
-            } catch (error) {
-                console.error('Error uploading photo:', error);
-                statusDiv.textContent = 'Upload failed. Please try again.';
+
+              // Insert at the beginning of the grid
+              if (gridContainer.firstChild) {
+                gridContainer.insertAdjacentHTML('afterbegin', newPhotoHtml);
+              } else {
+                gridContainer.innerHTML = newPhotoHtml;
+              }
+            } else {
+              statusDiv.textContent = result.message || 'Upload failed';
             }
+          } catch (error) {
+            console.error('Error uploading photo:', error);
+            statusDiv.textContent = 'Upload failed. Please try again.';
+          }
         });
 
-        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('rsvpStatus');
-            const formData = new FormData(this);
-            
-            try {
-                statusDiv.textContent = 'Sending RSVP...';
-                const response = await fetch('/submit-rsvp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(formData)
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
-                    this.reset();
-                } else {
-                    statusDiv.textContent = result.message || 'Failed to send RSVP';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                statusDiv.textContent = 'Failed to send RSVP. Please try again.';
+      document
+        .getElementById('rsvpForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const statusDiv = document.getElementById('rsvpStatus');
+          const formData = new FormData(this);
+
+          try {
+            statusDiv.textContent = 'Sending RSVP...';
+            const response = await fetch('/submit-rsvp', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams(formData),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              statusDiv.textContent = 'Thank you! Your RSVP has been sent.';
+              this.reset();
+            } else {
+              statusDiv.textContent = result.message || 'Failed to send RSVP';
             }
+          } catch (error) {
+            console.error('Error:', error);
+            statusDiv.textContent = 'Failed to send RSVP. Please try again.';
+          }
         });
 
-        // Contact form submission
-        document.getElementById('contactForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('contactStatus');
-            const formData = new FormData(this);
-            
-            try {
-                statusDiv.textContent = 'Sending message...';
-                const response = await fetch('/submit-contact', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(formData)
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.textContent = 'Thank you! Your message has been sent.';
-                    this.reset();
-                } else {
-                    statusDiv.textContent = result.message || 'Failed to send message';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                statusDiv.textContent = 'Failed to send message. Please try again.';
+      // Contact form submission
+      document
+        .getElementById('contactForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const statusDiv = document.getElementById('contactStatus');
+          const formData = new FormData(this);
+
+          try {
+            statusDiv.textContent = 'Sending message...';
+            const response = await fetch('/submit-contact', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams(formData),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              statusDiv.textContent = 'Thank you! Your message has been sent.';
+              this.reset();
+            } else {
+              statusDiv.textContent =
+                result.message || 'Failed to send message';
             }
+          } catch (error) {
+            console.error('Error:', error);
+            statusDiv.textContent = 'Failed to send message. Please try again.';
+          }
         });
 
-        document.getElementById('contactButton').addEventListener('click', function() {
-            document.getElementById('contactPopup').classList.add('active');
+      document
+        .getElementById('contactButton')
+        .addEventListener('click', function () {
+          document.getElementById('contactPopup').classList.add('active');
         });
 
-        document.querySelector('.close-popup').addEventListener('click', function() {
-            document.getElementById('contactPopup').classList.remove('active');
+      document
+        .querySelector('.close-popup')
+        .addEventListener('click', function () {
+          document.getElementById('contactPopup').classList.remove('active');
         });
 
-        function getDirections() {
-            const destination = '12.943319832193993,77.68109909325422';
-            const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
-            window.open(mapUrl, '_blank');
-        }
+      function getDirections() {
+        const destination = '12.943319832193993,77.68109909325422';
+        const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+        window.open(mapUrl, '_blank');
+      }
     </script>
-</body>
+  </body>
 </html>

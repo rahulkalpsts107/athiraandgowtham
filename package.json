@@ -4,7 +4,12 @@
   "description": "Wedding invitation website",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint . --ext .js,.html",
+    "lint:fix": "eslint . --ext .js,.html --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "dev": "node server.js"
   },
   "dependencies": {
     "cloudinary": "^1.41.0",
@@ -21,5 +26,11 @@
     "instagram-private-api": "^1.45.3",
     "axios": "^1.4.0",
     "instagram-scraping": "^1.0.17"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-html": "^7.1.0",
+    "prettier": "^3.2.5"
   }
 }
