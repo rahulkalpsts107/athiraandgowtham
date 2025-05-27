@@ -147,7 +147,7 @@ section {
 }
 
 .hamburger-menu {
-  display: block;
+  display: none; /* Hidden on desktop */
   position: fixed;
   top: 20px;
   left: 20px;
