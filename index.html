@@ -216,6 +216,9 @@
             </div>
         </div>
         <button id="contactButton" class="contact-button">Contact Us</button>
+        <button id="muteButton" class="mute-button">
+            <span class="mute-icon">🔈</span>
+        </button>
         <footer class="footer">
             <div class="brand">A & G</div>
             <div class="footer-separator"></div>
@@ -226,75 +229,106 @@
     <script>
         // YouTube player control
         let youtubePlayer;
-        
-        // This function will be called by YouTube API when ready
-        function onYouTubeIframeAPIReady() {
-            console.log('YouTube API Ready');
-        }
-        
-        // Document ready event for YouTube video
-        document.addEventListener('DOMContentLoaded', function() {
-            // When the invite-image section becomes visible
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (this.getAttribute('onclick') && this.getAttribute('onclick').includes('invite-image')) {
-                        setTimeout(() => {
-                            initializeYouTubePlayer();
-                        }, 500);
+        let isMuted = true;
+
+        function updateMuteButton() {
+            const muteButton = document.getElementById('muteButton');
+            if (muteButton) {
+                if (youtubePlayer) {
+                    muteButton.disabled = false;
+                    muteButton.classList.remove('disabled');
+                    try {
+                        const isMuted = youtubePlayer.isMuted();
+                        muteButton.querySelector('.mute-icon').textContent = isMuted ? '🔇' : '🔊';
+                        console.log('Mute state updated:', isMuted);
+                    } catch (error) {
+                        console.log('Player not ready yet, using fallback');
+                        muteButton.querySelector('.mute-icon').textContent = '🔇';
                     }
-                });
-            });
-        });
-        
-        // Initialize the player when section becomes visible
-        function initializeYouTubePlayer() {
-            if (youtubePlayer) {
-                youtubePlayer.playVideo();
-                youtubePlayer.unMute();
-                youtubePlayer.setVolume(100);
-                return;
+                } else {
+                    muteButton.disabled = true;
+                    muteButton.classList.add('disabled');
+                    muteButton.querySelector('.mute-icon').textContent = '🔇';
+                }
             }
+        }
+
+        function initializeYouTubePlayer() {
+            if (youtubePlayer) return;
             
-            youtubePlayer = new YT.Player('invitationVideo', {
+            // Replace the iframe with a div for the API
+            const iframe = document.getElementById('invitationVideo');
+            const playerDiv = document.createElement('div');
+            playerDiv.id = 'youtube-player';
+            iframe.parentNode.replaceChild(playerDiv, iframe);
+            
+            youtubePlayer = new YT.Player('youtube-player', {
+                height: '800',
+                width: '100%',
+                videoId: 'xXNUHY5jMPU',
+                playerVars: {
+                    'autoplay': 1,
+                    'mute': 1,
+                    'playsinline': 1,
+                    'controls': 1,
+                    'loop': 1,
+                    'playlist': 'xXNUHY5jMPU',
+                    'rel': 0,
+                    'modestbranding': 1
+                },
                 events: {
                     'onReady': function(event) {
+                        console.log('Player ready');
                         event.target.playVideo();
-                        
-                        // Unmute immediately and also after delays to handle different mobile browsers
-                        event.target.unMute();
-                        event.target.setVolume(100);
-                        
-                        // Try multiple times with increasing delays for mobile browsers
-                        setTimeout(() => {
-                            event.target.unMute();
-                            event.target.setVolume(100);
-                        }, 1000);
-                        
-                        setTimeout(() => {
-                            event.target.unMute();
-                            event.target.setVolume(100);
-                        }, 3000);
+                        event.target.mute();
+                        setTimeout(() => updateMuteButton(), 500);
                     },
                     'onStateChange': function(event) {
-                        // If video is playing, ensure it's unmuted
                         if (event.data === YT.PlayerState.PLAYING) {
-                            event.target.unMute();
-                            event.target.setVolume(100);
-                        }
-                        // If video ends, replay it (for looping)
-                        if (event.data === YT.PlayerState.ENDED) {
+                            setTimeout(() => updateMuteButton(), 100);
+                        } else if (event.data === YT.PlayerState.ENDED) {
                             event.target.playVideo();
                         }
                     }
                 }
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const muteButton = document.getElementById('muteButton');
+            if (muteButton) {
+                // Initialize as disabled
+                updateMuteButton();
+                
+                muteButton.addEventListener('click', function() {
+                    if (youtubePlayer && typeof youtubePlayer.isMuted === 'function' && !muteButton.disabled) {
+                        try {
+                            if (youtubePlayer.isMuted()) {
+                                youtubePlayer.unMute();
+                                youtubePlayer.setVolume(100);
+                            } else {
+                                youtubePlayer.mute();
+                            }
+                            setTimeout(() => updateMuteButton(), 100);
+                        } catch (error) {
+                            console.error('Error toggling mute:', error);
+                        }
+                    }
+                });
+            }
+
+            // Initialize if directly loading invitation section
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            if (section === 'invite-image') {
+                setTimeout(initializeYouTubePlayer, 1000);
+            }
+        });
         
         // Handle direct loading of invitation section
         const urlParams = new URLSearchParams(window.location.search);
         const section = urlParams.get('section');
         if (section === 'invite-image') {
-            // Initialize player when directly loading the invitation page
             setTimeout(initializeYouTubePlayer, 1000);
         }
         
@@ -354,7 +388,6 @@
         function showSection(sectionId) {
             if (!sectionId) return;
             
-            // Update active state in navigation first
             document.querySelectorAll('nav a').forEach(link => {
                 const linkSectionId = link.getAttribute('onclick')?.match(/showSection\('(.+?)'\)/)?.[1];
                 if (linkSectionId === sectionId) {
@@ -364,48 +397,31 @@
                 }
             });
             
-            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
             
-            // Show the selected section
             const selectedSection = document.getElementById(sectionId);
             if (selectedSection) {
                 selectedSection.classList.remove('hidden');
                 
-                // Update URL and history state
                 const url = new URL(window.location);
                 url.searchParams.set('section', sectionId);
                 window.history.pushState({sectionId}, '', url);
                 
-                // Load section-specific content
                 if (sectionId === 'photos') {
                     setTimeout(() => loadOurPhotos(), 100);
                 } else if (sectionId === 'share') {
                     setTimeout(() => loadSharedPhotos(), 100);
-                } else if (sectionId === 'invite-image') {
+                } else if (sectionId === 'invite-image' && !youtubePlayer) {
                     setTimeout(() => initializeYouTubePlayer(), 500);
                 }
                 
-                // Stop YouTube video if leaving the invitation section
-                if (sectionId !== 'invite-image' && youtubePlayer) {
-                    youtubePlayer.stopVideo();
-                }
+                gtag('event', 'view_section', {
+                    event_category: 'Section Navigation',
+                    event_label: sectionId
+                });
             }
-
-            // Track page view
-            gtag('event', 'page_view', {
-                page_title: `${sectionId} - Wedding Invitation`,
-                page_location: window.location.href,
-                page_path: `/${sectionId}`
-            });
-            
-            gtag('event', 'view_section', {
-                event_category: 'Section Navigation',
-                event_label: sectionId,
-                value: 1
-            });
         }
 
         // Handle browser back/forward buttons
