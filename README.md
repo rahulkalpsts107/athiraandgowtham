@@ -2,6 +2,53 @@
 
 A beautiful, interactive wedding invitation website built with Node.js, Express, and vanilla JavaScript.
 
+## System Architecture
+
+```mermaid
+graph TB
+    subgraph "Client Browser"
+        A[HTML/CSS/JS Frontend]
+        B[YouTube Video Player]
+        C[Photo Gallery]
+        D[Mobile Menu]
+    end
+    
+    subgraph "Express Server"
+        E[Node.js/Express App]
+        F[Static File Serving]
+        G[API Endpoints]
+        H[File Upload Handler]
+    end
+    
+    subgraph "External Services"
+        I[Cloudinary<br/>Image Storage]
+        J[Gmail SMTP<br/>Email Service]
+        K[YouTube API<br/>Video Player]
+        L[Google Analytics<br/>Tracking]
+        M[Sentry<br/>Error Monitoring]
+    end
+    
+    A --> E
+    B --> K
+    C --> G
+    D --> F
+    
+    G --> I
+    H --> I
+    G --> J
+    
+    E --> L
+    E --> M
+    
+    classDef client fill:#e1f5fe
+    classDef server fill:#f3e5f5
+    classDef external fill:#fff3e0
+    
+    class A,B,C,D client
+    class E,F,G,H server
+    class I,J,K,L,M external
+```
+
 ## Features
 
 - **Interactive Video Invitation** - YouTube video with custom mute controls
