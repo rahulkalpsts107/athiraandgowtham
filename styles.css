@@ -1360,21 +1360,36 @@ form button {
 }
 
 .hashtag-box {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px dashed rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  padding: 15px 25px;
-  margin: 20px 0;
-  font-size: 1.8em;
+  background: linear-gradient(135deg, #e91e63, #9c27b0);
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 1.2em;
   font-weight: bold;
+  text-align: center;
+  margin: 15px 0;
   letter-spacing: 1px;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+  word-break: break-all;
 }
 
-.hashtag-subtext {
-  font-size: 0.95em;
-  opacity: 0.9;
-  margin-bottom: 20px !important;
+/* Mobile responsive hashtag box */
+@media (max-width: 768px) {
+  .hashtag-box {
+    font-size: 0.9em;
+    padding: 12px 8px;
+    letter-spacing: 0.5px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .hashtag-box {
+    font-size: 0.8em;
+    padding: 10px 6px;
+    letter-spacing: 0px;
+  }
 }
 
 .instagram-link {
