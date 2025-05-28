@@ -313,6 +313,7 @@
             <p>Use our wedding hashtag when posting photos:</p>
             <div class="hashtag-box">
               #athirawedsgowtham2025
+              <button class="copy-button" onclick="copyHashtag(event)">Copy</button>
             </div>
             <p class="hashtag-subtext">Tag us and we'll feature our favorites!</p>
             <a href="https://instagram.com/explore/tags/athirawedsgowtham2025" target="_blank" class="instagram-link">
@@ -1204,6 +1205,52 @@
         // Refresh weather every 30 minutes
         setInterval(fetchWeather, 30 * 60 * 1000);
       });
+
+      // Simple copy function
+      function copyHashtag() {
+        const hashtag = '#athirawedsgowtham2025';
+        const button = event.target;
+        
+        // Try to copy
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(hashtag).then(() => {
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              button.textContent = 'Copy';
+              button.classList.remove('copied');
+            }, 2000);
+          }).catch(() => {
+            // Fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = hashtag;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              button.textContent = 'Copy';
+              button.classList.remove('copied');
+            }, 2000);
+          });
+        } else {
+          // Old browser fallback
+          const textarea = document.createElement('textarea');
+          textarea.value = hashtag;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          button.textContent = 'Copied!';
+          button.classList.add('copied');
+          setTimeout(() => {
+            button.textContent = 'Copy';
+            button.classList.remove('copied');
+          }, 2000);
+        }
+      }
     </script>
   </body>
 </html>

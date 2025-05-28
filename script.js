@@ -69,5 +69,81 @@ document.addEventListener('DOMContentLoaded', function () {
         status.textContent = '';
       }, 2000);
     }, 1000);
-  });
 });
+
+// Make copyHashtag function global so it can be called from onclick
+window.copyHashtag = function(event) {
+  console.log('Copy function called');
+  
+  if (event) {
+    event.preventDefault();
+  }
+  
+  const hashtag = '#athirawedsgowtham2025'; // Use the exact hashtag text
+  const button = event ? event.target : null;
+  
+  console.log('Attempting to copy:', hashtag);
+  
+  // Try modern clipboard API first (works on HTTPS and localhost)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    console.log('Using modern clipboard API');
+    navigator.clipboard.writeText(hashtag).then(() => {
+      console.log('Copy successful!');
+      if (button) {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = 'Copy';
+          button.classList.remove('copied');
+        }, 2000);
+      }
+    }).catch((err) => {
+      console.error('Clipboard API failed:', err);
+      fallbackCopy(hashtag, button);
+    });
+  } else {
+    console.log('Clipboard API not available, using fallback');
+    fallbackCopy(hashtag, button);
+  }
+};
+
+function fallbackCopy(text, button) {
+  // Create a temporary textarea
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  textArea.style.top = '-9999px';
+  
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    const successful = document.execCommand('copy');
+    console.log('Fallback copy result:', successful);
+    if (successful && button) {
+      button.textContent = 'Copied!';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = 'Copy';
+        button.classList.remove('copied');
+      }, 2000);
+    } else if (button) {
+      button.textContent = 'Failed';
+      setTimeout(() => {
+        button.textContent = 'Copy';
+      }, 2000);
+    }
+  } catch (err) {
+    console.error('Fallback copy failed:', err);
+    if (button) {
+      button.textContent = 'Failed';
+      setTimeout(() => {
+        button.textContent = 'Copy';
+      }, 2000);
+    }
+  }
+  
+  document.body.removeChild(textArea);
+}
