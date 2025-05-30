@@ -9,18 +9,117 @@ const Sentry = require('@sentry/node');
 const { ProfilingIntegration } = require('@sentry/profiling-node');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
+// Enhanced Logger function with batched LogTail sending
+const logBatchSize = 10;
+const logBatchInterval = 5000; // 5 seconds
+let logQueue = [];
+let logTimer = null;
+
+function sendLogsToLogTail() {
+  if (logQueue.length === 0) return;
+
+  const batchToSend = [...logQueue];
+  logQueue = [];
+
+  // Clear any existing timer
+  if (logTimer) {
+    clearTimeout(logTimer);
+    logTimer = null;
+  }
+
+  // Send batch to Better Stack (formerly Logtail)
+  if (process.env.BETTERSTACK_SOURCE_TOKEN) {
+    fetch('https://s1329744.eu-nbg-2.betterstackdata.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.BETTERSTACK_SOURCE_TOKEN}`,
+      },
+      body: JSON.stringify(batchToSend),
+    })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            log(
+              'error',
+              `Better Stack API error (${response.status}): ${text}`
+            );
+            throw new Error(`Better Stack API returned ${response.status}`);
+          });
+        }
+        return response.text();
+      })
+      .then(data => {
+        if (data) log('debug', `Better Stack response: ${data}`);
+      })
+      .catch(err => {
+        log('error', `Failed to send logs to Better Stack: ${err.message}`);
+      });
+  } else {
+    log(
+      'warn',
+      'BETTERSTACK_SOURCE_TOKEN not set, logs not sent to Better Stack'
+    );
+  }
+}
+
+// Schedule the next log batch to be sent
+function scheduleLogSending() {
+  // Only set a new timer if one isn't already running
+  if (!logTimer) {
+    logTimer = setTimeout(() => {
+      if (logQueue.length > 0) {
+        sendLogsToLogTail();
+      }
+      // Timer is cleared in sendLogsToLogTail
+    }, logBatchInterval);
+  }
+}
+
 // Logger function
 function log(type, message, data = {}) {
   const timestamp = new Date().toISOString();
-  console.log(
-    JSON.stringify({
-      timestamp,
-      type,
-      message,
-      ...data,
-    })
-  );
+  const logEntry = {
+    timestamp,
+    type,
+    message,
+    ...data,
+  };
+
+  // Log to console immediately
+  console.log(JSON.stringify(logEntry));
+
+  // Add to batch for Better Stack (formerly Logtail)
+  if (process.env.BETTERSTACK_SOURCE_TOKEN) {
+    logQueue.push(logEntry);
+
+    // Send immediately if batch size reached
+    if (logQueue.length >= logBatchSize) {
+      sendLogsToLogTail();
+    } else {
+      // Otherwise schedule a send for later
+      scheduleLogSending();
+    }
+  }
 }
+
+// Make sure logs are sent before app exit
+process.on('beforeExit', () => {
+  if (logQueue.length > 0) {
+    sendLogsToLogTail();
+  }
+});
+
+// Also handle other exit signals to ensure logs are sent
+['SIGINT', 'SIGTERM'].forEach(signal => {
+  process.on(signal, () => {
+    if (logQueue.length > 0) {
+      log('info', `Sending ${logQueue.length} pending logs before ${signal}`);
+      sendLogsToLogTail();
+    }
+    process.exit(0);
+  });
+});
 
 // Cloudinary configuration
 cloudinary.config({
@@ -106,13 +205,35 @@ app.use(Sentry.Handlers.tracingHandler());
 
 // Log all requests
 app.use((req, res, next) => {
-  log('request', 'Incoming request', {
+  // Format request parameters in a Better Stack friendly way
+  const params = {
+    query: req.query || {},
+    body: req.method !== 'GET' ? req.body || {} : undefined,
+  };
+
+  // Remove sensitive data
+  if (params.body && params.body.password) {
+    params.body.password = '[REDACTED]';
+  }
+
+  // Create a message that contains the jsonified request info
+  const requestInfo = {
     method: req.method,
-    url: req.url,
+    path: req.path,
+    params: params,
     userAgent: req.get('User-Agent'),
     ip: req.ip || req.connection.remoteAddress,
-    timestamp: new Date().toISOString(),
-  });
+  };
+
+  // Log with the request info jsonified in the message
+  log(
+    'request',
+    `Request ${req.method} ${req.path} - ${JSON.stringify(requestInfo)}`,
+    {
+      timestamp: new Date().toISOString(),
+    }
+  );
+
   next();
 });
 
@@ -153,22 +274,24 @@ app.post('/upload-photo', upload.single('photo'), async (req, res) => {
   }
 
   try {
-    log('info', 'Photo upload received', { 
+    log('info', 'Photo upload received', {
       filename: req.file.originalname,
-      url: req.file.path || 'No URL available'
+      url: req.file.path || 'No URL available',
     });
-    
+
     // When using CloudinaryStorage with multer, the upload to Cloudinary is already done
     // and req.file contains the result with path containing the Cloudinary URL
     res.json({
       success: true,
       message: 'File uploaded successfully',
-      url: req.file.path
+      url: req.file.path,
     });
   } catch (error) {
     log('error', 'Photo upload failed', { error: error.message });
     Sentry.captureException(error);
-    res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
+    res
+      .status(500)
+      .json({ success: false, message: 'Upload failed: ' + error.message });
   }
 });
 
@@ -278,7 +401,7 @@ app.get('/our-photos', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
 
-    console.log(`[Our Photos] Loading page ${page} with limit ${limit}`);
+    log('info', `Loading our photos`, { page, limit });
 
     const result = await cloudinary.search
       .expression('folder:our-photos')
@@ -293,9 +416,11 @@ app.get('/our-photos', async (req, res) => {
       .slice(startIndex, endIndex)
       .map(photo => photo.secure_url);
 
-    console.log(
-      `[Our Photos] Sending ${photos.length} photos for page ${page}`
-    );
+    log('info', `Sending our photos`, {
+      page,
+      count: photos.length,
+      totalPhotos: totalPhotos.length,
+    });
 
     res.json({
       photos,
@@ -304,7 +429,7 @@ app.get('/our-photos', async (req, res) => {
       hasMore: endIndex < totalPhotos.length,
     });
   } catch (error) {
-    console.error('[Our Photos Error]:', error);
+    log('error', 'Failed to fetch our photos', { error: error.message });
     res.status(500).json({ error: 'Failed to fetch photos' });
   }
 });

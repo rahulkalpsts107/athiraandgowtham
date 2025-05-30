@@ -1,160 +1,62 @@
-# Wedding Invitation Website
+# Invito - Wedding Invitation Website
 
-A beautiful, interactive wedding invitation website built with Node.js, Express, and vanilla JavaScript.
+[![Better Stack Badge](https://img.shields.io/badge/monitoring-Better%20Stack-blue)](https://betterstack.com/)
+[![Cloudinary Badge](https://img.shields.io/badge/images-Cloudinary-orange)](https://cloudinary.com/)
+[![Node.js Badge](https://img.shields.io/badge/powered%20by-Node.js-green)](https://nodejs.org/)
+[![Express Badge](https://img.shields.io/badge/server-Express-lightgrey)](https://expressjs.com/)
+[![Sentry Badge](https://img.shields.io/badge/error%20monitoring-Sentry-red)](https://sentry.io/)
 
-## System Architecture
-
-```mermaid
-graph TB
-    subgraph "Client Browser"
-        A[HTML/CSS/JS Frontend]
-        B[YouTube Video Player]
-        C[Photo Gallery]
-        D[Mobile Menu]
-    end
-    
-    subgraph "Express Server"
-        E[Node.js/Express App]
-        F[Static File Serving]
-        G[API Endpoints]
-        H[File Upload Handler]
-    end
-    
-    subgraph "External Services"
-        I[Cloudinary<br/>Image Storage]
-        J[Gmail SMTP<br/>Email Service]
-        K[YouTube API<br/>Video Player]
-        L[Google Analytics<br/>Tracking]
-        M[Sentry<br/>Error Monitoring]
-    end
-    
-    A --> E
-    B --> K
-    C --> G
-    D --> F
-    
-    G --> I
-    H --> I
-    G --> J
-    
-    E --> L
-    E --> M
-    
-    classDef client fill:#e1f5fe
-    classDef server fill:#f3e5f5
-    classDef external fill:#fff3e0
-    
-    class A,B,C,D client
-    class E,F,G,H server
-    class I,J,K,L,M external
-```
+A beautiful, responsive wedding invitation website with RSVP, photo sharing, and live streaming features.
 
 ## Features
 
-- **Interactive Video Invitation** - YouTube video with custom mute controls
-- **Photo Gallery** - Slideshow of wedding photos with lazy loading
-- **Photo Sharing** - Guests can upload and share photos
-- **RSVP System** - Online RSVP form with email notifications
-- **Live Streaming** - Wedding day live stream section
-- **Mobile Responsive** - Works seamlessly on all devices
-- **Contact Form** - Easy way for guests to get in touch
+- 💌 Digital wedding invitation
+- 📍 Location details with maps
+- 📆 RSVP management
+- 📸 Photo sharing for guests
+- 📹 Live streaming support
+- 📱 Fully responsive design
+- 🔔 Contact form
+- ⏱️ Countdown timer
 
-## Tech Stack
+## Technology Stack
 
-- **Backend**: Node.js, Express.js
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Database**: Cloudinary for image storage
-- **Email**: Nodemailer for notifications
-- **Analytics**: Google Analytics integration
-- **Error Tracking**: Sentry integration
-
-## Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env` file with the following variables:
-   ```
-   PORT=3000
-   CLOUDINARY_CLOUD_NAME=your_cloud_name
-   CLOUDINARY_API_KEY=your_api_key
-   CLOUDINARY_API_SECRET=your_api_secret
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASS=your_app_password
-   GOOGLE_ANALYTICS_ID=your_ga_id
-   SENTRY_DSN=your_sentry_dsn
-   ```
-
-## Development
-
-### Available Scripts
-
-- `npm start` - Start the production server
-- `npm run dev` - Start the development server
-- `npm run lint` - Check code for linting issues
-- `npm run lint:fix` - Automatically fix linting issues
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check if code is properly formatted
-
-### Code Quality
-
-This project uses:
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **HTML plugin** for linting JavaScript in HTML files
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Node.js, Express
+- **Storage**: Cloudinary for image hosting
+- **Monitoring**: Better Stack (formerly Logtail)
+- **Error Tracking**: Sentry
+- **Analytics**: Google Analytics
 
 ## Deployment
 
-The application is configured for deployment on Render.com with automatic deploys from the main branch.
-
-## Project Structure
-
-```
-├── server.js           # Main server file
-├── index.html          # Main HTML file
-├── styles.css          # Main stylesheet
-├── package.json        # Dependencies and scripts
-├── .eslintrc.json      # ESLint configuration
-├── .prettierrc.json    # Prettier configuration
-└── README.md           # This file
-```
-
-## Features in Detail
-
-### YouTube Video Integration
-- Custom mute button with state synchronization
-- Autoplay and loop functionality
-- Responsive video player
-
-### Photo Management
-- Batch loading for performance
-- Cloudinary integration for optimization
-- Infinite scroll for shared photos
-
-### RSVP System
-- Form validation and submission
-- Email notifications to couple
-- Status feedback for users
+The site is deployed on [Render](https://render.com) and can be accessed at [https://athiraandgowtham.onrender.com](https://athiraandgowtham.onrender.com)
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Server port (default: 3000) |
-| `CLOUDINARY_*` | Cloudinary configuration for image storage |
-| `EMAIL_*` | Gmail configuration for notifications |
-| `GOOGLE_ANALYTICS_ID` | Google Analytics tracking ID |
-| `SENTRY_DSN` | Sentry error tracking DSN |
+The following environment variables need to be set:
 
-## Contributing
+```
+EMAIL_SERVICE=
+EMAIL_USER=
+EMAIL_PASS=
+RECIPIENT_EMAIL=
+PORT=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+GOOGLE_ANALYTICS_ID=
+SENTRY_DSN=
+BETTERSTACK_SOURCE_TOKEN=
+```
 
-1. Run linting before committing: `npm run lint`
-2. Format code: `npm run format`
-3. Test thoroughly on mobile devices
+## Local Development
+
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Create a `.env` file with the required environment variables
+4. Run the development server with `npm start`
 
 ## License
 
-Private project for wedding use.
+This project is licensed under the MIT License - see the LICENSE file for details.
