@@ -76,7 +76,7 @@ const transporter = nodemailer.createTransport({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'wedding-photos',
+    folder: 'shared-photos',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
   },
 });
@@ -153,29 +153,22 @@ app.post('/upload-photo', upload.single('photo'), async (req, res) => {
   }
 
   try {
-    const b64 = Buffer.from(req.file.buffer).toString('base64');
-    const dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
-
-    log('info', 'Attempting to upload photo to Cloudinary', {
-      mimetype: req.file.mimetype,
+    log('info', 'Photo upload received', { 
+      filename: req.file.originalname,
+      url: req.file.path || 'No URL available'
     });
-    const result = await cloudinary.uploader.upload(dataURI, {
-      folder: 'shared-photos',
-    });
-
-    log('success', 'Photo uploaded successfully', {
-      publicId: result.public_id,
-    });
-    res.setHeader('Content-Type', 'application/json');
+    
+    // When using CloudinaryStorage with multer, the upload to Cloudinary is already done
+    // and req.file contains the result with path containing the Cloudinary URL
     res.json({
       success: true,
       message: 'File uploaded successfully',
-      url: result.secure_url,
-      publicId: result.public_id,
+      url: req.file.path
     });
   } catch (error) {
     log('error', 'Photo upload failed', { error: error.message });
-    res.status(500).json({ success: false, message: 'Upload failed' });
+    Sentry.captureException(error);
+    res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
   }
 });
 
