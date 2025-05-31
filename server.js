@@ -17,49 +17,55 @@ let logTimer = null;
 
 function sendLogsToLogTail() {
   if (logQueue.length === 0) return;
-
+  
   const batchToSend = [...logQueue];
   logQueue = [];
-
+  
   // Clear any existing timer
   if (logTimer) {
     clearTimeout(logTimer);
     logTimer = null;
   }
-
+  
   // Send batch to Better Stack (formerly Logtail)
   if (process.env.BETTERSTACK_SOURCE_TOKEN) {
-    fetch('https://s1329744.eu-nbg-2.betterstackdata.com', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BETTERSTACK_SOURCE_TOKEN}`,
-      },
-      body: JSON.stringify(batchToSend),
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.text().then(text => {
-            log(
-              'error',
-              `Better Stack API error (${response.status}): ${text}`
-            );
-            throw new Error(`Better Stack API returned ${response.status}`);
-          });
-        }
-        return response.text();
-      })
-      .then(data => {
-        if (data) log('debug', `Better Stack response: ${data}`);
-      })
-      .catch(err => {
-        log('error', `Failed to send logs to Better Stack: ${err.message}`);
-      });
+    // Use node-fetch compatible approach
+    try {
+      console.log(`Sending ${batchToSend.length} logs to Better Stack`);
+      
+      // Create the request options
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.BETTERSTACK_SOURCE_TOKEN}`
+        },
+        body: JSON.stringify(batchToSend)
+      };
+      
+      // Make the request using fetch with proper error handling
+      fetch('https://s1329744.eu-nbg-2.betterstackdata.com', requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            return response.text().then(text => {
+              console.error(`Better Stack API error (${response.status}):`, text);
+              throw new Error(`Better Stack API returned ${response.status}`);
+            });
+          }
+          console.log('Logs successfully sent to Better Stack');
+          return response.text();
+        })
+        .then(data => {
+          if (data) console.log('Better Stack response:', data);
+        })
+        .catch(err => {
+          console.error('Failed to send logs to Better Stack:', err.message);
+        });
+    } catch (error) {
+      console.error('Exception during log sending:', error.message);
+    }
   } else {
-    log(
-      'warn',
-      'BETTERSTACK_SOURCE_TOKEN not set, logs not sent to Better Stack'
-    );
+    console.warn('BETTERSTACK_SOURCE_TOKEN not set, logs not sent to Better Stack');
   }
 }
 
@@ -314,40 +320,78 @@ app.get('/get-our-photos', async (req, res) => {
   }
 });
 
-// Get shared photos with pagination
+// Get shared photos with pagination using Cloudinary's alternative pagination approach
 app.get('/get-shared-photos', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 12;
+    const limit = parseInt(req.query.limit) || 12;
+    const nextCursor = req.query.next_cursor || undefined;
 
-    log('info', 'Fetching shared photos from Cloudinary', { page, limit });
-    const result = await cloudinary.search
-      .expression('folder:shared-photos')
-      .sort_by('created_at', 'desc')
-      .max_results(100)
-      .execute();
-
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const photos = result.resources
-      .slice(startIndex, endIndex)
-      .map(photo => photo.secure_url);
-
-    log('success', 'Successfully fetched shared photos', {
+    log('info', 'Fetching shared photos from Cloudinary', {
       page,
-      totalPhotos: result.resources.length,
-      returnedPhotos: photos.length,
+      limit,
+      nextCursor: nextCursor || 'initial',
+    });
+
+    // Use a more compatible version of the Cloudinary search API
+    let result;
+    try {
+      // Build search options
+      const searchOptions = {
+        expression: 'folder:shared-photos',
+        sort_by: [{ created_at: 'desc' }],
+        max_results: limit,
+      };
+      
+      // Add next_cursor only if it exists (as a param to execute())
+      const searchParams = nextCursor ? { next_cursor: nextCursor } : {};
+      
+      // Log the attempted search for debugging
+      log('debug', 'Cloudinary search attempt', { searchOptions, searchParams });
+      
+      result = await cloudinary.search
+        .expression(searchOptions.expression)
+        .sort_by('created_at', 'desc')
+        .max_results(searchOptions.max_results)
+        .execute(searchParams); // Pass next_cursor this way instead
+        
+      // Log success and response structure
+      log('debug', 'Cloudinary API response structure', {
+        responseKeys: Object.keys(result),
+        resourceCount: result.resources ? result.resources.length : 0,
+        totalCount: result.total_count,
+        hasNextCursor: !!result.next_cursor
+      });
+      
+    } catch (cloudinaryError) {
+      log('error', 'Cloudinary API error', {
+        error: cloudinaryError.message,
+        stack: cloudinaryError.stack,
+        details: JSON.stringify(cloudinaryError)
+      });
+      throw cloudinaryError;
+    }
+
+    const photos = result.resources.map(photo => photo.secure_url);
+    
+    log('success', 'Successfully fetched shared photos', {
+      count: photos.length,
+      hasMore: !!result.next_cursor,
     });
 
     res.json({
       photos,
       currentPage: page,
-      totalPages: Math.ceil(result.resources.length / limit),
-      hasMore: endIndex < result.resources.length,
+      next_cursor: result.next_cursor || null,
+      hasMore: !!result.next_cursor,
     });
   } catch (error) {
-    log('error', 'Failed to fetch shared photos', { error: error.message });
-    res.status(500).json({ error: 'Failed to fetch photos' });
+    log('error', 'Failed to fetch shared photos', { 
+      error: error.message,
+      stack: error.stack
+    });
+    Sentry.captureException(error);
+    res.status(500).json({ error: 'Failed to fetch photos', details: error.message });
   }
 });
 
@@ -395,41 +439,72 @@ app.post('/submit-contact', async (req, res) => {
   }
 });
 
-// Get our photos with pagination
+// Get our photos with compatible Cloudinary pagination
 app.get('/our-photos', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
+    const nextCursor = req.query.next_cursor || undefined;
 
-    log('info', `Loading our photos`, { page, limit });
-
-    const result = await cloudinary.search
-      .expression('folder:our-photos')
-      .sort_by('created_at', 'desc')
-      .max_results(100)
-      .execute();
-
-    const totalPhotos = result.resources;
-    const startIndex = (page - 1) * limit;
-    const endIndex = Math.min(startIndex + limit, totalPhotos.length);
-    const photos = totalPhotos
-      .slice(startIndex, endIndex)
-      .map(photo => photo.secure_url);
-
-    log('info', `Sending our photos`, {
+    log('info', 'Loading our photos with pagination', {
       page,
-      count: photos.length,
-      totalPhotos: totalPhotos.length,
+      limit,
+      nextCursor: nextCursor || 'initial',
     });
 
+    // Use the same compatible approach as get-shared-photos
+    let result;
+    try {
+      // Build search options
+      const searchParams = nextCursor ? { next_cursor: nextCursor } : {};
+      
+      // Log the search attempt for debugging
+      log('debug', 'Cloudinary our-photos search attempt', { 
+        folder: 'our-photos', 
+        limit,
+        hasNextCursor: !!nextCursor
+      });
+      
+      result = await cloudinary.search
+        .expression('folder:our-photos')
+        .sort_by('created_at', 'desc')
+        .max_results(limit)
+        .execute(searchParams);  // Pass next_cursor this way
+        
+      log('debug', 'Cloudinary our-photos API response', {
+        resourceCount: result.resources ? result.resources.length : 0,
+        totalCount: result.total_count,
+        hasNextCursor: !!result.next_cursor
+      });
+    } catch (cloudinaryError) {
+      log('error', 'Cloudinary API error in our-photos', {
+        error: cloudinaryError.message,
+        details: JSON.stringify(cloudinaryError)
+      });
+      throw cloudinaryError;
+    }
+
+    const photos = result.resources.map(photo => photo.secure_url);
+
+    log('success', 'Successfully fetched our photos', {
+      count: photos.length,
+      hasMore: !!result.next_cursor,
+    });
+
+    // Return consistent response format
     res.json({
       photos,
       currentPage: page,
-      totalPhotos: totalPhotos.length,
-      hasMore: endIndex < totalPhotos.length,
+      next_cursor: result.next_cursor || null,
+      hasMore: !!result.next_cursor,
+      totalPhotos: result.total_count || photos.length,
     });
   } catch (error) {
-    log('error', 'Failed to fetch our photos', { error: error.message });
+    log('error', 'Failed to fetch our photos', { 
+      error: error.message,
+      stack: error.stack
+    });
+    Sentry.captureException(error);
     res.status(500).json({ error: 'Failed to fetch photos' });
   }
 });

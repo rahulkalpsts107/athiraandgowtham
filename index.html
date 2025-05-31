@@ -789,16 +789,22 @@
 
       let isLoading = false;
       let hasMore = true;
-      let currentPage = 1;
+      let nextCursor = null;
 
-      async function loadSharedPhotos(page = 1, append = false) {
+      async function loadSharedPhotos(append = false) {
         if (isLoading || (!append && !hasMore)) return;
 
         try {
           isLoading = true;
           document.getElementById('loading-spinner').classList.remove('hidden');
 
-          const response = await fetch(`/get-shared-photos?page=${page}`);
+          // Build URL with cursor for pagination
+          let url = '/get-shared-photos?limit=12';
+          if (nextCursor) {
+            url += `&next_cursor=${encodeURIComponent(nextCursor)}`;
+          }
+
+          const response = await fetch(url);
           if (!response.ok) {
             throw new Error('Failed to fetch photos');
           }
@@ -820,15 +826,15 @@
                 '/upload/w_400,c_scale,f_auto,q_auto/'
               );
               return `
-                            <div class="shared-photo loading">
-                                <img src="${optimizedUrl}" 
-                                    alt="Shared photo" 
-                                    loading="lazy"
-                                    decoding="async"
-                                    onload="this.parentElement.classList.remove('loading')"
-                                    onerror="this.parentElement.classList.add('error')">
-                            </div>
-                        `;
+          <div class="shared-photo loading">
+            <img src="${optimizedUrl}" 
+              alt="Shared photo" 
+              loading="lazy"
+              decoding="async"
+              onload="this.parentElement.classList.remove('loading')"
+              onerror="this.parentElement.classList.add('error')">
+          </div>
+        `;
             })
             .join('');
 
@@ -838,8 +844,9 @@
             gridContainer.innerHTML = photoHtml;
           }
 
+          // Update pagination state with cursor-based navigation
+          nextCursor = data.next_cursor;
           hasMore = data.hasMore;
-          currentPage = data.currentPage;
         } catch (error) {
           console.error('Error loading shared photos:', error);
           if (!append) {
@@ -857,7 +864,7 @@
         entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting && hasMore && !isLoading) {
-              loadSharedPhotos(currentPage + 1, true);
+              loadSharedPhotos(true);
             }
           });
         },
