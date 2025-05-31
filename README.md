@@ -30,7 +30,7 @@ A beautiful, responsive wedding invitation website with RSVP, photo sharing, and
 
 ## Deployment
 
-The site is deployed on [Render](https://render.com) and can be accessed at [https://athiraandgowtham.onrender.com](https://athiraandgowtham.onrender.com)
+The site is deployed on [Render](https://render.com)
 
 ## Environment Variables
 
