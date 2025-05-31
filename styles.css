@@ -1632,3 +1632,54 @@ form button {
     height: 36px;
   }
 }
+
+/* Unmute prompt styles */
+.unmute-prompt {
+  position: fixed;
+  bottom: 140px;
+  right: 20px;
+  background-color: rgba(97, 121, 57, 0.85);
+  color: white;
+  border-radius: 25px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  z-index: 998;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.unmute-prompt.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.unmute-prompt .unmute-icon {
+  font-size: 16px;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Make mute button more noticeable when invitation is showing */
+.invitation-active .mute-button {
+  transform: scale(1.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  animation: attention-pulse 2s 2 ease-in-out;
+}
+
+@keyframes attention-pulse {
+  0% { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); }
+  50% { transform: scale(1.2); box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); }
+  100% { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); }
+}

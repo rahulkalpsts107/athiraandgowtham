@@ -371,6 +371,12 @@
       <button id="muteButton" class="mute-button">
         <span class="mute-icon">🔈</span>
       </button>
+      
+      <!-- Unmute prompt to guide mobile users -->
+      <div id="unmutePrompt" class="unmute-prompt">
+        <span class="unmute-icon">🔊</span>
+        <span>Tap to unmute invitation</span>
+      </div>
 
       <!-- Lightbox for shared photos -->
       <div id="photoLightbox" class="lightbox">
@@ -443,8 +449,9 @@
             onReady: function (event) {
               console.log('Invitation player ready');
               event.target.playVideo();
-              event.target.mute();
+              event.target.mute(); // Ensure video starts muted
               setTimeout(() => updateMuteButton(), 500);
+              // No auto-unmute functionality
             },
             onStateChange: function (event) {
               if (event.data === YT.PlayerState.PLAYING) {
@@ -583,6 +590,29 @@
           const url = new URL(window.location);
           url.searchParams.set('section', sectionId);
           window.history.pushState({ sectionId }, '', url);
+          
+          // Add invitation-active class to body when showing invitation
+          if (sectionId === 'invite-image') {
+            document.body.classList.add('invitation-active');
+            
+            // Show unmute prompt on mobile devices
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const unmutePrompt = document.getElementById('unmutePrompt');
+            
+            if (isMobile && unmutePrompt) {
+              // Show the unmute prompt with a slight delay
+              setTimeout(() => {
+                unmutePrompt.classList.add('visible');
+                
+                // Hide the prompt after 6 seconds
+                setTimeout(() => {
+                  unmutePrompt.classList.remove('visible');
+                }, 6000);
+              }, 2000);
+            }
+          } else {
+            document.body.classList.remove('invitation-active');
+          }
 
           if (sectionId === 'photos') {
             setTimeout(() => loadOurPhotos(), 100);
@@ -1306,7 +1336,7 @@
               console.log('Opening lightbox for:', img.src);
               
               // Get full resolution image URL (remove Cloudinary transformations)
-              let fullUrl = img.src.replace('/upload/w_400,c_scale,f_auto,q_auto/', '/upload/');
+              let fullUrl = img.src.replace('/upload/w_400,c_scale,f_auto/', '/upload/');
               
               // Set image and show lightbox
               lightboxImg.src = fullUrl;
