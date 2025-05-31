@@ -1652,7 +1652,8 @@ form button {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
-  pointer-events: none;
+  pointer-events: auto; /* Make it clickable */
+  cursor: pointer; /* Show hand cursor */
 }
 
 .unmute-prompt.visible {

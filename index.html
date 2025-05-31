@@ -492,6 +492,30 @@
           });
         }
 
+        // Make the unmute prompt clickable to unmute the video
+        const unmutePrompt = document.getElementById('unmutePrompt');
+        if (unmutePrompt) {
+          unmutePrompt.addEventListener('click', function() {
+            if (invitationPlayer && 
+                typeof invitationPlayer.isMuted === 'function' && 
+                invitationPlayer.isMuted()) {
+              
+              // Unmute the video
+              invitationPlayer.unMute();
+              invitationPlayer.setVolume(80);
+              
+              // Update the mute button icon
+              updateMuteButton();
+              
+              // Hide the prompt after unmuting
+              unmutePrompt.classList.remove('visible');
+              
+              // Log the unmute action
+              console.log('Video unmuted via prompt');
+            }
+          });
+        }
+
         // Initialize if directly loading invitation section
         const urlParams = new URLSearchParams(window.location.search);
         const section = urlParams.get('section');
@@ -595,11 +619,10 @@
           if (sectionId === 'invite-image') {
             document.body.classList.add('invitation-active');
             
-            // Show unmute prompt on mobile devices
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Show unmute prompt for all users, not just mobile
             const unmutePrompt = document.getElementById('unmutePrompt');
             
-            if (isMobile && unmutePrompt) {
+            if (unmutePrompt) {
               // Show the unmute prompt with a slight delay
               setTimeout(() => {
                 unmutePrompt.classList.add('visible');
