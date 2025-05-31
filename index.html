@@ -371,6 +371,15 @@
       <button id="muteButton" class="mute-button">
         <span class="mute-icon">🔈</span>
       </button>
+
+      <!-- Lightbox for shared photos -->
+      <div id="photoLightbox" class="lightbox">
+        <div class="lightbox-content">
+          <button class="lightbox-close">&times;</button>
+          <img id="lightboxImage" src="" alt="Shared photo">
+        </div>
+      </div>
+      
       <footer class="footer">
         <div class="brand">A & G</div>
         <div class="footer-separator"></div>
@@ -1279,6 +1288,52 @@
           }, 2000);
         }
       }
+
+      // Lightbox functionality for shared photos
+      document.addEventListener('DOMContentLoaded', function() {
+        const lightbox = document.getElementById('photoLightbox');
+        const lightboxImg = document.getElementById('lightboxImage');
+        const lightboxClose = document.querySelector('.lightbox-close');
+        
+        // Make shared photos clickable
+        document.querySelector('.shared-photos-grid').addEventListener('click', function(e) {
+          // Find the clicked element - either the image or its container
+          const clickedPhoto = e.target.closest('.shared-photo');
+          if (clickedPhoto) {
+            e.preventDefault();
+            const img = clickedPhoto.querySelector('img');
+            if (img) {
+              console.log('Opening lightbox for:', img.src);
+              
+              // Get full resolution image URL (remove Cloudinary transformations)
+              let fullUrl = img.src.replace('/upload/w_400,c_scale,f_auto,q_auto/', '/upload/');
+              
+              // Set image and show lightbox
+              lightboxImg.src = fullUrl;
+              lightbox.classList.add('active');
+            }
+          }
+        });
+        
+        // Close lightbox when clicking the close button
+        lightboxClose.addEventListener('click', function() {
+          lightbox.classList.remove('active');
+        });
+        
+        // Close lightbox when clicking outside the image
+        lightbox.addEventListener('click', function(e) {
+          if (e.target === lightbox) {
+            lightbox.classList.remove('active');
+          }
+        });
+        
+        // Close lightbox with Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            lightbox.classList.remove('active');
+          }
+        });
+      });
     </script>
   </body>
 </html>
