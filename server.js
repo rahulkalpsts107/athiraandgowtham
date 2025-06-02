@@ -470,7 +470,8 @@ app.get('/our-photos', async (req, res) => {
         .sort_by('created_at', 'desc')
         .max_results(limit)
         .execute(searchParams);  // Pass next_cursor this way
-        
+      log('info', searchParams);
+      log('info', result);
       log('debug', 'Cloudinary our-photos API response', {
         resourceCount: result.resources ? result.resources.length : 0,
         totalCount: result.total_count,

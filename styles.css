@@ -1684,3 +1684,109 @@ form button {
   50% { transform: scale(1.2); box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); }
   100% { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); }
 }
+
+/* Add to Calendar Button Styles */
+.add-to-calendar-wrapper {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.add-to-calendar-btn {
+  background-color: #617939;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-family: 'Abhaya Libre', serif;
+  font-weight: 400;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.add-to-calendar-btn:hover {
+  background-color: #4a5e2c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-to-calendar-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-icon {
+  font-size: 18px;
+}
+
+.calendar-options {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff7e1;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(97, 121, 57, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  min-width: 160px;
+  margin-top: 8px;
+  border: 1px solid #617939;
+}
+
+.calendar-options.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(5px);
+}
+
+.calendar-option {
+  display: block;
+  padding: 12px 20px;
+  color: #617939;
+  text-decoration: none;
+  font-family: 'Abhaya Libre', serif;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(97, 121, 57, 0.2);
+  transition: all 0.2s ease;
+}
+
+.calendar-option:last-child {
+  border-bottom: none;
+}
+
+.calendar-option:hover {
+  background: rgba(97, 121, 57, 0.1);
+  color: #4a5e2c;
+  padding-left: 25px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .add-to-calendar-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .calendar-options {
+    left: 10px;
+    right: 10px;
+    transform: none;
+    width: calc(100% - 20px);
+  }
+  
+  .calendar-options.active {
+    transform: translateY(5px);
+  }
+}

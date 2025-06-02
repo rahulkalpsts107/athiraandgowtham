@@ -154,6 +154,21 @@
         <div class="days-to-go">
           <p id="countdown"></p>
         </div>
+        
+        <!-- Add to Calendar Button -->
+        <div class="add-to-calendar-wrapper">
+          <button class="add-to-calendar-btn" onclick="toggleCalendarOptions()">
+            <span class="calendar-icon">📅</span>
+            Add to Calendar
+          </button>
+          <div class="calendar-options" id="calendarOptions">
+            <a href="#" class="calendar-option" data-calendar="google">Google Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="apple">Apple Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="outlook">Outlook</a>
+            <a href="#" class="calendar-option" data-calendar="yahoo">Yahoo Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="ics">Download ICS</a>
+          </div>
+        </div>
       </div>
 
       <div id="invite-image" class="section hidden">
@@ -848,7 +863,7 @@
       function currentSlide(n) {
         showSlides((slideIndex = n));
       }
-
+      
       let isLoading = false;
       let hasMore = true;
       let nextCursor = null;
@@ -1386,6 +1401,61 @@
             lightbox.classList.remove('active');
           }
         });
+      });
+
+      // Add to Calendar functionality
+      function toggleCalendarOptions() {
+        const calendarOptions = document.getElementById('calendarOptions');
+        if (calendarOptions) {
+          calendarOptions.classList.toggle('active');
+        }
+      }
+
+      function addToCalendar(type) {
+        const weddingDate = new Date('2025-08-21T10:00:00');
+        const endDate = new Date('2025-08-21T18:00:00');
+        const formattedStartDate = weddingDate.toISOString().replace(/-|:|\.\d{3}/g, '');
+        const formattedEndDate = endDate.toISOString().replace(/-|:|\.\d{3}/g, '');
+        
+        // Enhanced event details
+        const eventTitle = 'Athira & Gowtham\'s Wedding';
+        const location = 'Vila Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
+        const description = 'You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\\n\\nWebsite: https://athiraandgowtham.onrender.com\\nVenue: Vila Kasu\\nTime: 10:00 AM - 6:00 PM IST\\nDress Code: Traditional Indian Attire\\n\\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422';
+        
+        const calendarUrl = {
+          google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${formattedStartDate}/${formattedEndDate}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&sf=true&output=xml`,
+          apple: `/wedding-invitation.ics`,
+          outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(eventTitle)}&startdt=${formattedStartDate}&enddt=${formattedEndDate}&body=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&path=/calendar/action/compose&rru=addevent`,
+          yahoo: `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${encodeURIComponent(eventTitle)}&st=${formattedStartDate}&et=${formattedEndDate}&desc=${encodeURIComponent(description)}&in_loc=${encodeURIComponent(location)}`,
+          ics: `/wedding-invitation.ics`,
+        };
+
+        if (calendarUrl[type]) {
+          window.open(calendarUrl[type], '_blank');
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        // Hide calendar options when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.add-to-calendar-wrapper')) {
+            const calendarOptions = document.getElementById('calendarOptions');
+            if (calendarOptions) {
+              calendarOptions.classList.remove('active');
+            }
+          }
+        });
+        
+        // Calendar option click handler
+        document.addEventListener('click', function(e) {
+          if (e.target.classList.contains('calendar-option')) {
+            e.preventDefault();
+            const calendarType = e.target.getAttribute('data-calendar');
+            addToCalendar(calendarType);
+          }
+        });
+        
+        // ...existing code...
       });
     </script>
   </body>

@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Athira & Gowtham//Wedding Invitation//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:athira-gowtham-wedding-2025@athiraandgowtham.com
+DTSTART:20250821T043000Z
+DTEND:20250821T123000Z
+DTSTAMP:20250129T000000Z
+SUMMARY:Athira & Gowtham's Wedding
+DESCRIPTION:You are cordially invited to celebrate our wedding on August 21\, 2025 in Bengaluru. Join us for a day of love\, laughter\, and celebration!\n\nWebsite: https://athiraandgowtham.onrender.com\nVenue: Vila Kasu\nTime: 10:00 AM - 6:00 PM IST\nDress Code: Traditional Indian Attire\n\nFor directions: https://maps.google.com/?q=12.943319832193993\,77.68109909325422
+LOCATION:Vila Kasu\, 1\, Kariyammana Agrahara Rd\, Yemalur\, Bengaluru 560037\, Karnataka\, India
+URL:https://athiraandgowtham.onrender.com
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Athira & Gowtham's Wedding Tomorrow
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Athira & Gowtham's Wedding in 2 hours
+END:VALARM
+END:VEVENT
+END:VCALENDAR
