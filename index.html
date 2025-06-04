@@ -423,8 +423,8 @@
       // Define YouTube video IDs based on ENV_TYPE
       const YOUTUBE_VIDEO_IDS = {
         '0': 'jbE0tb2Kfz0', // For marriage and soiree
-        '1': 'BzbN3fBmFMw', // For marriage
-        // '2': 'YOUR_VIDEO_ID_FOR_GROOM' // Placeholder for groom
+        '1': 'pT2rCXHm8Lc', // For ENV_TYPE=1
+        '2': '5uATzKTGOxU'  // For ENV_TYPE=2
       };
       const DEFAULT_VIDEO_ID = YOUTUBE_VIDEO_IDS['0'];
 
@@ -466,7 +466,9 @@
       function initializeYouTubePlayer(videoIdToLoad) {
         // Determine videoId based on ENV_TYPE from server, fallback to videoIdToLoad or default
         const envType = "<%- process.env.ENV_TYPE %>";
+        console.log("Creating YouTube player with ENV_TYPE:", envType);
         const selectedVideoId = YOUTUBE_VIDEO_IDS[envType] || videoIdToLoad || DEFAULT_VIDEO_ID;
+        console.log("Selected video ID:", selectedVideoId);
 
         if (ytApiReady) {
           // If API is ready, create player immediately
@@ -631,13 +633,23 @@
             coupleName.textContent = 'Gowtham & Athira';
           }
           
-          // Update document title with "and" instead of "&"
-          document.title = "Gowtham and Athira's Wedding Invitation";
+          document.title = "Gowtham & Athira's Wedding Invitation";
           
           // Update meta title tag
           const metaTitle = document.querySelector('meta[property="og:title"]');
           if (metaTitle) {
             metaTitle.setAttribute('content', "Gowtham and Athira's Wedding Invitation");
+          }
+          
+          // Update meta image for ENV_TYPE=2
+          const metaImage = document.querySelector('meta[property="og:image"]');
+          const metaSecureUrl = document.querySelector('meta[property="og:image:secure_url"]');
+          const imageUrl = "https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052620/PHOTO-2025-06-04-21-23-18_gco7lr.jpg";
+          if (metaImage) {
+            metaImage.setAttribute('content', imageUrl);
+          }
+          if (metaSecureUrl) {
+            metaSecureUrl.setAttribute('content', imageUrl);
           }
           
           // Update footer brand
@@ -646,7 +658,30 @@
             footerBrand.textContent = 'G & A';
           }
         }
+        // Handle ENV_TYPE=1: Hide soirée question and update meta image
+        else if (envType === '1') {
+          const attendingLabel = document.getElementById('attending-label');
+          const attendingSelect = document.getElementById('attending');
+          if (attendingLabel) {
+            attendingLabel.style.display = 'none';
+          }
+          if (attendingSelect) {
+            attendingSelect.style.display = 'none';
+          }
+          
+          // Update meta image for ENV_TYPE=1
+          const metaImage = document.querySelector('meta[property="og:image"]');
+          const metaSecureUrl = document.querySelector('meta[property="og:image:secure_url"]');
+          const imageUrl = "https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052619/PHOTO-2025-06-04-21-02-34_zjg7f1.jpg";
+          if (metaImage) {
+            metaImage.setAttribute('content', imageUrl);
+          }
+          if (metaSecureUrl) {
+            metaSecureUrl.setAttribute('content', imageUrl);
+          }
+        }
         
+        // Rest of DOMContentLoaded event handler
         const hamburger = document.querySelector('.hamburger-menu');
         const navMenu = document.querySelector('.nav-menu');
 
