@@ -631,8 +631,14 @@
             coupleName.textContent = 'Gowtham & Athira';
           }
           
-          // Update document title
-          document.title = "Gowtham & Athira's Wedding Invitation";
+          // Update document title with "and" instead of "&"
+          document.title = "Gowtham and Athira's Wedding Invitation";
+          
+          // Update meta title tag
+          const metaTitle = document.querySelector('meta[property="og:title"]');
+          if (metaTitle) {
+            metaTitle.setAttribute('content', "Gowtham and Athira's Wedding Invitation");
+          }
           
           // Update footer brand
           const footerBrand = document.querySelector('.footer .brand');
