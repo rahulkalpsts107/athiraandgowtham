@@ -604,6 +604,8 @@
         // Conditionally hide the soirée question based on ENV_TYPE - moved to top for priority
         const envType = "<%- process.env.ENV_TYPE %>";
         console.log("Current ENV_TYPE:", envType);
+        
+        // Handle ENV_TYPE=1: Hide soirée question
         if (envType === '1') {
           const attendingLabel = document.getElementById('attending-label');
           const attendingSelect = document.getElementById('attending');
@@ -612,6 +614,30 @@
           }
           if (attendingSelect) {
             attendingSelect.style.display = 'none';
+          }
+        }
+        
+        // Handle ENV_TYPE=2: Switch to "G & A" instead of "A & G" and "Gowtham & Athira" instead of "Athira & Gowtham"
+        if (envType === '2') {
+          // Update small brand in header
+          const smallBrand = document.querySelector('.small-brand');
+          if (smallBrand) {
+            smallBrand.textContent = 'g & a';
+          }
+          
+          // Update couple name in header
+          const coupleName = document.querySelector('.couple-name');
+          if (coupleName) {
+            coupleName.textContent = 'Gowtham & Athira';
+          }
+          
+          // Update document title
+          document.title = "Gowtham & Athira's Wedding Invitation";
+          
+          // Update footer brand
+          const footerBrand = document.querySelector('.footer .brand');
+          if (footerBrand) {
+            footerBrand.textContent = 'G & A';
           }
         }
         
