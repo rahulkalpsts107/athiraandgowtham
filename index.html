@@ -429,6 +429,14 @@ He admires how she effortlessly complements him in ways he never knew he needed.
       let ytApiReady = false;
       let playerInitializationQueue = []; // Stores {videoIdToLoad: 'someId'}
 
+      // Define YouTube video IDs based on ENV_TYPE
+      const YOUTUBE_VIDEO_IDS = {
+        '0': 'jbE0tb2Kfz0', // For marriage and soiree
+        '1': 'BzbN3fBmFMw', // For marriage
+        // '2': 'YOUR_VIDEO_ID_FOR_GROOM' // Placeholder for groom
+      };
+      const DEFAULT_VIDEO_ID = YOUTUBE_VIDEO_IDS['0'];
+
       // This function is called by the YouTube API when it's ready
       function onYouTubeIframeAPIReady() {
         ytApiReady = true;
@@ -465,15 +473,16 @@ He admires how she effortlessly complements him in ways he never knew he needed.
       }
 
       function initializeYouTubePlayer(videoIdToLoad) {
-        const defaultVideoId = 'jbE0tb2Kfz0'; // Default video if none specified
-        const finalVideoId = videoIdToLoad || defaultVideoId;
+        // Determine videoId based on ENV_TYPE from server, fallback to videoIdToLoad or default
+        const envType = "<%- process.env.ENV_TYPE %>";
+        const selectedVideoId = YOUTUBE_VIDEO_IDS[envType] || videoIdToLoad || DEFAULT_VIDEO_ID;
 
         if (ytApiReady) {
           // If API is ready, create player immediately
-          createFreshPlayer(finalVideoId);
+          createFreshPlayer(selectedVideoId);
         } else {
           // If API is not ready, queue the initialization
-          playerInitializationQueue.push({ videoIdToLoad: finalVideoId });
+          playerInitializationQueue.push({ videoIdToLoad: selectedVideoId });
         }
       }
 

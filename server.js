@@ -393,6 +393,7 @@ app.get('/', (req, res) => {
     process: {
       env: {
         GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || '',
+        ENV_TYPE: process.env.ENV_TYPE || '0', // Added ENV_TYPE
       },
     },
   });
