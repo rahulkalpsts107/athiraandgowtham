@@ -324,7 +324,7 @@ app.get('/get-our-photos', async (req, res) => {
 app.get('/get-shared-photos', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // page is for client-side tracking, not directly used in cursor API call
-    const limit = parseInt(req.query.limit) || 12;
+    const limit = parseInt(req.query.limit) || 5; // Changed default limit to 5
     const nextCursor = req.query.next_cursor || undefined;
 
     log('info', 'Fetching shared photos from Cloudinary', {

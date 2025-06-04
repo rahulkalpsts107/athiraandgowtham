@@ -56,6 +56,9 @@
       });
     </script>
 
+    <!-- Eruda for mobile debugging (temporary) -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+
     <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap"
@@ -923,7 +926,7 @@
           sharedPhotosLoading = true;
           document.getElementById('loading-spinner').classList.remove('hidden');
 
-          let url = `/get-shared-photos?limit=12`;
+          let url = `/get-shared-photos?limit=5`; // Changed limit to 5
           if (append && sharedPhotosNextCursor) { // Use sharedPhotosNextCursor for appending
             url += `&next_cursor=${encodeURIComponent(sharedPhotosNextCursor)}`;
           } else if (!append) {
@@ -988,9 +991,18 @@
             document.querySelector('.shared-photos-grid').innerHTML =
               '<p>Error loading photos. Please try again later.</p>';
           }
+          // If an error occurs, consider all data loaded for this attempt to prevent infinite error loops
+          sharedPhotosAllDataLoaded = true; 
         } finally {
           sharedPhotosLoading = false; // Reset its own flag
-          document.getElementById('loading-spinner').classList.add('hidden');
+          const spinnerElement = document.getElementById('loading-spinner');
+          if (spinnerElement) {
+            if (sharedPhotosAllDataLoaded) { // If ALL data is loaded (or an error occurred), hide spinner.
+              spinnerElement.classList.add('hidden');
+            } else { // If there MIGHT be more data, ensure spinner is visible for the observer.
+              spinnerElement.classList.remove('hidden');
+            }
+          }
         }
       }
 
@@ -998,14 +1010,36 @@
       const observer = new IntersectionObserver(
         entries => {
           entries.forEach(entry => {
-            // Check if the share section is active before loading more shared photos
-            const shareSectionActive = document.getElementById('share') && !document.getElementById('share').classList.contains('hidden');
+            const shareDiv = document.getElementById('share');
+            const isShareDivHidden = shareDiv ? shareDiv.classList.contains('hidden') : true;
+            const shareSectionActive = shareDiv && !isShareDivHidden;
+            
+            console.log('[Observer]', {
+              isIntersecting: entry.isIntersecting,
+              targetId: entry.target.id,
+              sharedPhotosAllDataLoaded,
+              sharedPhotosLoading,
+              // shareSectionActive, // This will be re-evaluated based on direct check
+              isShareDivActuallyHidden: isShareDivHidden, // Direct check
+              shareDivClassList: shareDiv ? Array.from(shareDiv.classList) : null, // Log the class list
+              calculatedShareSectionActive: shareSectionActive, // Log the calculated value
+              willLoadMore: entry.isIntersecting && !sharedPhotosAllDataLoaded && !sharedPhotosLoading && shareSectionActive
+            });
+
             if (entry.isIntersecting && !sharedPhotosAllDataLoaded && !sharedPhotosLoading && shareSectionActive) {
+              console.log('[Observer] Triggering loadSharedPhotos(true) because all conditions met.');
               loadSharedPhotos(true); // Pass true to append
+            } else if (entry.isIntersecting) {
+              console.log('[Observer] Spinner is intersecting, but not loading more. Reasons:', {
+                allDataLoaded: sharedPhotosAllDataLoaded,
+                stillLoading: sharedPhotosLoading,
+                shareSectionNotActive: !shareSectionActive,
+                isShareDivActuallyHidden_Debug: isShareDivHidden // Add direct check here too for context
+              });
             }
           });
         },
-        { threshold: 0.5 }
+        { threshold: 0.1 } // Lowered threshold to 0.1 (10% visibility)
       );
 
       // Observe the loading spinner
@@ -1517,6 +1551,12 @@
         
         // ...existing code...
       });
+    </script>
+    <!-- Initialize Eruda (conditionally) -->
+    <script>
+      if (new URLSearchParams(window.location.search).has('debug')) {
+        eruda.init();
+      }
     </script>
   </body>
 </html>
