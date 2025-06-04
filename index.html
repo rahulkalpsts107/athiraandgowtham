@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Athira & Gowtham's Wedding Invitation</title>
+    <title><%- process.env.META_TITLE %></title>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://athiraandgowtham.onrender.com/" />
-    <meta property="og:title" content="Athira & Gowtham's Wedding Invitation" />
+    <meta property="og:title" content="<%- process.env.META_TITLE %>" />
     <meta
       property="og:description"
       content="You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru"
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749017407/PHOTO-2025-06-04-11-34-28_wrfsik.jpg"
+      content="<%- process.env.META_IMAGE_URL %>"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -23,7 +23,7 @@
     <!-- WhatsApp specific -->
     <meta
       property="og:image:secure_url"
-      content="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749017407/PHOTO-2025-06-04-11-34-28_wrfsik.jpg"
+      content="<%- process.env.META_IMAGE_URL %>"
     />
 
     <!-- Google Analytics -->

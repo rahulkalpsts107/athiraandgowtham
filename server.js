@@ -387,13 +387,27 @@ app.get('/get-shared-photos', async (req, res) => {
   }
 });
 
-// Render the index page - this should be BEFORE any catch-all routes
+// Route for the home page
 app.get('/', (req, res) => {
+  // Set the proper meta image based on ENV_TYPE
+  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749017407/PHOTO-2025-06-04-11-34-28_wrfsik.jpg'; // Default image
+  let metaTitle = "Athira & Gowtham's Wedding Invitation";
+  
+  // ENV_TYPE specific customizations
+  if (process.env.ENV_TYPE === '1') {
+    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052619/PHOTO-2025-06-04-21-02-34_zjg7f1.jpg';
+  } else if (process.env.ENV_TYPE === '2') {
+    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052620/PHOTO-2025-06-04-21-23-18_gco7lr.jpg';
+    metaTitle = "Gowtham and Athira's Wedding Invitation";
+  }
   res.render(path.join(__dirname, 'index.html'), {
     process: {
       env: {
         GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || '',
+        SENTRY_DSN: process.env.SENTRY_DSN || '',
         ENV_TYPE: process.env.ENV_TYPE || '0', // Added ENV_TYPE
+        META_IMAGE_URL: metaImageUrl,
+        META_TITLE: metaTitle
       },
     },
   });
