@@ -324,37 +324,60 @@ form button {
   }
 }
 
+/* Story Section */
 .story-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  text-align: left;
 }
 
 .about-person {
-  margin-bottom: 40px;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-start; /* Align items to the top */
+  margin-bottom: 30px;
+  gap: 20px; /* Add some space between image and text */
+}
+
+.person-photo {
+  width: 100px; /* Explicit width */
+  height: 100px; /* Explicit height */
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.about-person .details {
+  flex: 1; /* Allow text to take remaining space */
 }
 
 .about-person h3 {
-  color: #565950;
-  margin-bottom: 15px;
-  font-family: 'Gilda Display', serif;
-}
-
-.our-story {
-  padding: 30px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0; /* Remove default top margin from h3 if image is shorter */
+  color: #d4af37;
 }
 
 .our-story h3 {
-  color: #565950;
+  color: #d4af37;
+  text-align: center;
   margin-bottom: 15px;
-  font-family: 'Gilda Display', serif;
+}
+
+.our-story p {
+  text-align: center;
+  line-height: 1.8;
+}
+
+.couple-photo-container {
+  text-align: center; /* Center the image */
+  margin: 30px 0; /* Add some space around the image */
+}
+
+.couple-photo {
+  max-width: 100%; /* Make image responsive */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Rounded edges */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+  max-height: 400px; /* Limit max height */
 }
 
 .location-container {
