@@ -179,7 +179,7 @@
           <iframe
             width="100%"
             height="800"
-            src="https://www.youtube.com/embed/jbE0tb2Kfz0?autoplay=1&mute=1&playsinline=1&controls=1&loop=1&playlist=xXNUHY5jMPU&rel=0&modestbranding=1&enablejsapi=1"
+            src="https://www.youtube.com/embed/jbE0tb2Kfz0?autoplay=1&mute=1&playsinline=1&controls=1&loop=1&playlist=jbE0tb2Kfz0&rel=0&modestbranding=1&enablejsapi=1"
             title="Wedding Invitation"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -414,7 +414,21 @@
     <script>
       // YouTube player control
       let invitationPlayer;
-      const isMuted = true;
+
+      // YouTube API readiness and player queue
+      let ytApiReady = false;
+      let playerInitializationQueue = []; // Stores {videoIdToLoad: 'someId'}
+
+      // This function is called by the YouTube API when it's ready
+      function onYouTubeIframeAPIReady() {
+        ytApiReady = true;
+
+        // Process any queued player initializations
+        while (playerInitializationQueue.length > 0) {
+          const { videoIdToLoad } = playerInitializationQueue.shift();
+          initializeYouTubePlayer(videoIdToLoad);
+        }
+      }
 
       function updateMuteButton() {
         const muteButton = document.getElementById('muteButton');
@@ -440,8 +454,23 @@
         }
       }
 
-      function initializeYouTubePlayer() {
-        if (invitationPlayer) return;
+      function initializeYouTubePlayer(videoIdToLoad) {
+        const defaultVideoId = 'jbE0tb2Kfz0'; // Default video if none specified
+        const finalVideoId = videoIdToLoad || defaultVideoId;
+
+        if (ytApiReady) {
+          // If API is ready, create player immediately
+          createFreshPlayer(finalVideoId);
+        } else {
+          // If API is not ready, queue the initialization
+          playerInitializationQueue.push({ videoIdToLoad: finalVideoId });
+        }
+      }
+
+      function createFreshPlayer(videoId) {
+        if (invitationPlayer) {
+          invitationPlayer.destroy(); // Destroy existing player instance
+        }
 
         // Replace the iframe with a div for the API
         const iframe = document.getElementById('invitationVideo');
@@ -452,14 +481,14 @@
         invitationPlayer = new YT.Player('youtube-player', {
           height: '800',
           width: '100%',
-          videoId: 'xXNUHY5jMPU',
+          videoId: videoId, // This will be the finalVideoId passed to createFreshPlayer
           playerVars: {
             autoplay: 1,
-            mute: 1,
+            mute: 1, // Start muted
             playsinline: 1,
             controls: 1,
             loop: 1,
-            playlist: 'xXNUHY5jMPU',
+            playlist: videoId, // Important for loop to work with a single video
             rel: 0,
             modestbranding: 1,
           },
