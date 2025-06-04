@@ -323,46 +323,38 @@ app.get('/get-our-photos', async (req, res) => {
 // Get shared photos with pagination using Cloudinary's alternative pagination approach
 app.get('/get-shared-photos', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
+    const page = parseInt(req.query.page) || 1; // page is for client-side tracking, not directly used in cursor API call
     const limit = parseInt(req.query.limit) || 12;
     const nextCursor = req.query.next_cursor || undefined;
 
     log('info', 'Fetching shared photos from Cloudinary', {
       page,
       limit,
-      nextCursor: nextCursor || 'initial',
+      inputNextCursor: nextCursor || 'initial',
     });
 
-    // Use a more compatible version of the Cloudinary search API
+    let searchQuery = cloudinary.search
+      .expression('folder:shared-photos')
+      .sort_by('created_at', 'desc')
+      .max_results(limit);
+
+    if (nextCursor) {
+      log('debug', 'Applying next_cursor to shared-photos search', { nextCursorToApply: nextCursor });
+      searchQuery = searchQuery.next_cursor(nextCursor);
+    } else {
+      log('debug', 'No next_cursor for shared-photos search, fetching first page');
+    }
+
     let result;
     try {
-      // Build search options
-      const searchOptions = {
-        expression: 'folder:shared-photos',
-        sort_by: [{ created_at: 'desc' }],
-        max_results: limit,
-      };
+      result = await searchQuery.execute();
       
-      // Add next_cursor only if it exists (as a param to execute())
-      const searchParams = nextCursor ? { next_cursor: nextCursor } : {};
-      
-      // Log the attempted search for debugging
-      log('debug', 'Cloudinary search attempt', { searchOptions, searchParams });
-      
-      result = await cloudinary.search
-        .expression(searchOptions.expression)
-        .sort_by('created_at', 'desc')
-        .max_results(searchOptions.max_results)
-        .execute(searchParams); // Pass next_cursor this way instead
-        
-      // Log success and response structure
-      log('debug', 'Cloudinary API response structure', {
-        responseKeys: Object.keys(result),
+      log('debug', 'Cloudinary API response structure (shared-photos)', {
         resourceCount: result.resources ? result.resources.length : 0,
         totalCount: result.total_count,
-        hasNextCursor: !!result.next_cursor
+        hasNextCursor: !!result.next_cursor,
+        returnedNextCursor: result.next_cursor || null
       });
-      
     } catch (cloudinaryError) {
       log('error', 'Cloudinary API error', {
         error: cloudinaryError.message,
@@ -442,41 +434,49 @@ app.post('/submit-contact', async (req, res) => {
 // Get our photos with compatible Cloudinary pagination
 app.get('/our-photos', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
+    const page = parseInt(req.query.page) || 1; // page is for client-side tracking
     const limit = parseInt(req.query.limit) || 5;
     const nextCursor = req.query.next_cursor || undefined;
 
     log('info', 'Loading our photos with pagination', {
       page,
       limit,
-      nextCursor: nextCursor || 'initial',
+      inputNextCursor: nextCursor || 'initial',
     });
 
-    // Use the same compatible approach as get-shared-photos
+    let searchQuery = cloudinary.search
+      .expression('folder:our-photos')
+      .sort_by('created_at', 'desc')
+      .max_results(limit);
+
+    if (nextCursor) {
+      log('debug', 'Applying next_cursor to our-photos search', { nextCursorToApply: nextCursor });
+      searchQuery = searchQuery.next_cursor(nextCursor);
+    } else {
+      log('debug', 'No next_cursor for our-photos search, fetching first page');
+    }
+    
     let result;
     try {
-      // Build search options
-      const searchParams = nextCursor ? { next_cursor: nextCursor } : {};
+      result = await searchQuery.execute();
       
-      // Log the search attempt for debugging
-      log('debug', 'Cloudinary our-photos search attempt', { 
-        folder: 'our-photos', 
-        limit,
-        hasNextCursor: !!nextCursor
-      });
-      
-      result = await cloudinary.search
-        .expression('folder:our-photos')
-        .sort_by('created_at', 'desc')
-        .max_results(limit)
-        .execute(searchParams);  // Pass next_cursor this way
-      log('info', searchParams);
-      log('info', result);
       log('debug', 'Cloudinary our-photos API response', {
         resourceCount: result.resources ? result.resources.length : 0,
         totalCount: result.total_count,
-        hasNextCursor: !!result.next_cursor
+        hasNextCursor: !!result.next_cursor,
+        returnedNextCursor: result.next_cursor || null // Consistent logging key
       });
+
+      if (result.resources && result.resources.length > 0) {
+        const returnedPhotoIds = result.resources.map(r => r.public_id);
+        log('debug', 'Cloudinary returned photo IDs for /our-photos', { 
+          count: returnedPhotoIds.length, 
+          firstFewIds: returnedPhotoIds.slice(0, 3) // Log first 3 public_ids
+        });
+      } else {
+        log('debug', 'Cloudinary returned no resources for /our-photos for this request.');
+      }
+
     } catch (cloudinaryError) {
       log('error', 'Cloudinary API error in our-photos', {
         error: cloudinaryError.message,

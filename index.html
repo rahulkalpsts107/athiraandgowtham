@@ -582,7 +582,7 @@
 
               // Small delay to allow menu to close smoothly
               setTimeout(() => {
-                showSection(sectionId);
+                showSection(sectionId); // Calls the now global showSection
               }, 100);
             }
           });
@@ -592,9 +592,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const section = urlParams.get('section');
         if (section) {
-          showSection(section);
+          showSection(section); // Calls the now global showSection
         } else {
-          showSection('home');
+          showSection('home'); // Calls the now global showSection
         }
 
         // Initialize intersection observer for infinite scroll
@@ -604,13 +604,14 @@
         }
       });
 
+      // Moved showSection outside DOMContentLoaded to make it globally accessible
       function showSection(sectionId) {
         if (!sectionId) return;
 
         document.querySelectorAll('nav a').forEach(link => {
           const linkSectionId = link
             .getAttribute('onclick')
-            ?.match(/showSection\('(.+?)'\)/)?.[1];
+            ?.match(/showSection\\('(.+?)'\\)/)?.[1];
           if (linkSectionId === sectionId) {
             link.classList.add('active');
           } else {
@@ -653,7 +654,7 @@
           }
 
           if (sectionId === 'photos') {
-            setTimeout(() => loadOurPhotos(), 100);
+            setTimeout(() => loadOurPhotos(false), 100); // CHANGED: pass false for initial load
           } else if (sectionId === 'share') {
             setTimeout(() => loadSharedPhotos(), 100);
           } else if (sectionId === 'invite-image' && !invitationPlayer) {
@@ -673,7 +674,7 @@
           event.state?.sectionId ||
           new URLSearchParams(window.location.search).get('section') ||
           'home';
-        showSection(section);
+        showSection(section); // Calls the now global showSection
       });
 
       // Existing countdown code
@@ -701,11 +702,15 @@
 
       // Update 'Our Photos' section to load images in batches of 5
       let slideIndex = 1;
-      const isLoadingPhotos = false;
       let allPhotos = [];
-      let totalPhotos = 0;
-      const currentPhotoPage = 1;
+      let totalPhotos = 0; // Assuming API provides this on first load for UI consistency
       const photosPerBatch = 5;
+
+      // Pagination variables for Our Photos
+      // let ourPhotosCurrentPage = 1; // REMOVED
+      let ourPhotosNextCursor = null; // ADDED for cursor-based pagination
+      let ourPhotosLoading = false;
+      let ourPhotosAllDataLoaded = false;
 
       function log(message, data = {}) {
         const timestamp = new Date().toISOString();
@@ -718,35 +723,56 @@
         );
       }
 
-      async function loadOurPhotos(page = 1) {
+      async function loadOurPhotos(append = false) { // CHANGED SIGNATURE
+        if (ourPhotosLoading || (append && ourPhotosAllDataLoaded)) return; // MODIFIED CONDITION
+        ourPhotosLoading = true;
+
         const slidesContainer = document.getElementById('slides-container');
         try {
-          if (page === 1) {
+          if (!append) { // This is an initial load
+            allPhotos = [];
+            ourPhotosNextCursor = null; // Reset cursor for a fresh load
+            ourPhotosAllDataLoaded = false; // Reset all data loaded flag
             slidesContainer.innerHTML =
               '<div class="loading">Loading photos...</div>';
+            totalPhotos = 0; // Reset totalPhotos, will be set from API if available
           } else {
-            // Show loading indicator for subsequent batches
-            const loadingIndicator = document.createElement('div');
-            loadingIndicator.className = 'loading-message';
-            loadingIndicator.textContent = `Loading more photos... (${allPhotos.length} of ${totalPhotos})`;
-            slidesContainer.appendChild(loadingIndicator);
+            // Optional: Show a specific loading indicator for appended batches if needed
+            // For now, the main loading/slideshow update handles visual feedback.
           }
 
-          const response = await fetch(
-            `/our-photos?page=${page}&limit=${photosPerBatch}`
-          );
-          if (!response.ok) throw new Error('Failed to fetch photos');
-          const data = await response.json();
+          let url = `/our-photos?limit=${photosPerBatch}`; // API endpoint
+          if (append && ourPhotosNextCursor) {
+            url += `&next_cursor=${encodeURIComponent(ourPhotosNextCursor)}`;
+          }
+          // If !append, no cursor is sent; backend should return the first set of items.
 
-          if (page === 1) {
-            allPhotos = [];
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Failed to fetch our photos');
+          const data = await response.json(); // Expect { photos: [], next_cursor: "...", totalPhotos: "..." (optional) }
+
+          if (!append && data.totalPhotos !== undefined) { // On initial load, if API provides totalPhotos
             totalPhotos = data.totalPhotos;
           }
 
-          // Add new photos to the collection
-          allPhotos = [...allPhotos, ...data.photos];
-
-          // Update the slideshow with ALL loaded photos
+          if (!data.photos || data.photos.length === 0) {
+            if (!append && allPhotos.length === 0) { // No photos at all on initial load
+                 slidesContainer.innerHTML = '<p>No photos available yet.</p>';
+            }
+            // If appending and no new photos, or initial load and no photos, mark as all loaded.
+            ourPhotosAllDataLoaded = true;
+            // Loading indicator removal is handled further down or by showSlides.
+          } else {
+            allPhotos = [...allPhotos, ...data.photos];
+            // If totalPhotos wasn't provided by API, we might need to adjust UI relying on it,
+            // or assume allPhotos.length is the current total for display purposes if it dynamically grows.
+            // For now, assuming totalPhotos is primarily for the "X of Y" counter and dots.
+            // If totalPhotos is not reliably available, the dot generation and counter might need to only reflect loaded items.
+          }
+          
+          // Update slideshow with ALL loaded photos
+          // This part of the logic (rebuilding HTML, dots, counter) can remain largely the same,
+          // but ensure it uses `totalPhotos` correctly if it's available, or `allPhotos.length` if not.
           const photoHtml = allPhotos
             .map(
               (photo, index) => `
@@ -756,12 +782,11 @@
                 `
             )
             .join('');
-
-          slidesContainer.innerHTML = photoHtml;
+          slidesContainer.innerHTML = photoHtml || '<p>No photos available yet.</p>'; // Ensure fallback if allPhotos is empty
 
           // Add or update photo counter
           let photoCounter = document.querySelector('.photo-counter');
-          if (!photoCounter) {
+          if (!photoCounter && totalPhotos > 0) { // Only add counter if there are photos
             photoCounter = document.createElement('div');
             photoCounter.className = 'photo-counter';
             slidesContainer.parentElement.insertBefore(
@@ -769,53 +794,68 @@
               slidesContainer
             );
           }
-          photoCounter.textContent = `Photo ${slideIndex} of ${totalPhotos}`;
-
-          // Update dots for all photos
-          const dotsContainer = document.getElementById('dots-container');
-          dotsContainer.innerHTML = Array(totalPhotos)
-            .fill(0)
-            .map(
-              (_, index) => `
-                    <span class="dot" onclick="currentSlide(${index + 1})"></span>
-                `
-            )
-            .join('');
-
-          // Keep current slide visible
-          showSlides(slideIndex);
-
-          // If there are more photos and we're close to the end, load next batch
-          if (data.hasMore && slideIndex + 2 >= allPhotos.length) {
-            await loadOurPhotos(page + 1);
+          if (photoCounter) {
+             photoCounter.textContent = `Photo ${slideIndex} of ${totalPhotos || allPhotos.length}`;
           }
 
-          // Remove loading indicator if it exists
+          // Update dots for all photos (if totalPhotos is known)
+          const dotsContainer = document.getElementById('dots-container');
+          if (totalPhotos > 0) {
+            dotsContainer.innerHTML = Array(totalPhotos)
+              .fill(0)
+              .map(
+                (_, index) => `
+                      <span class="dot" onclick="currentSlide(${index + 1})"></span>
+                  `
+              )
+              .join('');
+          } else {
+            dotsContainer.innerHTML = ''; // Clear dots if no totalPhotos
+          }
+
+          // Update cursor and loaded state
+          ourPhotosNextCursor = data.next_cursor;
+          if (!ourPhotosNextCursor) {
+            ourPhotosAllDataLoaded = true;
+          }
+
+          if (allPhotos.length > 0) {
+             showSlides(slideIndex); // Refresh slideshow display
+          } else if (!append) {
+            // If initial load resulted in no photos, and already handled by innerHTML update.
+          }
+
+          // Remove loading indicator if it exists (e.g., the initial one)
           const loadingIndicator =
-            slidesContainer.querySelector('.loading-message');
-          if (loadingIndicator) {
+            slidesContainer.querySelector('.loading'); // General loading div
+          if (loadingIndicator && (allPhotos.length > 0 || ourPhotosAllDataLoaded)) {
             loadingIndicator.remove();
           }
+
         } catch (error) {
-          console.error('Error:', error);
-          if (page === 1) {
+          console.error('Error loading our photos:', error);
+          if (!append) {
             slidesContainer.innerHTML =
               '<p>Error loading photos. Please try again.</p>';
           }
+        } finally {
+          ourPhotosLoading = false;
         }
       }
 
       function showSlides(n) {
         const slides = document.getElementsByClassName('slide');
         const dots = document.getElementsByClassName('dot');
+        const currentTotal = totalPhotos || allPhotos.length; // Use totalPhotos if available, else current length
 
-        if (!slides.length) return;
+        if (!slides.length && !ourPhotosLoading) return; // Nothing to show and not loading
+        if (currentTotal === 0 && !ourPhotosLoading) return; // No photos loaded and not loading
 
         // Reset to first slide if we go past the end
-        if (n > totalPhotos) {
+        if (n > currentTotal && currentTotal > 0) {
           slideIndex = 1;
-        } else if (n < 1) {
-          slideIndex = totalPhotos;
+        } else if (n < 1 && currentTotal > 0) {
+          slideIndex = currentTotal;
         } else {
           slideIndex = n;
         }
@@ -824,11 +864,11 @@
 
         // Load more photos if needed and we're not at the end
         if (
-          currentIndex >= allPhotos.length - 2 &&
-          allPhotos.length < totalPhotos
+          currentIndex >= allPhotos.length - 2 && // Condition to load when near the end of current batch
+          !ourPhotosAllDataLoaded &&
+          !ourPhotosLoading
         ) {
-          const nextPage = Math.floor(allPhotos.length / photosPerBatch) + 1;
-          loadOurPhotos(nextPage);
+          loadOurPhotos(true); // Pass true to append
         }
 
         // Update slides display
@@ -864,35 +904,50 @@
         showSlides((slideIndex = n));
       }
       
-      let isLoading = false;
-      let hasMore = true;
-      let nextCursor = null;
+      // let isLoading = false; // Will be replaced by sharedPhotosLoading
+      // let hasMore = true; // Will be replaced by !sharedPhotosAllDataLoaded
+      // let nextCursor = null; // Will be replaced by sharedPhotosNextCursor
+
+      // Pagination variables for Shared Photos
+      let sharedPhotosCurrentPage = 1; // Or use cursor-based as it was
+      let sharedPhotosLoading = false;
+      let sharedPhotosAllDataLoaded = false;
+      let sharedPhotosNextCursor = null;
+
 
       async function loadSharedPhotos(append = false) {
-        if (isLoading || (!append && !hasMore)) return;
+        // Use sharedPhotosLoading and sharedPhotosAllDataLoaded
+        if (sharedPhotosLoading || (sharedPhotosAllDataLoaded && !append)) return;
 
         try {
-          isLoading = true;
+          sharedPhotosLoading = true;
           document.getElementById('loading-spinner').classList.remove('hidden');
 
-          // Build URL with cursor for pagination
-          let url = '/get-shared-photos?limit=12';
-          if (nextCursor) {
-            url += `&next_cursor=${encodeURIComponent(nextCursor)}`;
+          let url = `/get-shared-photos?limit=12`;
+          if (append && sharedPhotosNextCursor) { // Use sharedPhotosNextCursor for appending
+            url += `&next_cursor=${encodeURIComponent(sharedPhotosNextCursor)}`;
+          } else if (!append) {
+            // Reset for a fresh load if not appending
+            sharedPhotosNextCursor = null; 
+            sharedPhotosAllDataLoaded = false;
+            document.querySelector('.shared-photos-grid').innerHTML = ''; // Clear previous photos
           }
+
 
           const response = await fetch(url);
           if (!response.ok) {
-            throw new Error('Failed to fetch photos');
+            throw new Error('Failed to fetch shared photos');
           }
           const data = await response.json();
 
           const gridContainer = document.querySelector('.shared-photos-grid');
           if (!data.photos || data.photos.length === 0) {
-            if (!append) {
+            if (!append || gridContainer.innerHTML.trim() === '') { // Check if grid is empty only if not appending or already empty
               gridContainer.innerHTML = '<p>No photos shared yet</p>';
             }
-            hasMore = false;
+            sharedPhotosAllDataLoaded = true; // All shared photos loaded
+            sharedPhotosLoading = false;
+            document.getElementById('loading-spinner').classList.add('hidden');
             return;
           }
 
@@ -922,16 +977,19 @@
           }
 
           // Update pagination state with cursor-based navigation
-          nextCursor = data.next_cursor;
-          hasMore = data.hasMore;
+          sharedPhotosNextCursor = data.next_cursor; // Store new cursor
+          if (!data.hasMore || !data.next_cursor) { // If no more or no next_cursor, all data is loaded
+            sharedPhotosAllDataLoaded = true;
+          }
+          
         } catch (error) {
-          console.error('Error loading shared photos:', error);
+          console.error('Error loading shared photos:', error); // Specific error message
           if (!append) {
             document.querySelector('.shared-photos-grid').innerHTML =
               '<p>Error loading photos. Please try again later.</p>';
           }
         } finally {
-          isLoading = false;
+          sharedPhotosLoading = false; // Reset its own flag
           document.getElementById('loading-spinner').classList.add('hidden');
         }
       }
@@ -940,8 +998,10 @@
       const observer = new IntersectionObserver(
         entries => {
           entries.forEach(entry => {
-            if (entry.isIntersecting && hasMore && !isLoading) {
-              loadSharedPhotos(true);
+            // Check if the share section is active before loading more shared photos
+            const shareSectionActive = document.getElementById('share') && !document.getElementById('share').classList.contains('hidden');
+            if (entry.isIntersecting && !sharedPhotosAllDataLoaded && !sharedPhotosLoading && shareSectionActive) {
+              loadSharedPhotos(true); // Pass true to append
             }
           });
         },
