@@ -479,16 +479,28 @@ He admires how she effortlessly complements him in ways he never knew he needed.
 
       function createFreshPlayer(videoId) {
         if (invitationPlayer) {
-          invitationPlayer.destroy(); // Destroy existing player instance
+          try {
+            invitationPlayer.destroy();
+          } catch (e) {
+            console.warn("Error destroying existing player:", e);
+          }
+          invitationPlayer = null;
         }
 
-        // Replace the iframe with a div for the API
-        const iframe = document.getElementById('invitationVideo');
-        const playerDiv = document.createElement('div');
-        playerDiv.id = 'youtube-player';
-        iframe.parentNode.replaceChild(playerDiv, iframe);
+        const videoContainerParent = document.querySelector('.invitation-video-container');
+        if (!videoContainerParent) {
+          console.error("'.invitation-video-container' not found. Cannot create player.");
+          return;
+        }
 
-        invitationPlayer = new YT.Player('youtube-player', {
+        // Clear the container and add a fresh div for the player
+        videoContainerParent.innerHTML = ''; 
+        
+        const playerDiv = document.createElement('div');
+        playerDiv.id = 'youtube-player'; // The YT API will use this ID
+        videoContainerParent.appendChild(playerDiv);
+
+        invitationPlayer = new YT.Player('youtube-player', { // YT.Player targets the div by its ID
           height: '800',
           width: '100%',
           videoId: videoId, // This will be the finalVideoId passed to createFreshPlayer
