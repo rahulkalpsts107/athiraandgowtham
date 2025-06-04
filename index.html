@@ -264,7 +264,7 @@
           <input type="text" id="name" name="name" required />
           <label for="email">Email:</label>
           <input type="email" id="email" name="email" required />
-          <label for="attending">Will you attend the soirée?</label>
+          <label for="attending" id="attending-label">Will you attend the soirée?</label>
           <select id="attending" name="attending">
             <option value="yes">Yes</option>
             <option value="no">No</option>
@@ -601,6 +601,20 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
+        // Conditionally hide the soirée question based on ENV_TYPE - moved to top for priority
+        const envType = "<%- process.env.ENV_TYPE %>";
+        console.log("Current ENV_TYPE:", envType);
+        if (envType === '1') {
+          const attendingLabel = document.getElementById('attending-label');
+          const attendingSelect = document.getElementById('attending');
+          if (attendingLabel) {
+            attendingLabel.style.display = 'none';
+          }
+          if (attendingSelect) {
+            attendingSelect.style.display = 'none';
+          }
+        }
+        
         const hamburger = document.querySelector('.hamburger-menu');
         const navMenu = document.querySelector('.nav-menu');
 
@@ -657,7 +671,7 @@
           observer.observe(spinner);
         }
       });
-
+      
       // Moved showSection outside DOMContentLoaded to make it globally accessible
       function showSection(sectionId) {
         if (!sectionId) return;
