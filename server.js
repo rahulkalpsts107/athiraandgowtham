@@ -598,6 +598,76 @@ app.get('/upload', (req, res) => {
   res.sendFile(path.join(__dirname, 'upload-form.html'));
 });
 
+// Generate ICS file for calendar download via endpoint
+app.get('/wedding-invitation-endpoint', (req, res) => {
+  try {
+    console.log('Generating ICS file with ENV_TYPE:', process.env.ENV_TYPE);
+    
+    // Get the correct website URL and title based on ENV_TYPE
+    let websiteUrl = "https://athiraandgowtham.onrender.com";
+    let eventTitle = "Athira & Gowtham's Wedding";
+    
+    if (process.env.ENV_TYPE === '1') {
+      websiteUrl = "https://athirawedsgowthan.onrender.com";
+      eventTitle = "Athira & Gowtham's Wedding";
+      console.log('Using ENV_TYPE 1 settings for ICS');
+    } else if (process.env.ENV_TYPE === '2') {
+      websiteUrl = "https://gowthamwedsathira.onrender.com";
+      eventTitle = "Gowtham & Athira's Wedding";
+      console.log('Using ENV_TYPE 2 settings for ICS');
+    } else {
+      console.log('Using default (0) settings for ICS');
+    }
+    
+    // Format date/time to ICS format
+    const startDate = new Date('2025-08-21T10:00:00+05:30');
+    const endDate = new Date('2025-08-21T18:00:00+05:30');
+    const icsStartDate = startDate.toISOString().replace(/-|:|\.\d{3}/g, '');
+    const icsEndDate = endDate.toISOString().replace(/-|:|\.\d{3}/g, '');
+
+    // Create ICS content with the correct DESCRIPTION
+    const location = 'Vila Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
+    const description = `You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\n\nWebsite: ${websiteUrl}\nVenue: Vila Kasu\nTime: 10:00 AM - 6:00 PM IST\nDress Code: Traditional Indian Attire\n\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422`;
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//athiraandgowtham//Wedding Invitation//EN',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `SUMMARY:${eventTitle}`,
+      `DTSTART:${icsStartDate}`,
+      `DTEND:${icsEndDate}`,
+      `LOCATION:${location}`,
+      `DESCRIPTION:${description.replace(/\n/g, '\\n')}`,
+      'STATUS:CONFIRMED',
+      'SEQUENCE:0',
+      'BEGIN:VALARM',
+      'TRIGGER:-P1D',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Reminder',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    // Set appropriate headers and send file
+    res.setHeader('Content-Type', 'text/calendar');
+    res.setHeader('Content-Disposition', 'attachment; filename=wedding-invitation.ics');
+    res.send(icsContent);
+
+    log('info', 'ICS calendar file downloaded via endpoint', { 
+      envType: process.env.ENV_TYPE, 
+      usedWebsite: websiteUrl,
+      usedTitle: eventTitle
+    });
+  } catch (error) {
+    console.error('Error generating ICS file:', error);
+    log('error', 'Error generating ICS file', { error: error.message });
+    res.status(500).send('Error generating calendar file');
+  }
+});
+
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 

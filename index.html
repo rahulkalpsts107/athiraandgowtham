@@ -1647,29 +1647,43 @@
         
         // Get the correct website URL based on ENV_TYPE
         const envType = "<%- process.env.ENV_TYPE %>";
+        console.log("Calendar: ENV_TYPE is", envType);
+        
         let websiteUrl = "https://athiraandgowtham.onrender.com";
         let eventTitle = "Athira & Gowtham's Wedding";
         
-        if (envType === '1') {
+        if (envType === "1") {
           websiteUrl = "https://athirawedsgowthan.onrender.com";
           eventTitle = "Athira & Gowtham's Wedding";
-        } else if (envType === '2') {
+          console.log("Calendar: Using ENV_TYPE 1 URL:", websiteUrl);
+        } else if (envType === "2") {
           websiteUrl = "https://gowthamwedsathira.onrender.com";
           eventTitle = "Gowtham & Athira's Wedding";
+          console.log("Calendar: Using ENV_TYPE 2 URL:", websiteUrl);
+        } else {
+          console.log("Calendar: Using default URL:", websiteUrl);
         }
         
         // Enhanced event details with dynamic website URL
         const location = 'Vila Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
         const description = `You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\\n\\nWebsite: ${websiteUrl}\\nVenue: Vila Kasu\\nTime: 10:00 AM - 6:00 PM IST\\nDress Code: Traditional Indian Attire\\n\\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422`;
         
+        console.log("Calendar: Final description with URL:", description);
+        
+        // Get current domain for endpoints
+        const currentDomain = window.location.origin;
+        
+        // Create calendar URLs with the correct website URL
         const calendarUrl = {
           google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${formattedStartDate}/${formattedEndDate}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&sf=true&output=xml`,
-          apple: `/wedding-invitation.ics`,
+          apple: `${currentDomain}/wedding-invitation-endpoint`,  // Use server endpoint
           outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(eventTitle)}&startdt=${formattedStartDate}&enddt=${formattedEndDate}&body=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&path=/calendar/action/compose&rru=addevent`,
           yahoo: `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${encodeURIComponent(eventTitle)}&st=${formattedStartDate}&et=${formattedEndDate}&desc=${encodeURIComponent(description)}&in_loc=${encodeURIComponent(location)}`,
-          ics: `/wedding-invitation.ics`,
+          ics: `${currentDomain}/wedding-invitation-endpoint`,  // Use server endpoint
         };
 
+        console.log("Calendar: Opening URL for type", type, calendarUrl[type]);
+        
         if (calendarUrl[type]) {
           window.open(calendarUrl[type], '_blank');
         }
@@ -1687,12 +1701,13 @@
         });
         
         // Calendar option click handler
-        document.addEventListener('click', function(e) {
-          if (e.target.classList.contains('calendar-option')) {
+        document.querySelectorAll('.calendar-option').forEach(option => {
+          option.addEventListener('click', function(e) {
             e.preventDefault();
-            const calendarType = e.target.getAttribute('data-calendar');
+            const calendarType = this.getAttribute('data-calendar');
+            console.log("Calendar: Option clicked:", calendarType);
             addToCalendar(calendarType);
-          }
+          });
         });
         
         // ...existing code...
