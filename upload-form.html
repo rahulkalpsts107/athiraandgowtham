@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Photo Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-upload-btn {
+            border: 2px dashed #d4af37;
+            color: #666;
+            background-color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload-btn:hover {
+            background-color: #f9f7f7;
+        }
+        .upload-btn {
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .upload-btn:hover {
+            background-color: #c9a229;
+        }
+        .upload-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #filePreview {
+            margin-top: 20px;
+            display: none;
+        }
+        #previewImage {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 5px;
+        }
+        .preview-container {
+            margin-bottom: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .password-container {
+            width: 100%;
+        }
+        .upload-container {
+            display: none;
+            width: 100%;
+        }
+        .verify-btn {
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .verify-btn:hover {
+            background-color: #c9a229;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wedding Photo Upload</h1>
+        <p>Share your special moments from our wedding day! Upload your photos here to add them to our wedding album.</p>
+        
+        <div id="passwordContainer" class="password-container">
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required placeholder="Enter the upload password">
+            </div>
+            <button type="button" id="verifyBtn" class="verify-btn">Verify Password</button>
+        </div>
+
+        <div id="uploadContainer" class="upload-container">
+            <form id="uploadForm">
+                <div class="file-upload">
+                    <label for="photo" class="file-upload-btn">
+                        <span id="fileLabel">Click to select a photo</span>
+                    </label>
+                    <input type="file" id="photo" name="photo" accept="image/*" required>
+                </div>
+                
+                <div id="filePreview" class="preview-container">
+                    <img id="previewImage" src="" alt="Preview">
+                </div>
+                
+                <button type="submit" class="upload-btn" id="uploadBtn">Upload Photo</button>
+            </form>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const verifyBtn = document.getElementById('verifyBtn');
+            const passwordContainer = document.getElementById('passwordContainer');
+            const uploadContainer = document.getElementById('uploadContainer');
+            const passwordInput = document.getElementById('password');
+            const form = document.getElementById('uploadForm');
+            const fileInput = document.getElementById('photo');
+            const fileLabel = document.getElementById('fileLabel');
+            const filePreview = document.getElementById('filePreview');
+            const previewImage = document.getElementById('previewImage');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const resultDiv = document.getElementById('result');
+
+            let verifiedPassword = '';
+            
+            // Verify password when button is clicked
+            verifyBtn.addEventListener('click', function() {
+                const password = passwordInput.value;
+                
+                if (!password) {
+                    showResult('Please enter a password', false);
+                    return;
+                }
+                
+                // Verify the password with the server
+                fetch('/api/verify-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-upload-password': password
+                    },
+                    body: JSON.stringify({ action: 'verify' })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Invalid password');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Password is valid, show upload form
+                    verifiedPassword = password;
+                    passwordContainer.style.display = 'none';
+                    uploadContainer.style.display = 'block';
+                    showResult('Password verified! You can now upload photos.', true);
+                })
+                .catch(error => {
+                    showResult('Invalid password. Please try again.', false);
+                });
+            });
+            
+            // Show preview when a file is selected
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    fileLabel.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        filePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    fileLabel.textContent = 'Click to select a photo';
+                    filePreview.style.display = 'none';
+                }
+            });
+            
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    showResult('Please select a photo to upload', false);
+                    return;
+                }
+                
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Uploading...';
+                
+                const formData = new FormData();
+                formData.append('photo', file);
+                
+                fetch('/api/upload-photo', {
+                    method: 'POST',
+                    headers: {
+                        'x-upload-password': verifiedPassword
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Upload failed');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showResult('Photo uploaded successfully!', true);
+                    form.reset();
+                    fileLabel.textContent = 'Click to select a photo';
+                    filePreview.style.display = 'none';
+                })
+                .catch(error => {
+                    showResult(error.message, false);
+                })
+                .finally(() => {
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'Upload Photo';
+                });
+            });
+            
+            function showResult(message, isSuccess) {
+                resultDiv.textContent = message;
+                resultDiv.className = isSuccess ? 'success' : 'error';
+                resultDiv.style.display = 'block';
+                
+                if (isSuccess) {
+                    setTimeout(() => {
+                        resultDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

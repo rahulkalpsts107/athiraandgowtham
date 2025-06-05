@@ -8,6 +8,7 @@ const fs = require('fs');
 const Sentry = require('@sentry/node');
 const { ProfilingIntegration } = require('@sentry/profiling-node');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cors = require('cors');
 
 // Enhanced Logger function with batched LogTail sending
 const logBatchSize = 10;
@@ -191,6 +192,7 @@ const upload = multer({ storage: storage });
 // Middleware to parse form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Serve static files (but exclude index.html since we render it with EJS)
 app.use(
@@ -527,6 +529,73 @@ app.get('/our-photos', async (req, res) => {
     Sentry.captureException(error);
     res.status(500).json({ error: 'Failed to fetch photos' });
   }
+});
+
+// Password middleware for protection
+const passwordProtect = (req, res, next) => {
+  const providedPassword = req.headers['x-upload-password'];
+  
+  if (!providedPassword || providedPassword !== process.env.UPLOAD_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid password' });
+  }
+  
+  next();
+};
+
+// Create multer storage for the guest photos endpoint
+const guestUpload = multer({ 
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '/tmp') // Temporary store files
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+  })
+});
+
+// Photo upload endpoint with password protection
+app.post('/api/upload-photo', passwordProtect, guestUpload.single('photo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No photo provided' });
+    }
+
+    // Upload to Cloudinary using the guest-photos preset
+    const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'guest-photos',
+      folder: 'our-photos'
+    });
+
+    // Remove the temp file
+    fs.unlinkSync(req.file.path);
+
+    res.status(200).json({ 
+      success: true, 
+      url: uploadResponse.secure_url,
+      public_id: uploadResponse.public_id
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// Create a password verification endpoint
+app.post('/api/verify-password', (req, res) => {
+  const providedPassword = req.headers['x-upload-password'];
+  
+  if (!providedPassword || providedPassword !== process.env.UPLOAD_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid password' });
+  }
+  
+  res.status(200).json({ success: true, message: 'Password verified' });
+});
+
+// Serve the photo upload form
+app.get('/upload', (req, res) => {
+  res.sendFile(path.join(__dirname, 'upload-form.html'));
 });
 
 // The error handler must be registered before any other error middleware and after all controllers
