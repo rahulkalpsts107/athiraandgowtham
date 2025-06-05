@@ -1645,10 +1645,22 @@
         const formattedStartDate = weddingDate.toISOString().replace(/-|:|\.\d{3}/g, '');
         const formattedEndDate = endDate.toISOString().replace(/-|:|\.\d{3}/g, '');
         
-        // Enhanced event details
-        const eventTitle = 'Athira & Gowtham\'s Wedding';
+        // Get the correct website URL based on ENV_TYPE
+        const envType = "<%- process.env.ENV_TYPE %>";
+        let websiteUrl = "https://athiraandgowtham.onrender.com";
+        let eventTitle = "Athira & Gowtham's Wedding";
+        
+        if (envType === '1') {
+          websiteUrl = "https://athirawedsgowthan.onrender.com";
+          eventTitle = "Athira & Gowtham's Wedding";
+        } else if (envType === '2') {
+          websiteUrl = "https://gowthamwedsathira.onrender.com";
+          eventTitle = "Gowtham & Athira's Wedding";
+        }
+        
+        // Enhanced event details with dynamic website URL
         const location = 'Vila Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
-        const description = 'You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\\n\\nWebsite: https://athiraandgowtham.onrender.com\\nVenue: Vila Kasu\\nTime: 10:00 AM - 6:00 PM IST\\nDress Code: Traditional Indian Attire\\n\\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422';
+        const description = `You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\\n\\nWebsite: ${websiteUrl}\\nVenue: Vila Kasu\\nTime: 10:00 AM - 6:00 PM IST\\nDress Code: Traditional Indian Attire\\n\\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422`;
         
         const calendarUrl = {
           google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${formattedStartDate}/${formattedEndDate}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&sf=true&output=xml`,
