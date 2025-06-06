@@ -404,6 +404,10 @@ app.get('/', (req, res) => {
     metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052620/PHOTO-2025-06-04-21-23-18_gco7lr.jpg';
     metaTitle = "Gowtham and Athira's Wedding Invitation";
     metaUrl = "https://gowthamwedsathira.onrender.com/";
+  } else if (process.env.ENV_TYPE === '3') {
+    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749200000/PHOTO-2025-06-06-13-51-53_a5hlv6.jpg';
+    metaTitle = "Athira & Gowtham's Wedding Invitation";
+    metaUrl = "https://athiraandgowtham-wedding-invite.onrender.com/";
   }
   res.render(path.join(__dirname, 'index.html'), {
     process: {
