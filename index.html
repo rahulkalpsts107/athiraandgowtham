@@ -525,7 +525,19 @@
               event.target.playVideo();
               event.target.mute(); // Ensure video starts muted
               setTimeout(() => updateMuteButton(), 500);
-              // No auto-unmute functionality
+              
+              // Show unmute prompt only after video has loaded
+              const unmutePrompt = document.getElementById('unmutePrompt');
+              if (unmutePrompt) {
+                setTimeout(() => {
+                  unmutePrompt.classList.add('visible');
+                  
+                  // Hide the prompt after 30 seconds
+                  setTimeout(() => {
+                    unmutePrompt.classList.remove('visible');
+                  }, 30000);
+                }, 1000);
+              }
             },
             onStateChange: function (event) {
               if (event.data === YT.PlayerState.PLAYING) {
@@ -604,7 +616,7 @@
       if (section === 'invite-image') {
         setTimeout(initializeYouTubePlayer, 1000);
       }
-
+      
       document.addEventListener('DOMContentLoaded', function () {
         // Conditionally hide the soirée question based on ENV_TYPE - moved to top for priority
         const envType = "<%- process.env.ENV_TYPE %>";
@@ -772,21 +784,6 @@
           // Add invitation-active class to body when showing invitation
           if (sectionId === 'invite-image') {
             document.body.classList.add('invitation-active');
-            
-            // Show unmute prompt for all users, not just mobile
-            const unmutePrompt = document.getElementById('unmutePrompt');
-            
-            if (unmutePrompt) {
-              // Show the unmute prompt with a slight delay
-              setTimeout(() => {
-                unmutePrompt.classList.add('visible');
-                
-                // Hide the prompt after 15 seconds
-                setTimeout(() => {
-                  unmutePrompt.classList.remove('visible');
-                }, 30000);
-              }, 2000);
-            }
           } else {
             document.body.classList.remove('invitation-active');
           }
