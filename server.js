@@ -9,6 +9,7 @@ const Sentry = require('@sentry/node');
 const { ProfilingIntegration } = require('@sentry/profiling-node');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cors = require('cors');
+const mongoose = require('mongoose'); // Add mongoose for MongoDB
 
 // Enhanced Logger function with batched LogTail sending
 const logBatchSize = 10;
@@ -691,6 +692,69 @@ app.use(function onError(err, req, res, next) {
   log('error', 'Server error', { error: err.message });
   res.statusCode = 500;
   res.end('Internal Server Error');
+});
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('Connected to MongoDB');
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err.message);
+});
+
+// Guestbook schema and model
+const guestbookSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  message: { type: String, required: true },
+  background: { type: String, default: 'default' }, // Add background field
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Guestbook = mongoose.model('Guestbook', guestbookSchema);
+
+// API endpoint to submit guestbook entry
+app.post('/api/guestbook', async (req, res) => {
+  const { name, message, background } = req.body;
+  
+  if (!name || !message) {
+    return res.status(400).json({ success: false, message: 'Name and message are required' });
+  }
+  
+  log('info', 'Guestbook submission received', { name, background });
+
+  try {
+    // Create new guestbook entry with background
+    const entry = new Guestbook({
+      name,
+      message,
+      background: background || 'default' // Use provided background or default
+    });
+    
+    // Save to database
+    await entry.save();
+    
+    log('success', 'Guestbook entry saved successfully', { name, background });
+    res.json({ success: true, message: 'Thank you for your message!' });
+  } catch (error) {
+    log('error', 'Failed to save guestbook entry', { error: error.message });
+    Sentry.captureException(error);
+    res.status(500).json({ success: false, message: 'Failed to save your message' });
+  }
+});
+
+// API endpoint to get guestbook entries
+app.get('/api/guestbook', async (req, res) => {
+  try {
+    const entries = await Guestbook.find().sort({ createdAt: -1 }).limit(100);
+    res.json(entries);
+  } catch (error) {
+    log('error', 'Failed to fetch guestbook entries', { error: error.message });
+    res.status(500).json({ error: 'Failed to fetch guestbook entries' });
+  }
 });
 
 // Start the server

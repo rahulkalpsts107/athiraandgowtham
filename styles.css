@@ -1847,3 +1847,269 @@ form button {
     max-width: 100%;
   }
 }
+
+/* Guestbook Styles */
+.guestbook-intro {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #617939;
+  font-style: italic;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.guestbook-form {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  padding: 20px;
+  background: rgba(97, 121, 57, 0.05);
+  border-radius: 8px;
+}
+
+.guestbook-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.guestbook-form input,
+.guestbook-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.guestbook-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.guestbook-form button {
+  background-color: #617939;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.guestbook-form button:hover {
+  background-color: #4d612e;
+}
+
+#guestbookStatus {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+#guestbookStatus.success {
+  background-color: rgba(75, 181, 67, 0.1);
+  color: #4bb543;
+}
+
+#guestbookStatus.error {
+  background-color: rgba(255, 76, 76, 0.1);
+  color: #ff4c4c;
+}
+
+.guestbook-messages {
+  margin-top: 40px;
+}
+
+.guestbook-messages h3 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #617939;
+}
+
+.entries-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.guestbook-entry {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-left: 3px solid #617939;
+}
+
+.guestbook-entry-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.guestbook-entry-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.guestbook-entry-date {
+  color: #999;
+  font-size: 0.85em;
+}
+
+.guestbook-entry-message {
+  color: #444;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Background selection styles */
+.background-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.background-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 80px;
+}
+
+.background-option:hover {
+  transform: translateY(-3px);
+}
+
+.background-option.active {
+  position: relative;
+}
+
+.background-option.active::after {
+  content: '✓';
+  position: absolute;
+  bottom: 22px;
+  right: 10px;
+  background: #617939;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.bg-preview {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.bg-default {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.bg-floral {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405157/europeana-LfCD_R84AwY-unsplash_hjffip.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-hearts {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405155/freestocks-r_oV6smBBYk-unsplash_jy8r5y.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-confetti {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405154/seyedeh-hamideh-kazemi-H67AHfpKhZk-unsplash_b5ldfx.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-elegant {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405238/the-cleveland-museum-of-art-xmL7BT7w07k-unsplash_n8y0a0.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Guestbook entries with backgrounds */
+.guestbook-entry.bg-floral,
+.guestbook-entry.bg-hearts,
+.guestbook-entry.bg-confetti,
+.guestbook-entry.bg-elegant {
+  position: relative;
+  border-left: none;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* Background images as separate divs at the top */
+.guestbook-entry.bg-floral .entry-background,
+.guestbook-entry.bg-hearts .entry-background,
+.guestbook-entry.bg-confetti .entry-background,
+.guestbook-entry.bg-elegant .entry-background {
+  height: 150px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+/* Set specific background images */
+.guestbook-entry.bg-floral .entry-background {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405157/europeana-LfCD_R84AwY-unsplash_hjffip.jpg');
+}
+
+.guestbook-entry.bg-hearts .entry-background {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405155/freestocks-r_oV6smBBYk-unsplash_jy8r5y.jpg');
+}
+
+.guestbook-entry.bg-confetti .entry-background {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405154/seyedeh-hamideh-kazemi-H67AHfpKhZk-unsplash_b5ldfx.jpg');
+}
+
+.guestbook-entry.bg-elegant .entry-background {
+  background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405238/the-cleveland-museum-of-art-xmL7BT7w07k-unsplash_n8y0a0.jpg');
+}
+
+/* Content box below the image */
+.guestbook-entry.bg-floral .guestbook-entry-content-box,
+.guestbook-entry.bg-hearts .guestbook-entry-content-box,
+.guestbook-entry.bg-confetti .guestbook-entry-content-box,
+.guestbook-entry.bg-elegant .guestbook-entry-content-box {
+  background-color: white;
+  padding: 15px;
+  margin: 0;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Style for name in the content box */
+.guestbook-entry.bg-floral .guestbook-entry-name,
+.guestbook-entry.bg-hearts .guestbook-entry-name,
+.guestbook-entry.bg-confetti .guestbook-entry-name,
+.guestbook-entry.bg-elegant .guestbook-entry-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(97, 121, 57, 0.2);
+  padding-bottom: 8px;
+}

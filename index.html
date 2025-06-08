@@ -138,6 +138,11 @@
                 >Share Photos</a
               >
             </li>
+            <li>
+              <a href="#" onclick="showSection('guestbook'); return false;"
+                >Our Wedding Book</a
+              >
+            </li>
           </ul>
         </nav>
       </header>
@@ -398,6 +403,60 @@
         </div>
         <div id="loading-spinner" class="loading-spinner hidden">
           Loading more photos...
+        </div>
+      </div>
+
+      <div id="guestbook" class="section hidden">
+        <h2>Our Wedding Book</h2>
+        <div class="guestbook-intro">
+          <p>Leave a message for the couple! Share your wishes, memories, or advice for their journey ahead.</p>
+        </div>
+        
+        <form id="guestbookForm" class="guestbook-form">
+          <label for="guestName">Your Name:</label>
+          <input type="text" id="guestName" name="name" required placeholder="Enter your name">
+          
+          <label for="guestMessage">Your Message:</label>
+          <textarea id="guestMessage" name="message" required placeholder="Write your message here..."></textarea>
+          
+          <label for="guestBackground">Choose a Background:</label>
+          <div class="background-options">
+            <div class="background-option" data-background="default">
+              <div class="bg-preview bg-default"></div>
+              <span>Default</span>
+            </div>
+            <div class="background-option" data-background="floral">
+              <div class="bg-preview bg-floral"></div>
+              <span>Floral</span>
+            </div>
+            <div class="background-option" data-background="hearts">
+              <div class="bg-preview bg-hearts"></div>
+              <span>Hearts</span>
+            </div>
+            <div class="background-option" data-background="confetti">
+              <div class="bg-preview bg-confetti"></div>
+              <span>Confetti</span>
+            </div>
+            <div class="background-option" data-background="elegant">
+              <div class="bg-preview bg-elegant"></div>
+              <span>Elegant</span>
+            </div>
+          </div>
+          <input type="hidden" id="selectedBackground" name="background" value="default">
+          
+          <button type="submit">Submit Message</button>
+          <div id="guestbookStatus"></div>
+        </form>
+        
+        <div class="guestbook-messages">
+          <h3>Messages from Loved Ones</h3>
+          <div id="entriesContainer" class="entries-container">
+            <!-- Entries will be loaded here -->
+            <div class="guestbook-loading">Loading messages...</div>
+          </div>
+          <div id="entriesLoading" class="loading-spinner hidden">
+            Loading more messages...
+          </div>
         </div>
       </div>
 
@@ -833,6 +892,9 @@
             setTimeout(() => loadSharedPhotos(), 100);
           } else if (sectionId === 'invite-image' && !invitationPlayer) {
             setTimeout(() => initializeYouTubePlayer(), 500);
+          } else if (sectionId === 'guestbook') {
+            // Load guestbook entries when the guestbook section is shown
+            setTimeout(() => loadGuestbookEntries(false), 100);
           }
 
           gtag('event', 'view_section', {
@@ -1622,7 +1684,100 @@
         }
       }
 
-      // Lightbox functionality for shared photos
+      // Guestbook functionality - make the function globally accessible
+      let guestbookCurrentPage = 1;
+      let guestbookLoading = false;
+      let guestbookAllDataLoaded = false;
+      
+      // Function to load guestbook entries - moved outside DOMContentLoaded
+      async function loadGuestbookEntries(append = false) {
+        if (guestbookLoading || (append && guestbookAllDataLoaded)) return;
+        
+        guestbookLoading = true;
+        const entriesContainer = document.getElementById('entriesContainer');
+        const loadingIndicator = document.getElementById('entriesLoading');
+        
+        if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+        
+        try {
+          const response = await fetch(`/api/guestbook?page=${guestbookCurrentPage}`);
+          if (!response.ok) throw new Error('Failed to load guestbook entries');
+          
+          const data = await response.json();
+          
+          if (!append) {
+            entriesContainer.innerHTML = '';
+          }
+          
+          if (data.length > 0) {
+            // Create HTML for each entry
+            data.forEach(entry => {
+             
+             
+             
+             
+              const date = new Date(entry.createdAt);
+              const formattedDate = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              });
+              
+              // Add the background class based on the entry's background property
+              const backgroundClass = entry.background ? `bg-${entry.background}` : 'bg-default';
+              
+              const entryHTML = `
+                <div class="guestbook-entry ${backgroundClass}">
+                  <div class="entry-background"></div>
+                  <div class="guestbook-entry-content-box">
+                    <div class="guestbook-entry-name">${entry.name}</div>
+                    <div class="guestbook-entry-message">${entry.message}</div>
+                  </div>
+                </div>
+              `;
+              
+              entriesContainer.innerHTML += entryHTML;
+            });
+            
+            // Add load more button if entries were returned
+            if (data.length === 10) {  // Assuming 10 is the page size
+              if (!document.getElementById('loadMoreGuestbook')) {
+                const loadMoreBtn = document.createElement('button');
+                loadMoreBtn.id = 'loadMoreGuestbook';
+                loadMoreBtn.className = 'guestbook-load-more';
+                loadMoreBtn.textContent = 'Load More Messages';
+                loadMoreBtn.addEventListener('click', () => {
+                  guestbookCurrentPage++;
+                  loadGuestbookEntries(true);
+                });
+                
+                // Add the button after the entries container
+                entriesContainer.parentNode.insertBefore(loadMoreBtn, loadingIndicator);
+              }
+            } else {
+              guestbookAllDataLoaded = true;
+              // Remove load more button if it exists
+              const loadMoreBtn = document.getElementById('loadMoreGuestbook');
+              if (loadMoreBtn) loadMoreBtn.remove();
+            }
+          } else {
+            // No entries
+            if (!append) {
+              entriesContainer.innerHTML = '<div class="no-entries-message">No messages yet. Be the first to sign the guestbook!</div>';
+            }
+            guestbookAllDataLoaded = true;
+          }
+        } catch (error) {
+          console.error('Error loading guestbook entries:', error);
+          if (!append) {
+            entriesContainer.innerHTML = '<div class="error">Failed to load guestbook entries. Please try again later.</div>';
+          }
+        } finally {
+          guestbookLoading = false;
+          if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        }
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
         const lightbox = document.getElementById('photoLightbox');
         const lightboxImg = document.getElementById('lightboxImage');
@@ -1666,6 +1821,73 @@
             lightbox.classList.remove('active');
           }
         });
+        
+        // Handle guestbook form submission
+        const guestbookForm = document.getElementById('guestbookForm');
+        if (guestbookForm) {
+          guestbookForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('guestName');
+            const messageInput = document.getElementById('guestMessage');
+            const statusDiv = document.getElementById('guestbookStatus');
+            const backgroundInput = document.getElementById('selectedBackground');
+            
+            // Basic validation
+            if (!nameInput.value.trim() || !messageInput.value.trim()) {
+              statusDiv.textContent = 'Please fill in all fields';
+              statusDiv.className = 'error';
+              return;
+            }
+            
+            try {
+              statusDiv.textContent = 'Submitting...';
+              statusDiv.className = '';
+              
+              const response = await fetch('/api/guestbook', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  name: nameInput.value.trim(),
+                  message: messageInput.value.trim(),
+                  background: backgroundInput.value // Send the selected background
+                })
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                statusDiv.textContent = 'Thank you for signing our guestbook!';
+                statusDiv.className = 'success';
+                
+                // Clear form
+                nameInput.value = '';
+                messageInput.value = '';
+                backgroundInput.value = 'default'; // Reset to default background
+                
+                // Make the success message disappear after 3 seconds
+                setTimeout(() => {
+                  statusDiv.textContent = '';
+                  statusDiv.className = '';
+                }, 3000);
+                
+                // Reload entries to show the new one
+                guestbookCurrentPage = 1;
+                guestbookAllDataLoaded = false;
+                loadGuestbookEntries(false);
+              } else {
+                statusDiv.textContent = result.message || 'Failed to submit message';
+                statusDiv.className = 'error';
+              }
+            } catch (error) {
+              console.error('Error submitting guestbook message:', error);
+              statusDiv.textContent = 'Failed to submit message. Please try again later.';
+              statusDiv.className = 'error';
+            }
+          });
+        }
       });
 
       // Add to Calendar functionality
@@ -1751,7 +1973,39 @@
           });
         });
         
-        // ...existing code...
+        // Handle background selection
+        // Set up background selection
+        const backgroundOptions = document.querySelectorAll('.background-option');
+        const selectedBackgroundInput = document.getElementById('selectedBackground');
+        
+        // Initialize with default as active
+        document.querySelector('.background-option[data-background="default"]').classList.add('active');
+        
+        // Add click handler for each background option
+        backgroundOptions.forEach(option => {
+          option.addEventListener('click', function() {
+            // Remove active class from all options
+            backgroundOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to clicked option
+            this.classList.add('active');
+            
+            // Get selected background
+            const background = this.getAttribute('data-background');
+            
+            // Update hidden input value
+            selectedBackgroundInput.value = background;
+            
+            // Update form background to preview the selection
+            const guestbookForm = document.getElementById('guestbookForm');
+            
+            // First remove all background classes
+            guestbookForm.classList.remove('bg-default', 'bg-floral', 'bg-hearts', 'bg-confetti', 'bg-elegant');
+            
+            // Add the selected background class
+            guestbookForm.classList.add('bg-' + background);
+          });
+        });
       });
     </script>
     <!-- Initialize Eruda (conditionally) -->
