@@ -1813,3 +1813,104 @@ form button {
     transform: translateY(5px);
   }
 }
+
+/* Transportation Information Styles */
+.transportation-info {
+  margin: 2rem 0;
+  padding: 20px;
+  border: 2px solid #617939;
+  border-radius: 8px;
+  background-color: #fff7e1;
+  max-width: 100%;
+  text-align: left;
+}
+
+.transportation-info h3 {
+  color: #617939;
+  font-family: 'Gilda Display', serif;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.8em;
+}
+
+.transport-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed rgba(97, 121, 57, 0.3);
+}
+
+.transport-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.transport-section h4 {
+  color: #4285f4;
+  font-family: 'Gilda Display', serif;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.transport-icon {
+  margin-right: 10px;
+  font-size: 1.3em;
+}
+
+.transportation-info ul {
+  list-style-type: none;
+  padding-left: 15px;
+}
+
+.transportation-info li {
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 20px;
+  color: #555;
+}
+
+.transportation-info li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #617939;
+  font-weight: bold;
+}
+
+.transportation-info strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.transport-note {
+  margin-top: 1.5rem;
+  padding: 10px 15px;
+  background-color: rgba(97, 121, 57, 0.1);
+  border-radius: 6px;
+  font-style: italic;
+}
+
+.transport-note p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+@media screen and (max-width: 768px) {
+  .transportation-info {
+    padding: 15px;
+  }
+  
+  .transportation-info h3 {
+    font-size: 1.5em;
+  }
+  
+  .transport-section h4 {
+    font-size: 1.1em;
+  }
+  
+  .transportation-info li {
+    font-size: 0.9em;
+  }
+}
