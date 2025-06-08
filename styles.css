@@ -1815,6 +1815,7 @@ form button {
 }
 
 /* Transportation Information Styles */
+<<<<<<< Updated upstream
 .transportation-info {
   margin: 2rem 0;
   padding: 20px;
@@ -1912,5 +1913,37 @@ form button {
   
   .transportation-info li {
     font-size: 0.9em;
+=======
+.location-details-map-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.location-details-map-wrapper .location-details {
+  flex: 1;
+  min-width: 300px;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.location-details-map-wrapper .map-container {
+  flex: 2;
+  min-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .location-details-map-wrapper {
+    flex-direction: column;
+  }
+  
+  .location-details-map-wrapper .location-details {
+    max-width: 100%;
+>>>>>>> Stashed changes
   }
 }
