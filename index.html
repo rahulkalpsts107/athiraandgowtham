@@ -305,16 +305,23 @@
 
       <div id="rsvp" class="section hidden">
         <h2>RSVP</h2>
+        <div class="rsvp-intro">
+          <p>Please let us know if you'll be joining us on our special day!</p>
+        </div>
+        
         <form id="rsvpForm" class="rsvp-form">
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name" required />
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required />
+          <label for="name">Your Name:</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your full name" />
+          
+          <label for="email">Your Email:</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email address" />
+          
           <label for="attending" id="attending-label">Will you attend the soirée?</label>
           <select id="attending" name="attending">
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
+          
           <button type="submit">Submit RSVP</button>
           <div id="rsvpStatus"></div>
         </form>
@@ -1710,7 +1717,7 @@
           }
           
           if (data.length > 0) {
-            // Create HTML for each entry
+                       // Create HTML for each entry
             data.forEach(entry => {
              
              

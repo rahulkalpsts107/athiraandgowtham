@@ -122,6 +122,9 @@ section {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 #countdown {
@@ -850,6 +853,37 @@ form button {
 
 .loading-spinner.hidden {
   display: none;
+}
+
+.rsvp-form {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  padding: 25px;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rsvp-intro {
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Abhaya Libre', serif;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rsvp-form label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  text-align: left;
+  font-family: 'Abhaya Libre', serif;
+  color: black;
+  background-color: rgba(250, 249, 249, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
 }
 
 .rsvp-form button {
