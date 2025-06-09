@@ -737,6 +737,40 @@ app.post('/api/guestbook', async (req, res) => {
     // Save to database
     await entry.save();
     
+    // Send email notification if notification emails are configured
+    if (process.env.GUESTBOOK_NOTIFICATION_EMAILS) {
+      try {
+        const notificationEmails = process.env.GUESTBOOK_NOTIFICATION_EMAILS.split(',').map(email => email.trim());
+        
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: notificationEmails,
+          subject: `New Wedding Book Entry from ${name}`,
+          html: `
+            <h2>New Wedding Book Message</h2>
+            <p><strong>From:</strong> ${name}</p>
+            <p><strong>Background Style:</strong> ${background || 'default'}</p>
+            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>Message:</strong></p>
+            <div style="padding: 15px; border-left: 4px solid #617939; background-color: #f9f9f9; margin: 10px 0;">
+              ${message}
+            </div>
+            <p>View all messages in your <a href="https://athiraandgowtham.onrender.com/guestbook">Wedding Book</a>.</p>
+          `
+        };
+        
+        await transporter.sendMail(mailOptions);
+        log('success', 'Guestbook notification email sent', { recipients: notificationEmails });
+      } catch (emailError) {
+        log('error', 'Failed to send guestbook notification email', { 
+          error: emailError.message,
+          name,
+          recipients: process.env.GUESTBOOK_NOTIFICATION_EMAILS 
+        });
+        // Don't return error to client, just log it since the entry was saved successfully
+      }
+    }
+    
     log('success', 'Guestbook entry saved successfully', { name, background });
     res.json({ success: true, message: 'Thank you for your message!' });
   } catch (error) {
