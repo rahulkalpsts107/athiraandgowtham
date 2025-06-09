@@ -1918,13 +1918,13 @@ form button {
 }
 
 #guestbookStatus.success {
-  background-color: rgba(75, 181, 67, 0.1);
-  color: #4bb543;
+  background-color: rgba(75, 181, 67, 0.8);
+  color: white;
 }
 
 #guestbookStatus.error {
-  background-color: rgba(255, 76, 76, 0.1);
-  color: #ff4c4c;
+  background-color: rgba(255, 76, 76, 0.8);
+  color: white;
 }
 
 .guestbook-messages {
