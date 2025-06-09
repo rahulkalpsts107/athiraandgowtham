@@ -393,7 +393,7 @@ app.get('/get-shared-photos', async (req, res) => {
 // Route for the home page
 app.get('/', (req, res) => {
   // Set the proper meta image based on ENV_TYPE
-  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453775/PHOTO-2025-06-09-12-39-29_tsdo1p.jpg'; // Default image
+  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749462046/Athira_wedding_Soiree_invite_kt5enk.png'; // Default image
   let metaTitle = "Athira & Gowtham's Wedding Invitation";
   let metaUrl = "https://athiraandgowtham.onrender.com/"; // Default URL
   
