@@ -1868,10 +1868,16 @@ form button {
 }
 
 .guestbook-form label {
-  display: block;
   margin-bottom: 8px;
   font-weight: 500;
   text-align: left;
+  font-family: 'Abhaya Libre', serif;
+  color: black;
+  background-color: rgba(250, 249, 249, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
 }
 
 .guestbook-form input,
