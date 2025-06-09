@@ -857,6 +857,24 @@
         if (spinner) {
           observer.observe(spinner);
         }
+        
+        // Auto-click hamburger menu after 30 seconds if it hasn't been clicked yet
+        setTimeout(function() {
+          const hamburger = document.querySelector('.hamburger-menu');
+          const navMenu = document.querySelector('.nav-menu');
+          
+          // Only trigger if menu isn't already active
+          if (!navMenu.classList.contains('active')) {
+            hamburger.classList.add('active');
+            navMenu.classList.add('active');
+            
+            // Auto-close after 5 seconds
+            setTimeout(function() {
+              hamburger.classList.remove('active');
+              navMenu.classList.remove('active');
+            }, 5000);
+          }
+        }, 30000);
       });
       
       // Moved showSection outside DOMContentLoaded to make it globally accessible
