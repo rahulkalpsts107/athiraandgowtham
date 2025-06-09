@@ -246,24 +246,72 @@ app.use((req, res, next) => {
   next();
 });
 
+// RSVP schema and model
+const rsvpSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  attending: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const RSVP = mongoose.model('RSVP', rsvpSchema);
+
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
   const { name, email, attending } = req.body;
   log('info', 'RSVP submission received', { name, email, attending });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.RECIPIENT_EMAIL,
-    subject: 'New RSVP Submission',
-    text: `New RSVP from ${name}\nEmail: ${email}\nAttending Sangeet: ${attending}`,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    log('success', 'RSVP email sent successfully', { name, email });
+    // Save RSVP to MongoDB
+    const rsvp = new RSVP({
+      name,
+      email,
+      attending
+    });
+    
+    await rsvp.save();
+    log('success', 'RSVP saved to database', { name, email });
+
+    // Get recipient emails (handle comma-separated list)
+    const recipientEmails = process.env.RECIPIENT_EMAIL
+      ? process.env.RECIPIENT_EMAIL.split(',')
+          .map(email => email.trim())
+          .filter(email => email.includes('@')) // Ensure each email has @ symbol
+      : [];
+      
+    if (recipientEmails.length === 0) {
+      log('warning', 'No valid recipient emails defined for RSVP notifications', { name, email });
+    }
+
+    // Send email notification only if recipients are defined
+    if (recipientEmails.length > 0) {
+      // Determine which website version this is coming from
+      let websiteIdentifier = "Athira weds Gowtham";
+      if (process.env.ENV_TYPE === '2') {
+        websiteIdentifier = "Gowtham weds Athira";
+      }
+      
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: recipientEmails,
+        subject: `New RSVP Submission from ${websiteIdentifier}`,
+        text: `New RSVP from ${name}\nEmail: ${email}\nAttending: ${attending}\nFrom website: ${websiteIdentifier}`,
+        html: `
+          <h3>New RSVP Submission</h3>
+          <p><strong>From Website:</strong> ${websiteIdentifier}</p>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Attending:</strong> ${attending}</p>
+        `,
+      };
+      log('info', 'mail option', mailOptions);
+      await transporter.sendMail(mailOptions);
+      log('success', 'RSVP email sent successfully', { name, email, website: websiteIdentifier, recipients: recipientEmails });
+    }
+    
     res.json({ success: true, message: 'RSVP sent successfully!' });
   } catch (error) {
-    log('error', 'Failed to send RSVP email', {
+    log('error', 'Failed to process RSVP', {
       error: error.message,
       name,
       email,
