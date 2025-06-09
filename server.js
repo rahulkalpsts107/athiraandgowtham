@@ -393,16 +393,16 @@ app.get('/get-shared-photos', async (req, res) => {
 // Route for the home page
 app.get('/', (req, res) => {
   // Set the proper meta image based on ENV_TYPE
-  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749017407/PHOTO-2025-06-04-11-34-28_wrfsik.jpg'; // Default image
+  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453775/PHOTO-2025-06-09-12-39-29_tsdo1p.jpg'; // Default image
   let metaTitle = "Athira & Gowtham's Wedding Invitation";
   let metaUrl = "https://athiraandgowtham.onrender.com/"; // Default URL
   
   // ENV_TYPE specific customizations
   if (process.env.ENV_TYPE === '1') {
-    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052619/PHOTO-2025-06-04-21-02-34_zjg7f1.jpg';
+    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453776/PHOTO-2025-06-09-12-39-59_jkzc32.jpg';
     metaUrl = "https://athirawedsgowthan.onrender.com/";
   } else if (process.env.ENV_TYPE === '2') {
-    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749052620/PHOTO-2025-06-04-21-23-18_gco7lr.jpg';
+    metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453775/PHOTO-2025-06-09-12-24-43_irrx0v.jpg';
     metaTitle = "Gowtham and Athira's Wedding Invitation";
     metaUrl = "https://gowthamwedsathira.onrender.com/";
   } else if (process.env.ENV_TYPE === '3') {
