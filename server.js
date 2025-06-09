@@ -740,6 +740,17 @@ app.post('/api/guestbook', async (req, res) => {
     // Send email notification if notification emails are configured
     if (process.env.GUESTBOOK_NOTIFICATION_EMAILS) {
       try {
+        // Get the correct website URL based on ENV_TYPE
+        let websiteUrl = "https://athiraandgowtham.onrender.com";
+        
+        if (process.env.ENV_TYPE === '1') {
+          websiteUrl = "https://athirawedsgowthan.onrender.com";
+        } else if (process.env.ENV_TYPE === '2') {
+          websiteUrl = "https://gowthamwedsathira.onrender.com";
+        } else if (process.env.ENV_TYPE === '3') {
+          websiteUrl = "https://athiraandgowtham-wedding-invite.onrender.com";
+        }
+        
         const notificationEmails = process.env.GUESTBOOK_NOTIFICATION_EMAILS.split(',').map(email => email.trim());
         
         const mailOptions = {
@@ -755,12 +766,15 @@ app.post('/api/guestbook', async (req, res) => {
             <div style="padding: 15px; border-left: 4px solid #617939; background-color: #f9f9f9; margin: 10px 0;">
               ${message}
             </div>
-            <p>View all messages in your <a href="https://athiraandgowtham.onrender.com/guestbook">Wedding Book</a>.</p>
+            <p>View all messages in your <a href="${websiteUrl}?section=guestbook">Wedding Book</a>.</p>
           `
         };
         
         await transporter.sendMail(mailOptions);
-        log('success', 'Guestbook notification email sent', { recipients: notificationEmails });
+        log('success', 'Guestbook notification email sent', { 
+          recipients: notificationEmails,
+          websiteUrl: websiteUrl 
+        });
       } catch (emailError) {
         log('error', 'Failed to send guestbook notification email', { 
           error: emailError.message,
