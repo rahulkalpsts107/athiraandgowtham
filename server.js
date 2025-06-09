@@ -430,9 +430,14 @@ app.post('/submit-contact', async (req, res) => {
   log('info', 'Contact form submission received', { name, email });
 
   try {
+    // Get recipients from environment variable instead of hardcoding
+    const recipientEmails = process.env.CONTACT_FORM_RECIPIENTS 
+      ? process.env.CONTACT_FORM_RECIPIENTS.split(',').map(email => email.trim())
+      : [process.env.RECIPIENT_EMAIL]; // Fallback to RECIPIENT_EMAIL if CONTACT_FORM_RECIPIENTS is not set
+    
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: ['rahulkalpsts107@gmail.com', 'aparnarevi.nair@gmail.com'],
+      to: recipientEmails,
       subject: `Wedding Website Contact Form - Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       html: `
@@ -444,7 +449,7 @@ app.post('/submit-contact', async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    log('success', 'Contact email sent successfully', { name, email });
+    log('success', 'Contact email sent successfully', { name, email, recipients: recipientEmails });
     res.json({ success: true });
   } catch (error) {
     log('error', 'Failed to send contact form email', {
