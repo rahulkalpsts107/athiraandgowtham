@@ -441,9 +441,9 @@ app.get('/get-shared-photos', async (req, res) => {
 // Route for the home page
 app.get('/', (req, res) => {
   // Set the proper meta image based on ENV_TYPE
-  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749462046/Athira_wedding_Soiree_invite_kt5enk.png'; // Default image
+  let metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749536248/IMG_6491_jtve5z.jpg'; // Default image
   let metaTitle = "Athira & Gowtham's Wedding Invitation";
-  let metaUrl = "https://res.cloudinary.com/dl4p1qeva/image/upload/v1749462046/Athira_wedding_Soiree_invite_kt5enk.png"; // Default URL
+  let metaUrl = "https://res.cloudinary.com/dl4p1qeva/image/upload/v1749536248/IMG_6491_jtve5z.jpg"; // Default URL
   
   // ENV_TYPE specific customizations
   if (process.env.ENV_TYPE === '1') {
