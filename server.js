@@ -10,6 +10,40 @@ const { ProfilingIntegration } = require('@sentry/profiling-node');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cors = require('cors');
 const mongoose = require('mongoose'); // Add mongoose for MongoDB
+const ua = require('universal-analytics'); // Add Google Analytics tracking
+
+// Initialize Google Analytics visitor based on ENV_TYPE
+let visitor = null;
+if (process.env.GOOGLE_ANALYTICS_ID) {
+  visitor = ua(process.env.GOOGLE_ANALYTICS_ID);
+  console.log('Google Analytics initialized with ID:', process.env.GOOGLE_ANALYTICS_ID);
+}
+
+// Function to track events to Google Analytics
+function trackGAEvent(category, action, label = '', value = 0, customDimensions = {}) {
+  if (!visitor) return;
+  
+  try {
+    const eventData = {
+      ec: category,        // Event Category
+      ea: action,          // Event Action
+      el: label,           // Event Label
+      ev: value,           // Event Value
+      cd1: process.env.ENV_TYPE || '0',  // Custom Dimension 1: ENV_TYPE
+      ...customDimensions  // Any additional custom dimensions
+    };
+    
+    visitor.event(eventData).send((err) => {
+      if (err) {
+        console.error('GA tracking error:', err);
+      } else {
+        console.log(`GA Event tracked: ${category}/${action} (ENV_TYPE: ${process.env.ENV_TYPE})`);
+      }
+    });
+  } catch (error) {
+    console.error('GA tracking exception:', error);
+  }
+}
 
 // Enhanced Logger function with batched LogTail sending
 const logBatchSize = 10;
@@ -212,7 +246,7 @@ app.use(Sentry.Handlers.requestHandler());
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
 
-// Log all requests
+// Log all requests and track in Google Analytics
 app.use((req, res, next) => {
   // Format request parameters in a Better Stack friendly way
   const params = {
@@ -242,6 +276,42 @@ app.use((req, res, next) => {
       timestamp: new Date().toISOString(),
     }
   );
+
+  // Track request in Google Analytics based on ENV_TYPE
+  const envType = process.env.ENV_TYPE || '0';
+  const envTypeLabels = {
+    '0': 'AthiraAndGowtham_Soiree_Wedding_Invitation_Site',
+    '1': 'AthiraWedsGowtham_Wedding_Site', 
+    '2': 'GowthamWedsAthira_Site',
+    '3': 'Chitta_Wedding_Invite_Site'
+  };
+  
+  const envLabel = envTypeLabels[envType] || 'Unknown_Site';
+  
+  // Track different types of requests
+  if (req.path === '/') {
+    trackGAEvent('Site_Visit', 'Homepage_Load', envLabel, 1);
+  } else if (req.path === '/submit-rsvp') {
+    trackGAEvent('Form_Submission', 'RSVP_Submit', envLabel, 1);
+  } else if (req.path === '/upload-photo') {
+    trackGAEvent('Photo_Upload', 'Shared_Photo_Upload', envLabel, 1);
+  } else if (req.path === '/submit-contact') {
+    trackGAEvent('Form_Submission', 'Contact_Form_Submit', envLabel, 1);
+  } else if (req.path === '/get-shared-photos') {
+    trackGAEvent('Content_Load', 'Shared_Photos_Load', envLabel, 1);
+  } else if (req.path === '/our-photos') {
+    trackGAEvent('Content_Load', 'Our_Photos_Load', envLabel, 1);
+  } else if (req.path === '/api/guestbook' && req.method === 'POST') {
+    trackGAEvent('Form_Submission', 'Guestbook_Submit', envLabel, 1);
+  } else if (req.path === '/api/guestbook' && req.method === 'GET') {
+    trackGAEvent('Content_Load', 'Guestbook_Load', envLabel, 1);
+  } else if (req.path === '/wedding-invitation-endpoint') {
+    trackGAEvent('File_Download', 'Calendar_Download', envLabel, 1);
+  } else if (req.path.startsWith('/api/')) {
+    trackGAEvent('API_Request', req.method + '_' + req.path.replace('/api/', ''), envLabel, 1);
+  } else {
+    trackGAEvent('Site_Request', req.method + '_Request', `${envLabel}_${req.path}`, 1);
+  }
 
   next();
 });
