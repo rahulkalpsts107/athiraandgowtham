@@ -2007,6 +2007,20 @@ form button {
   color: #444;
   line-height: 1.6;
   font-style: italic;
+  background: rgba(255, 255, 255, 0.9) !important;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.guestbook-entry-message::before {
+  content: '"';
+  font-size: 3rem;
+  color: rgba(0,0,0,0.1);
+  position: absolute;
+  top: -10px;
+  left: 15px;
 }
 
 /* Background selection styles */

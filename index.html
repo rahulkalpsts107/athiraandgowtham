@@ -408,9 +408,6 @@
           <h3>📷 Photos Shared by Guests</h3>
           <div class="shared-photos-grid"></div>
         </div>
-        <div id="loading-spinner" class="loading-spinner hidden">
-          Loading more photos...
-        </div>
       </div>
 
       <div id="guestbook" class="section hidden">
@@ -460,9 +457,6 @@
           <div id="entriesContainer" class="entries-container">
             <!-- Entries will be loaded here -->
             <div class="guestbook-loading">Loading messages...</div>
-          </div>
-          <div id="entriesLoading" class="loading-spinner hidden">
-            Loading more messages...
           </div>
         </div>
       </div>
@@ -1803,6 +1797,90 @@
         }
       }
 
+      // Function to load all guestbook entries at once
+      async function loadGuestbookEntries() {
+        if (guestbookLoading) return;
+        
+        guestbookLoading = true;
+        const entriesContainer = document.getElementById('entriesContainer');
+        
+        // Show loading message
+        entriesContainer.innerHTML = '<div class="guestbook-loading">Loading messages...</div>';
+        
+        try {
+          const response = await fetch('/api/guestbook');
+          if (!response.ok) throw new Error('Failed to load guestbook entries');
+          
+          const entries = await response.json();
+          
+          // Clear container
+          entriesContainer.innerHTML = '';
+          
+          if (entries.length > 0) {
+            // Create masonry grid container
+            const masonryGrid = document.createElement('div');
+            masonryGrid.className = 'masonry-grid';
+            
+            function formatDate(dateString) {
+              const date = new Date(dateString);
+              return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+            }
+            
+            // Create scrapbook cards for each entry
+            entries.forEach((entry, index) => {
+              const card = document.createElement('div');
+              card.className = 'guestbook-entry';
+              card.style.animationDelay = (index * 0.1) + 's';
+              
+              const rotation = (Math.random() - 0.5) * 4; // Random rotation between -2 and 2 degrees
+              card.style.setProperty('--rotation', rotation + 'deg');
+              
+              // Use the actual background from the database entry
+              const bgClass = entry.background ? `bg-${entry.background}` : 'bg-default';
+              card.classList.add(bgClass);
+              
+              const hasTape = Math.random() > 0.5; // 50% chance for tape decoration
+              
+              card.innerHTML = `
+                ${hasTape ? '<div class="tape tape-top-left"></div>' : ''}
+                ${hasTape && Math.random() > 0.5 ? '<div class="tape tape-top-right"></div>' : ''}
+                <div class="guestbook-entry-name">${entry.name}</div>
+                <div class="guestbook-entry-message">${entry.message}</div>
+                <div class="guestbook-entry-date">${formatDate(entry.createdAt)}</div>
+              `;
+              
+              masonryGrid.appendChild(card);
+            });
+            
+            entriesContainer.appendChild(masonryGrid);
+            
+            // Add click handlers for cards
+            document.querySelectorAll('.guestbook-entry').forEach(card => {
+              card.addEventListener('click', () => {
+                // Add a gentle bounce effect
+                card.style.animation = 'none';
+                card.offsetHeight; // Trigger reflow
+                card.style.animation = 'fadeInUp 0.5s ease-out forwards';
+              });
+            });
+            
+          } else {
+            entriesContainer.innerHTML = '<div class="no-entries-message">No messages yet. Be the first to sign our guestbook!</div>';
+          }
+        } catch (error) {
+          console.error('Error loading guestbook entries:', error);
+          entriesContainer.innerHTML = '<div class="error">Failed to load guestbook entries. Please try again later.</div>';
+        } finally {
+          guestbookLoading = false;
+        }
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
         const lightbox = document.getElementById('photoLightbox');
         const lightboxImg = document.getElementById('lightboxImage');
@@ -2039,5 +2117,214 @@
         eruda.init();
       }
     </script>
+
+    <style>
+        /* Guestbook scrapbook styling */
+        .entries-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px 0;
+        }
+
+        .masonry-grid {
+          column-count: 3;
+          column-gap: 20px;
+          column-fill: balance;
+        }
+
+        @media (max-width: 768px) {
+          .masonry-grid {
+            column-count: 2;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .masonry-grid {
+            column-count: 1;
+          }
+        }
+
+        .guestbook-entry {
+          break-inside: avoid;
+          margin-bottom: 20px;
+          opacity: 0;
+          transform: translateY(30px) rotate(-2deg);
+          animation: fadeInUp 0.8s ease-out forwards;
+          position: relative;
+          padding: 25px;
+          border-radius: 15px;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .guestbook-entry:nth-child(even) {
+          transform: translateY(30px) rotate(1deg);
+        }
+
+        .guestbook-entry:nth-child(3n) {
+          transform: translateY(30px) rotate(-1deg);
+        }
+
+        @keyframes fadeInUp {
+          to {
+            opacity: 1;
+            transform: translateY(0) rotate(var(--rotation, 0deg));
+          }
+        }
+
+        .guestbook-entry:hover {
+          transform: scale(1.05) rotate(0deg) !important;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+          z-index: 10;
+        }
+
+        /* Background styles for guestbook entries */
+        .guestbook-entry.bg-default {
+          background: linear-gradient(135deg, #E6F3FF, #F0F8FF);
+          border-color: #617939;
+        }
+
+        .guestbook-entry.bg-floral {
+          background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405157/europeana-LfCD_R84AwY-unsplash_hjffip.jpg');
+          background-size: cover;
+          background-position: center;
+          border-color: #617939;
+        }
+
+        .guestbook-entry.bg-hearts {
+          background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405155/freestocks-r_oV6smBBYk-unsplash_jy8r5y.jpg');
+          background-size: cover;
+          background-position: center;
+          border-color: #8fbc8f;
+        }
+
+        .guestbook-entry.bg-confetti {
+          background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749405154/seyedeh-hamideh-kazemi-H67AHfpKhZk-unsplash_b5ldfx.jpg');
+          background-size: cover;
+          background-position: center;
+          border-color: #DAA520;
+        }
+
+        .guestbook-entry.bg-elegant {
+          background-image: url('https://res.cloudinary.com/dl4p1qeva/image/upload/v1749447451/art-institute-of-chicago-QHOXUYAvjM8-unsplash_nhqa7f.jpg');
+          background-size: cover;
+          background-position: center;
+          border-color: #B8860B;
+        }
+
+        /* Add overlay for better text readability */
+        .guestbook-entry.bg-floral::before,
+        .guestbook-entry.bg-hearts::before,
+        .guestbook-entry.bg-confetti::before,
+        .guestbook-entry.bg-elegant::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.25);
+          border-radius: 15px;
+          z-index: 1;
+        }
+
+        .guestbook-entry-name,
+        .guestbook-entry-message,
+        .guestbook-entry-date {
+          position: relative;
+          z-index: 2;
+        }
+
+        .guestbook-entry-name {
+          font-size: 1.1rem;
+          font-weight: bold;
+          color: #2c3e50;
+          margin-bottom: 15px;
+          position: relative;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+          background: rgba(255, 255, 255, 0.9);
+          padding: 8px 12px;
+          border-radius: 8px;
+          display: inline-block;
+        }
+
+        .guestbook-entry-name::after {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+          width: 50px;
+          height: 2px;
+          background: linear-gradient(90deg, #617939, #8fbc8f);
+          border-radius: 1px;
+        }
+
+        .guestbook-entry-message {
+          font-size: 1rem;
+          line-height: 1.6;
+          color: #34495e;
+          font-style: italic;
+          position: relative;
+          padding: 15px;
+          background: rgba(255,255,255,0.3);
+          border-radius: 10px;
+          margin-bottom: 15px;
+        }
+
+        .guestbook-entry-message::before {
+          content: '"';
+          font-size: 3rem;
+          color: rgba(0,0,0,0.1);
+          position: absolute;
+          top: -10px;
+          left: 15px;
+        }
+
+        .guestbook-entry-date {
+          font-size: 0.8rem;
+          color: #7f8c8d;
+          text-align: right;
+          font-weight: 500;
+        }
+
+        /* Paper tape decorations */
+        .tape {
+          position: absolute;
+          width: 80px;
+          height: 25px;
+          background: rgba(255,255,255,0.8);
+          border: 1px solid rgba(0,0,0,0.1);
+          transform: rotate(-15deg);
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tape-top-left {
+          top: -10px;
+          left: -15px;
+        }
+
+        .tape-top-right {
+          top: -10px;
+          right: -15px;
+          transform: rotate(15deg);
+        }
+
+        .guestbook-loading {
+          text-align: center;
+          padding: 50px;
+          color: #617939;
+          font-size: 1.2rem;
+        }
+
+        .no-entries-message {
+          text-align: center;
+          padding: 50px;
+          color: #617939;
+          font-size: 1.1rem;
+          opacity: 0.7;
+        }
+    </style>
   </body>
 </html>
