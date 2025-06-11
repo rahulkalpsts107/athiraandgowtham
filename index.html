@@ -155,10 +155,17 @@
           this occasion for a day of love, laughter, and celebration!
         </p>
         <div class="family-photo">
-          <img
-            src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1747922795/family-pic_et4r6x_totjjk.jpg"
-            alt="Family Photo"
-          />
+          <% if (process.env.ENV_TYPE === '2') { %>
+            <img
+              src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749645203/PHOTO-2025-06-11-13-55-04_w0cv1y.jpg"
+              alt="Family Photo"
+            />
+          <% } else { %>
+            <img
+              src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749645203/PHOTO-2025-06-11-13-55-04_w0cv1y.jpg"
+              alt="Family Photo"
+            />
+          <% } %>
         </div>
         <div class="days-to-go">
           <p id="countdown"></p>
@@ -1686,7 +1693,7 @@
               button.classList.add('copied');
               setTimeout(() => {
                 button.textContent = 'Copy';
-                button.classList.remove('copied');
+                               button.classList.remove('copied');
               }, 2000);
             });
         } else {
