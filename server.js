@@ -153,6 +153,40 @@ function log(type, message, data = {}) {
       scheduleLogSending();
     }
   }
+  
+  // Send to New Relic if configured
+  if (process.env.NEW_RELIC_LICENSE_KEY) {
+    try {
+      // Format the log for New Relic Logs API
+      const newRelicLog = {
+        timestamp: timestamp,
+        message: message,
+        log: {
+          level: type
+        },
+        attributes: {
+          ...data,
+          service: 'wedding-invitation-app',
+          environment: process.env.ENV_TYPE || '0'
+        }
+      };
+      
+      // Send to New Relic Log API
+      fetch('https://log-api.newrelic.com/log/v1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Api-Key': process.env.NEW_RELIC_LICENSE_KEY
+        },
+        body: JSON.stringify([newRelicLog]) // New Relic expects an array of log objects
+      })
+      .catch(error => {
+        console.error('Failed to send log to New Relic:', error.message);
+      });
+    } catch (error) {
+      console.error('Error formatting log for New Relic:', error.message);
+    }
+  }
 }
 
 // Make sure logs are sent before app exit
