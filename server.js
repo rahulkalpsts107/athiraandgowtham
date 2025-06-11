@@ -24,20 +24,29 @@ function trackGAEvent(category, action, label = '', value = 0, customDimensions 
   if (!visitor) return;
   
   try {
+    // Capture ENV_TYPE early and log it for debugging
+    const envType = process.env.ENV_TYPE || '0';
+    console.log('ENV_TYPE being tracked:', envType, 'Type:', typeof envType);
+    
     const eventData = {
       ec: category,        // Event Category
       ea: action,          // Event Action
       el: label,           // Event Label
       ev: value,           // Event Value
-      cd1: process.env.ENV_TYPE || '0',  // Custom Dimension 1: ENV_TYPE
+      // Send ENV_TYPE as a custom parameter that GA4 can recognize
+      env_type: envType,   // This matches the parameter name in your GA4 custom dimension
       ...customDimensions  // Any additional custom dimensions
     };
     
+    // Log the complete eventData object for debugging
+    console.log('Complete GA eventData:', JSON.stringify(eventData, null, 2));
+    console.log('📊 Sending to GA4 at:', new Date().toISOString());
+    
     visitor.event(eventData).send((err) => {
       if (err) {
-        console.error('GA tracking error:', err);
+        console.error('❌ GA tracking error:', err);
       } else {
-        console.log(`GA Event tracked: ${category}/${action} (ENV_TYPE: ${process.env.ENV_TYPE})`);
+        console.log(`✅ GA Event tracked: ${category}/${action} (ENV_TYPE: ${envType}) at ${new Date().toLocaleTimeString()}`);
       }
     });
   } catch (error) {
@@ -930,5 +939,14 @@ app.get('/api/guestbook', async (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-  log('info', `Server started`, { port: PORT });
+  // Log startup information including ENV_TYPE for debugging
+  console.log(`Server started on port ${PORT}`);
+  console.log('ENV_TYPE at startup:', process.env.ENV_TYPE || 'undefined');
+  console.log('ENV_TYPE type:', typeof process.env.ENV_TYPE);
+  
+  log('info', `Server started`, { 
+    port: PORT,
+    envType: process.env.ENV_TYPE || 'undefined',
+    envTypeType: typeof process.env.ENV_TYPE
+  });
 });
