@@ -11,6 +11,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cors = require('cors');
 const mongoose = require('mongoose'); // Add mongoose for MongoDB
 const ua = require('universal-analytics'); // Add Google Analytics tracking
+const createRequestMetricsMiddleware = require('./middleware/requestMetrics');
 
 // Initialize Google Analytics visitor based on ENV_TYPE
 let visitor = null;
@@ -254,6 +255,12 @@ app.use(Sentry.Handlers.requestHandler());
 
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
+
+// Create the request metrics middleware with the log function
+const requestMetricsMiddleware = createRequestMetricsMiddleware(log);
+
+// Add the request metrics middleware before other middleware
+app.use(requestMetricsMiddleware);
 
 // Log all requests and track in Google Analytics
 app.use((req, res, next) => {
