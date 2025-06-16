@@ -205,7 +205,7 @@
 
       <div id="story" class="section hidden">
         <div class="story-container">
-          <div class="about-person">
+          <div class="about-person about-athira">
             <img src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749022251/PHOTO-2025-06-04-12-46-31_m58p8m.jpg" alt="Athira Revi" class="person-photo">
             <div class="details">
               <h3>Athira Revi</h3>
@@ -217,7 +217,7 @@
               <p>She cherishes the way he notices the little things, how her eyes light up around puppies, or how much she loves ice skating. Together, they dream of a life filled with joy, shared growth, and a home overflowing with laughter, love, and of course a pack of adorable fur babies. 🐾❤️</p>
             </div>
           </div>
-          <div class="about-person">
+          <div class="about-person about-gowtham">
             <img src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749019779/PHOTO-2025-06-04-12-17-44_ujqj7c.jpg" alt="Gowtham Vijaykumar" class="person-photo">
             <div class="details">
               <h3>Gowtham Vijaykumar</h3>
@@ -1693,7 +1693,7 @@
               button.classList.add('copied');
               setTimeout(() => {
                 button.textContent = 'Copy';
-                               button.classList.remove('copied');
+                button.classList.remove('copied');
               }, 2000);
             });
         } else {
@@ -2124,6 +2124,19 @@
             guestbookForm.classList.add('bg-' + background);
           });
         });
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // Swap Athira and Gowtham order in Our Story if ENV_TYPE=2
+        const envType = "<%- process.env.ENV_TYPE %>";
+        if (envType === '2') {
+          const storyContainer = document.querySelector('#story .story-container');
+          const athiraDiv = storyContainer.querySelector('.about-athira');
+          const gowthamDiv = storyContainer.querySelector('.about-gowtham');
+          if (storyContainer && athiraDiv && gowthamDiv) {
+            storyContainer.insertBefore(gowthamDiv, athiraDiv);
+          }
+        }
       });
     </script>
     <!-- Initialize Eruda (conditionally) -->
