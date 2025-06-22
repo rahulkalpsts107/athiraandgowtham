@@ -2167,3 +2167,49 @@ form button {
   border-bottom: 1px solid rgba(97, 121, 57, 0.2);
   padding-bottom: 8px;
 }
+
+.explore-hint {
+  position: absolute;
+  left: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  color: #617939;
+  font-size: 10px;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 1px;
+  font-weight: 200;
+  opacity: 0;
+  animation: bounceIn 1s ease forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.3);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-50%) scale(1.1);
+  }
+  70% {
+    opacity: 0.9;
+    transform: translateY(-50%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Match hamburger menu heart-beat animation duration */
+.hamburger-menu.heart-beat .explore-hint {
+  animation: bounceIn 1s ease forwards, fadeOut 0.5s ease 29.5s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

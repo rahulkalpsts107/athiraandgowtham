@@ -82,9 +82,20 @@
       <header>
         <div class="top-header">
           <div class="hamburger-menu">
+            <div id="menu-hint" style="
+              position: absolute;
+              left: -5px;
+              top: -5px;
+              width: calc(100% + 10px);
+              height: calc(100% + 10px);
+              pointer-events: none;
+              border-radius: 8px;
+              z-index: -1;
+            "></div>
             <span></span>
             <span></span>
             <span></span>
+            <div id = "explore-hint-id" class="explore-hint">❮ Click to explore!</div>
           </div>
           <div
             class="small-brand"
@@ -812,8 +823,19 @@
         // Handle mobile menu
         hamburger.addEventListener('click', e => {
           e.stopPropagation();
-          hamburger.classList.toggle('active');
           navMenu.classList.toggle('active');
+          
+          // Stop both animations immediately when clicked
+          hamburger.classList.remove('heart-beat');
+          const hint = hamburger.querySelector('.explore-hint');
+          if (hint) {
+            hint.remove();
+          }
+          const menuHint = document.getElementById('menu-hint');
+          if (menuHint) {
+            menuHint.remove();
+          }
+          hamburger.classList.toggle('active');
         });
 
         // Close menu when clicking outside
@@ -2126,7 +2148,7 @@
         });
       });
 
-      document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('DOMContentLoaded', function() {
         // Swap Athira and Gowtham order in Our Story if ENV_TYPE=2
         const envType = "<%- process.env.ENV_TYPE %>";
         if (envType === '2') {
@@ -2139,14 +2161,31 @@
         }
       });
 
-      document.addEventListener('DOMContentLoaded', function () {
-        // Heart-beat animation for hamburger menu on load
+      document.addEventListener('DOMContentLoaded', function() {
         const hamburger = document.querySelector('.hamburger-menu');
         if (hamburger) {
-          hamburger.classList.add('heart-beat');
+          // Remove heart-beat class after 30 seconds
           setTimeout(() => {
             hamburger.classList.remove('heart-beat');
-          }, 30000); // 30 seconds
+            const hint = hamburger.querySelector('.explore-hint');
+            if (hint) {
+              hint.remove();
+            }
+          }, 30000);
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const menuHint = document.getElementById('menu-hint');
+        if (menuHint) {
+          // Show hint
+          menuHint.classList.add('visible');
+          
+          // Remove hint after 30 seconds
+          setTimeout(() => {
+            menuHint.classList.remove('visible');
+            setTimeout(() => menuHint.remove(), 300);
+          }, 30000);
         }
       });
     </script>
@@ -2388,6 +2427,45 @@
           /* ...existing styles... */
           transform-origin: center;
           transition: transform 0.2s;
+        }
+
+        @keyframes menu-hint {
+          0% { box-shadow: 0 0 0 0 rgba(51, 51, 51, 0.2); }
+          40% { box-shadow: 0 0 0 0 rgba(51, 51, 51, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(51, 51, 51, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(51, 51, 51, 0); }
+        }
+
+        #menu-hint {
+          animation: menu-hint 1.8s cubic-bezier(0.5, 0, 0.6, 1) infinite;
+          opacity: 25;
+          transition: opacity 0.2s ease;
+        }
+
+        #menu-hint.visible {
+          opacity: 1;
+        }
+
+        .explore-text {
+          position: absolute;
+          left: 45px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 12px;
+          color: #333;
+          white-space: nowrap;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        #menu-hint.visible .explore-text {
+          opacity: 1;
+          animation: fade-text 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes fade-text {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
         }
     </style>
   </body>
