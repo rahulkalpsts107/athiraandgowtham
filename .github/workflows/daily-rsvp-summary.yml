@@ -29,4 +29,4 @@ jobs:
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
-        run: node sendRsvpSummary.js
+        run: node cron-rsvps-mailer.js
