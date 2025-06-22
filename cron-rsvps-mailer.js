@@ -77,9 +77,6 @@ function buildEmailContent(rsvps) {
   `;
 }
 
-
-
-
 async function sendEmail(subject, body) {
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
@@ -89,9 +86,15 @@ async function sendEmail(subject, body) {
     },
   });
 
+  // Split RECIPIENT_EMAIL by comma, trim spaces, and filter out empty strings
+  const recipientEmails = RECIPIENT_EMAIL
+    .split(',')
+    .map(email => email.trim())
+    .filter(email => email.length > 0);
+
   const mailOptions = {
     from: EMAIL_USER,
-    to: RECIPIENT_EMAIL,
+    to: recipientEmails, // Nodemailer supports array here
     subject,
     html: body
   };
