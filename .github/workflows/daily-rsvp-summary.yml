@@ -1,0 +1,32 @@
+name: Daily RSVP Summary Email
+
+on:
+  schedule:
+    # Runs at 3:30 AM UTC = 9:00 AM IST every day
+    - cron: '30 3 * * *'
+  workflow_dispatch: # Allows manual run from GitHub UI
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run RSVP summary script
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
+        run: node sendRsvpSummary.js
