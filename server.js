@@ -371,6 +371,8 @@ const rsvpSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   attending: { type: String, required: true },
+  numGuests: { type: Number, required: true, min: 1, max: 50 },
+  envType: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -378,19 +380,22 @@ const RSVP = mongoose.model('RSVP', rsvpSchema);
 
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
-  const { name, email, attending } = req.body;
-  log('info', 'RSVP submission received', { name, email, attending });
+  const { name, email, attending, numGuests } = req.body;
+  const envType = process.env.ENV_TYPE || '0';
+  log('info', 'RSVP submission received', { name, email, attending, numGuests, envType });
 
   try {
-    // Save RSVP to MongoDB
+    // Save RSVP to MongoDB with envType
     const rsvp = new RSVP({
       name,
       email,
-      attending
+      attending,
+      numGuests: parseInt(numGuests, 10),
+      envType
     });
     
     await rsvp.save();
-    log('success', 'RSVP saved to database', { name, email });
+    log('success', 'RSVP saved to database', { name, email, numGuests, envType });
 
     // Get recipient emails (handle comma-separated list)
     const recipientEmails = process.env.RECIPIENT_EMAIL
@@ -415,13 +420,14 @@ app.post('/submit-rsvp', async (req, res) => {
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: `New RSVP Submission from ${websiteIdentifier}`,
-        text: `New RSVP from ${name}\nEmail: ${email}\nAttending: ${attending}\nFrom website: ${websiteIdentifier}`,
+        text: `New RSVP from ${name}\nEmail: ${email}\nAttending: ${attending}\nNumber of Guests: ${numGuests}\nFrom website: ${websiteIdentifier}`,
         html: `
           <h3>New RSVP Submission</h3>
           <p><strong>From Website:</strong> ${websiteIdentifier}</p>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Attending:</strong> ${attending}</p>
+          <p><strong>Number of Guests:</strong> ${numGuests}</p>
         `,
       };
       log('info', 'mail option', mailOptions);

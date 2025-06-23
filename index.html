@@ -336,6 +336,10 @@
           <label for="email">Your Email:</label>
           <input type="email" id="email" name="email" required placeholder="Enter your email address" />
           
+          <!-- Add number of guests field -->
+          <label for="numGuests">Number of Guests:</label>
+          <input type="number" id="numGuests" name="numGuests" required min="1" max="50" value="1" />
+          
           <label for="attending" id="attending-label">Will you attend the soirée?</label>
           <select id="attending" name="attending">
             <option value="yes">Yes</option>
@@ -1679,7 +1683,7 @@
 
       // Initialize weather widget
       document.addEventListener('DOMContentLoaded', function () {
-        // Load weather when page loads
+                             // Load weather when page loads
         fetchWeather();
 
         // Refresh weather every 30 minutes
