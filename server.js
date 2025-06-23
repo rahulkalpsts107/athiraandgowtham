@@ -378,6 +378,17 @@ const rsvpSchema = new mongoose.Schema({
 
 const RSVP = mongoose.model('RSVP', rsvpSchema);
 
+// Add Contact schema and model
+const contactSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  message: { type: String, required: true },
+  envType: { type: String, default: '0' },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Contact = mongoose.model('Contact', contactSchema);
+
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
   const { name, email, attending, numGuests } = req.body;
@@ -601,9 +612,22 @@ app.get('/', (req, res) => {
 // Handle contact form submission
 app.post('/submit-contact', async (req, res) => {
   const { name, email, message } = req.body;
+  const envType = process.env.ENV_TYPE || '0';
   log('info', 'Contact form submission received', { name, email });
 
   try {
+    // Create and save new contact entry to database
+    const contact = new Contact({
+      name,
+      email,
+      message,
+      envType
+    });
+    
+    await contact.save();
+    log('success', 'Contact message saved to database', { name, email, envType });
+
+    // Continue with the existing email sending logic
     // Get recipients from environment variable instead of hardcoding
     const recipientEmails = process.env.CONTACT_FORM_RECIPIENTS 
       ? process.env.CONTACT_FORM_RECIPIENTS.split(',').map(email => email.trim())
