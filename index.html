@@ -336,9 +336,22 @@
           <label for="email">Your Email:</label>
           <input type="email" id="email" name="email" required placeholder="Enter your email address" />
           
-          <!-- Add number of guests field -->
+          <!-- Replace number input with select dropdown -->
           <label for="numGuests">Number of Guests:</label>
-          <input type="number" id="numGuests" name="numGuests" required min="1" max="50" value="1" />
+          <select id="numGuests" name="numGuests" required>
+            <!-- Add options from 1 to 50 -->
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                const select = document.getElementById('numGuests');
+                for(let i = 1; i <= 50; i++) {
+                  const option = document.createElement('option');
+                  option.value = i;
+                  option.textContent = i;
+                  select.appendChild(option);
+                }
+              });
+            </script>
+          </select>
           
           <label for="attending" id="attending-label">Will you attend the soirée?</label>
           <select id="attending" name="attending">

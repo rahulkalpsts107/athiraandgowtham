@@ -242,6 +242,26 @@ form button {
   margin: 0.5rem 0;
 }
 
+.rsvp-form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: 'Roboto', sans-serif;
+  background-color: white;
+  appearance: menulist; /* Show dropdown arrow on all platforms */
+  -webkit-appearance: menulist; /* For older WebKit browsers */
+  -moz-appearance: menulist; /* For Firefox */
+  cursor: pointer;
+}
+
+.rsvp-form select:focus {
+  outline: none;
+  border-color: #617939;
+  box-shadow: 0 0 5px rgba(97, 121, 57, 0.3);
+}
+
 .slideshow-container {
   max-width: 1000px;
   position: relative;
