@@ -1379,13 +1379,13 @@
                 '/upload/w_400,f_auto,q_auto/'
               );
               const newPhotoHtml = `
-                        <div class="shared-photo loading">
-                            <img src="${optimizedUrl}" 
-                                alt="Shared photo" 
-                                loading="lazy"
-                                onload="this.parentElement.classList.remove('loading')">
-                        </div>
-                    `;
+                  <div class="shared-photo loading">
+                      <img src="${optimizedUrl}" 
+                          alt="Shared photo" 
+                          loading="lazy"
+                          onload="this.parentElement.classList.remove('loading')">
+                  </div>
+              `;
 
               // Insert at the beginning of the grid
               if (gridContainer.firstChild) {
@@ -1394,11 +1394,19 @@
                 gridContainer.innerHTML = newPhotoHtml;
               }
             } else {
+              // Display moderation failure message with a different style
               statusDiv.textContent = result.message || 'Upload failed';
+              statusDiv.className = 'upload-error';
+              
+              // Clear the error styling after 5 seconds
+              setTimeout(() => {
+                statusDiv.className = '';
+              }, 5000);
             }
           } catch (error) {
             console.error('Error uploading photo:', error);
             statusDiv.textContent = 'Upload failed. Please try again.';
+            statusDiv.className = 'upload-error';
           }
         });
 
@@ -1961,7 +1969,7 @@
               
               // Get high quality image URL - replace small transformations with high quality ones
               let fullUrl = img.src
-                .replace('/upload/w_400,c_scale,f_auto,q_auto/', '/upload/w_1200,c_scale,f_auto,q_auto/')
+                .replace('/upload/w_400,c_scale,f_auto/', '/upload/w_1200,c_scale,f_auto/')
                 .replace('/upload/w_400,f_auto,q_auto/', '/upload/w_1200,f_auto,q_auto/');
               
               console.log('High quality URL:', fullUrl);
