@@ -1969,7 +1969,7 @@
               
               // Get high quality image URL - replace small transformations with high quality ones
               let fullUrl = img.src
-                .replace('/upload/w_400,c_scale,f_auto/', '/upload/w_1200,c_scale,f_auto/')
+                .replace('/upload/w_400,c_scale,f_auto,q_auto/', '/upload/w_1200,c_scale,f_auto,q_auto/')
                 .replace('/upload/w_400,f_auto,q_auto/', '/upload/w_1200,f_auto,q_auto/');
               
               console.log('High quality URL:', fullUrl);
