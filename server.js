@@ -585,11 +585,11 @@ app.get('/', (req, res) => {
   // ENV_TYPE specific customizations
   if (process.env.ENV_TYPE === '1') {
     metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453776/PHOTO-2025-06-09-12-39-59_jkzc32.jpg';
-    metaUrl = "https://athirawedsgowthan.onrender.com/";
+    metaUrl = "https://athirawedsgowtham2025.onrender.com/";
   } else if (process.env.ENV_TYPE === '2') {
     metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749453775/PHOTO-2025-06-09-12-24-43_irrx0v.jpg';
     metaTitle = "Gowtham and Athira's Wedding Invitation";
-    metaUrl = "https://gowthamwedsathira.onrender.com/";
+    metaUrl = "https://gowthamwedsathira2025.onrender.com/";
   } else if (process.env.ENV_TYPE === '3') {
     metaImageUrl = 'https://res.cloudinary.com/dl4p1qeva/image/upload/v1749200000/PHOTO-2025-06-06-13-51-53_a5hlv6.jpg';
     metaTitle = "Athira & Gowtham's Wedding Invitation";
@@ -827,11 +827,11 @@ app.get('/wedding-invitation-endpoint', (req, res) => {
     let eventTitle = "Athira & Gowtham's Wedding";
     
     if (process.env.ENV_TYPE === '1') {
-      websiteUrl = "https://athirawedsgowthan.onrender.com";
+      websiteUrl = "https://athirawedsgowtham2025.onrender.com";
       eventTitle = "Athira & Gowtham's Wedding";
       console.log('Using ENV_TYPE 1 settings for ICS');
     } else if (process.env.ENV_TYPE === '2') {
-      websiteUrl = "https://gowthamwedsathira.onrender.com";
+      websiteUrl = "https://gowthamwedsathira2025.onrender.com";
       eventTitle = "Gowtham & Athira's Wedding";
       console.log('Using ENV_TYPE 2 settings for ICS');
     } else {
