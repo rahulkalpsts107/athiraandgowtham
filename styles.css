@@ -2267,3 +2267,55 @@ form button {
     visibility: hidden;
   }
 }
+
+/* Added wrapper container for invitation section */
+.invitation-section-container {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-top: 50px; /* Add top padding to make room for the button */
+}
+
+/* Print Invitation Button Styles - updated positioning and size */
+.print-invite-btn {
+  position: absolute;
+  right: -10px; /* Move slightly outside the container */
+  top: 10px;
+  background-color: rgba(97, 121, 57, 0.8);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  z-index: 10;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.print-invite-btn:hover {
+  background-color: rgba(97, 121, 57, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.print-icon {
+  margin-right: 3px;
+  font-size: 8px;
+}
+
+/* Mobile styling for print button */
+@media screen and (max-width: 768px) {
+  .invitation-section-container {
+    padding-top: 40px; /* Reduced padding on mobile */
+  }
+  
+  .print-invite-btn {
+    right: 5px; /* Keep to the right but inside the margins on mobile */
+    top: 35px;
+    font-size: 8px; /* Even smaller on mobile */
+    padding: 4px 6px;
+  }
+}
