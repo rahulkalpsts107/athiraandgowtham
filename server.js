@@ -845,8 +845,8 @@ app.get('/wedding-invitation-endpoint', (req, res) => {
     const icsEndDate = endDate.toISOString().replace(/-|:|\.\d{3}/g, '');
 
     // Create ICS content with the correct DESCRIPTION
-    const location = 'Vila Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
-    const description = `You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\n\nWebsite: ${websiteUrl}\nVenue: Vila Kasu\nTime: 10:00 AM - 1:00 PM IST\n\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422`;
+    const location = 'Villa Kasu, 1, Kariyammana Agrahara Rd, Yemalur, Bengaluru 560037, Karnataka, India';
+    const description = `You are cordially invited to celebrate our wedding on August 21, 2025 in Bengaluru. Join us for a day of love, laughter, and celebration!\n\nWebsite: ${websiteUrl}\nVenue: Villa Kasu\nTime: 10:00 AM - 1:00 PM IST\n\nFor directions: https://maps.google.com/?q=12.943319832193993,77.68109909325422`;
 
     const icsContent = [
       'BEGIN:VCALENDAR',
