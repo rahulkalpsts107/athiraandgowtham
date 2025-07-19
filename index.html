@@ -1563,6 +1563,12 @@
           const statusDiv = document.getElementById('rsvpStatus');
           const formData = new FormData(this);
 
+          // Check ENV_TYPE and force attending to 'no' if ENV_TYPE is '1'
+          const envType = "<%- process.env.ENV_TYPE %>";
+          if (envType === '1') {
+            formData.set('attending', 'no');
+          }
+
           try {
             statusDiv.textContent = 'Sending RSVP...';
             const response = await fetch('/submit-rsvp', {

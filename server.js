@@ -393,8 +393,7 @@ const Contact = mongoose.model('Contact', contactSchema);
 app.post('/submit-rsvp', async (req, res) => {
   const { name, email, attending, numGuests } = req.body;
   const envType = process.env.ENV_TYPE || '0';
-  log('info', 'RSVP submission received', { name, email, attending, numGuests, envType });
-
+  log('info', 'RSVP submission received', { name, email, attending, numGuests, envType })
   try {
     // Save RSVP to MongoDB with envType
     const rsvp = new RSVP({
@@ -416,7 +415,7 @@ app.post('/submit-rsvp', async (req, res) => {
       : [];
       
     if (recipientEmails.length === 0) {
-      log('warning', 'No valid recipient emails defined for RSVP notifications', { name, email });
+      log('warning', 'No recipient emails defined for RSVP notification');
     }
 
     // Send email notification only if recipients are defined
@@ -437,13 +436,117 @@ app.post('/submit-rsvp', async (req, res) => {
           <p><strong>From Website:</strong> ${websiteIdentifier}</p>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Attending:</strong> ${attending}</p>
+          <p><strong>Attending Soirée:</strong> ${attending}</p>
           <p><strong>Number of Guests:</strong> ${numGuests}</p>
         `,
       };
       log('info', 'mail option', mailOptions);
       await transporter.sendMail(mailOptions);
       log('success', 'RSVP email sent successfully', { name, email, website: websiteIdentifier, recipients: recipientEmails });
+    }
+
+    let attendingLabel = '';
+    if(envType === '0' || envType === '2') {
+      attendingLabel = `<li><strong>Attending Soirée:</strong> ${attending === 'yes' ? 'Yes' : 'No'}</li>`;
+    }
+    // Send confirmation email to the guest
+    try {
+      // Determine website URL based on ENV_TYPE
+      let websiteUrl = "https://athiraandgowtham.onrender.com";
+      let coupleNames = "Athira and Gowtham";
+      
+      if (envType === '0') {
+        websiteUrl = "https://athiraandgowtham.onrender.com";
+        coupleNames = "Athira and Gowtham";
+      } else if (envType === '1') {
+        websiteUrl = "https://athirawedsgowtham2025.onrender.com";
+        coupleNames = "Athira and Gowtham";
+      } else if (envType === '2') {
+        websiteUrl = "https://gowthamwedsathira2025.onrender.com";
+        coupleNames = "Gowtham and Athira";
+      }
+      
+      // Construct thank you message based on attending status
+      const thankYouMessage = `Thank you for accepting our invitation! We're delighted that you'll be joining us on our special day.`;
+      
+      const guestMailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: `Thank You for Your RSVP - ${coupleNames}'s Wedding`,
+        text: `
+Dear ${name},
+
+${thankYouMessage}
+
+Here's a summary of your RSVP details:
+- Name: ${name}
+- Number of Guests: ${numGuests}
+- Attending Soirée: ${attending === 'yes' ? 'Yes' : 'No'}
+
+You can always refer back to our wedding website for updates and information:
+${websiteUrl}
+
+We look forward to celebrating with you on August 21, 2025!
+
+Warm regards,
+${coupleNames}`,
+        html: `
+<div style="font-family: 'Abhaya Libre', serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; background-color: #fff7e1;">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #617939; font-size: 24px; margin-bottom: 10px;">Thank You for Your RSVP</h1>
+    <p style="font-size: 16px; color: #666; font-style: italic;">August 21, 2025 • Bengaluru, Karnataka, India</p>
+  </div>
+  
+  <div style="background-color: white; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">Dear ${name},</p>
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">${thankYouMessage}</p>
+    
+    <div style="background-color: rgba(97, 121, 57, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <p style="font-weight: bold; margin-bottom: 10px;">Your RSVP Details:</p>
+      <ul style="list-style: none; padding-left: 0; margin: 0;">
+        <li style="margin-bottom: 8px;"><strong>Name:</strong> ${name}</li>
+        <li style="margin-bottom: 8px;"><strong>Number of Guests:</strong> ${numGuests}</li>
+        ${attendingLabel}
+      </ul>
+    </div>
+    
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">You can always refer back to our wedding website for updates and information:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${websiteUrl}" style="background-color: #617939; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Visit Wedding Website</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin-top: 30px; color: #617939; font-style: italic;">
+    <p style="margin-bottom: 5px;">We look forward to celebrating with you!</p>
+    <p style="font-size: 18px; margin-top: 10px;">- ${coupleNames}</p>
+  </div>
+</div>
+        `
+      };
+      
+      // Send the email with detailed logging
+      log('info', 'Attempting to send RSVP confirmation email', {
+        to: email,
+        bcc: recipientEmails.join(', '),
+        emailService: process.env.EMAIL_SERVICE,
+        emailUser: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 5) + '...' : 'undefined'
+      });
+      
+      await transporter.sendMail(guestMailOptions);
+      
+      log('success', 'RSVP confirmation email sent to guest with BCC to admins', { 
+        guestEmail: email,
+        name,
+        bccRecipients: recipientEmails.join(', ')
+      });
+    } catch (guestEmailError) {
+      log('error', 'Failed to send RSVP confirmation email to guest', { 
+        error: guestEmailError.message,
+        stack: guestEmailError.stack,
+        email,
+        name
+      });
+      // Don't fail the request if the guest confirmation email fails
     }
     
     res.json({ success: true, message: 'RSVP sent successfully!' });
