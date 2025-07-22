@@ -87,7 +87,7 @@ function buildEmailContent(rsvps) {
           <th>#</th>
           <th>Name</th>
           <th>Email</th>
-          <th>Attending</th>
+          <th>Attending soirée</th>
           <th>Number of Guests</th>
           <th>Website Version</th>
           <th>Created At</th>

@@ -565,9 +565,7 @@ ${coupleNames}`,
 app.post('/upload-photo', upload.single('photo'), async (req, res) => {
   if (!req.file) {
     log('error', 'Photo upload failed - no file provided');
-    return res
-      .status(400)
-      .json({ success: false, message: 'No file uploaded.' });
+    return res.status(400).json({ success: false, message: 'No file uploaded.' });
   }
 
   try {
@@ -576,8 +574,46 @@ app.post('/upload-photo', upload.single('photo'), async (req, res) => {
       url: req.file.path || 'No URL available',
     });
 
-    // When using CloudinaryStorage with multer, the upload to Cloudinary is already done
-    // and req.file contains the result with path containing the Cloudinary URL
+    // Get optimized preview URL
+    const previewUrl = req.file.path.replace('/upload/', '/upload/w_400,c_scale,f_auto,q_auto/');
+
+    // Send email notification if CONTACT_FORM_RECIPIENTS is set
+    if (process.env.CONTACT_FORM_RECIPIENTS) {
+      try {
+        const recipients = process.env.CONTACT_FORM_RECIPIENTS.split(',').map(email => email.trim());
+        
+        const emailHtml = `
+          <h2>New Photo Uploaded</h2>
+          <p>A new photo has been uploaded to the wedding website. Please review if needed</p>
+          <p><strong>Details:</strong></p>
+          <ul>
+            <li>Upload Date: ${new Date().toLocaleString()}</li>
+            <li>File Name: ${req.file.originalname}</li>
+          </ul>
+          <p><strong>Preview:</strong></p>
+          <img src="${previewUrl}" alt="Uploaded photo preview" style="max-width:400px; border-radius:8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <p><strong>Original URL:</strong><br>
+          <a href="${req.file.path}">${req.file.path}</a></p>
+        `;
+
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: recipients,
+          subject: 'New Photo Upload - Wedding Website',
+          html: emailHtml
+        };
+
+        await transporter.sendMail(mailOptions);
+        log('info', 'Photo upload notification email sent', { recipients });
+      } catch (emailError) {
+        log('error', 'Failed to send photo upload notification email', { 
+          error: emailError.message,
+          filename: req.file.originalname
+        });
+        // Don't fail the upload if email fails
+      }
+    }
+
     res.json({
       success: true,
       message: 'File uploaded successfully',
@@ -586,9 +622,7 @@ app.post('/upload-photo', upload.single('photo'), async (req, res) => {
   } catch (error) {
     log('error', 'Photo upload failed', { error: error.message });
     Sentry.captureException(error);
-    res
-      .status(500)
-      .json({ success: false, message: 'Upload failed: ' + error.message });
+    res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
   }
 });
 
@@ -887,20 +921,80 @@ app.post('/api/upload-photo', passwordProtect, guestUpload.single('photo'), asyn
     // Upload to Cloudinary using the guest-photos preset
     const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
       upload_preset: 'guest-photos',
-      folder: 'our-photos'
+      folder: 'our-photos',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif']
     });
 
-    // Remove the temp file
+    // Delete local file after upload
     fs.unlinkSync(req.file.path);
 
-    res.status(200).json({ 
-      success: true, 
-      url: uploadResponse.secure_url,
-      public_id: uploadResponse.public_id
+    // Get optimized preview URL
+    const previewUrl = cloudinary.url(uploadResponse.public_id, {
+      width: 400,
+      crop: 'fill',
+      format: 'jpg',
+      quality: 'auto:good'
     });
+
+    // Send email notification if CONTACT_FORM_RECIPIENTS is set
+    if (process.env.CONTACT_FORM_RECIPIENTS) {
+      try {
+        const recipients = process.env.CONTACT_FORM_RECIPIENTS.split(',').map(email => email.trim());
+        
+        const emailHtml = `
+          <h2>New Photo Uploaded</h2>
+          <p>A new photo has been uploaded to the wedding website.</p>
+          <p><strong>Details:</strong></p>
+          <ul>
+            <li>Upload Date: ${new Date().toLocaleString()}</li>
+            <li>File Name: ${req.file.originalname}</li>
+            <li>File Size: ${(uploadResponse.bytes / 1024 / 1024).toFixed(2)} MB</li>
+            <li>Format: ${uploadResponse.format}</li>
+          </ul>
+          <p><strong>Preview:</strong></p>
+          <img src="${previewUrl}" alt="Uploaded photo preview" style="max-width:400px; border-radius:8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <p><strong>Original URL:</strong><br>
+          <a href="${uploadResponse.secure_url}">${uploadResponse.secure_url}</a></p>
+        `;
+
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: recipients,
+          subject: 'New Photo Upload - Wedding Website',
+          html: emailHtml
+        };
+
+        await transporter.sendMail(mailOptions);
+        log('info', 'Photo upload notification email sent', { recipients });
+      } catch (emailError) {
+        log('error', 'Failed to send photo upload notification email', { 
+          error: emailError.message,
+          filename: req.file.originalname
+        });
+        // Don't fail the request if email fails
+      }
+    }
+
+    res.json({
+      success: true,
+      url: uploadResponse.secure_url,
+      message: 'Photo uploaded successfully'
+    });
+
   } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'Upload failed' });
+    console.error('Error in photo upload:', error);
+    log('error', 'Photo upload failed', { error: error.message });
+    
+    if (req.file && req.file.path) {
+      // Cleanup local file if it exists
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (e) {
+        console.error('Error cleaning up local file:', e);
+      }
+    }
+    
+    res.status(500).json({ error: 'Failed to upload photo' });
   }
 });
 
