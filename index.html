@@ -49,7 +49,7 @@
     <script>
       Sentry.init({
         dsn: '<%- process.env.SENTRY_DSN %>', // Make sure to add SENTRY_DSN to your environment variables
-        environment: process.env.NODE_ENV || 'development',
+        environment: '<%- process.env.SENTRY_DSN %>',
         integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 0.1,

@@ -740,7 +740,8 @@ app.get('/', (req, res) => {
         ENV_TYPE: process.env.ENV_TYPE || '0', // Added ENV_TYPE
         META_IMAGE_URL: metaImageUrl,
         META_TITLE: metaTitle,
-        META_URL: metaUrl
+        META_URL: metaUrl,
+        NODE_ENV: process.env.NODE_ENV || 'development'
       },
     },
   });
