@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 
 const {
   EMAIL_USER,
@@ -20,7 +21,7 @@ async function fetchRsvps() {
   }
 }
 
-function buildEmailContent(rsvps) {
+function buildEmailContent(rsvps, chartUrl) {
   const signOffs = [
     'Kind regards,',
     'Warm wishes,',
@@ -41,18 +42,15 @@ function buildEmailContent(rsvps) {
     `;
   }
 
-  // Calculate total guests
-  const totalGuests = rsvps.reduce((sum, rsvp) => sum + (rsvp.numGuests || 1), 0);
+  // ... your existing summary calculations ...
 
-  // Group RSVPs by website version
+  const totalGuests = rsvps.reduce((sum, rsvp) => sum + (rsvp.numGuests || 1), 0);
   const rsvpsByVersion = rsvps.reduce((acc, rsvp) => {
     const version = rsvp.envType || '0';
     if (!acc[version]) acc[version] = 0;
     acc[version] += rsvp.numGuests || 1;
     return acc;
   }, {});
-
-  // Create summary of RSVPs by version
   const versionSummary = Object.entries(rsvpsByVersion).map(([version, count]) => {
     const websiteName = version === '2' ? 'Gowtham weds Athira' : 'Athira weds Gowtham';
     return `${websiteName}: ${count} guests`;
@@ -81,16 +79,23 @@ function buildEmailContent(rsvps) {
       <p><strong>By Website Version:</strong><br/>${versionSummary}</p>
     </div>
 
-    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px; width: 100%;">
+    ${chartUrl ? `
+      <div style="text-align: center; margin: 20px 0;">
+        <h3>Daily RSVP Trend</h3>
+        <img src="${chartUrl}" alt="Daily RSVP Trend Chart" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+      </div>
+    ` : ''}
+
+    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 18px; width: 100%;">
       <thead style="background-color: #f2f2f2;">
         <tr>
           <th>#</th>
           <th>Name</th>
           <th>Email</th>
-          <th>Attending soirée</th>
-          <th>Number of Guests</th>
+          <th>Attending Soirée</th>
+          <th>No. of Guests</th>
           <th>Website Version</th>
-          <th>Created At</th>
+          <th>RSVP date</th>
         </tr>
       </thead>
       <tbody>
@@ -98,7 +103,7 @@ function buildEmailContent(rsvps) {
       </tbody>
     </table>
 
-    <p style="font-size: 12px; color: #888;">Report generated on ${generatedAt}</p>
+    <p style="font-size: 14px; color: #888;">Report generated on ${generatedAt}</p>
 
     <br/>
     <p>${signOff}<br/><strong>Anvi</strong></p>
@@ -130,12 +135,104 @@ async function sendEmail(subject, body) {
   await transporter.sendMail(mailOptions);
 }
 
-(async () => {
+async function generateRSVPReport() {
   try {
     const rsvps = await fetchRsvps();
-    const content = buildEmailContent(rsvps);
-    await sendEmail(`Good Morning – Daily RSVP Summary (${new Date().toLocaleDateString()})`, content);
+
+    // Prepare last 30 days
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+      days.push(moment().subtract(i, 'days').format('MMM D'));
+    }
+
+    // Initialize counts
+    const countsByEnv = {
+      athiraWedsGowtham: {},
+      gowthamWedsAthira: {},
+    };
+
+    days.forEach(day => {
+      countsByEnv.athiraWedsGowtham[day] = 0;
+      countsByEnv.gowthamWedsAthira[day] = 0;
+    });
+
+    // Count RSVPs per day by envType
+    rsvps.forEach(rsvp => {
+      const date = moment(rsvp.createdAt).format('MMM D');
+      const env = rsvp.envType === '2' ? 'gowthamWedsAthira' : 'athiraWedsGowtham';
+      if (countsByEnv[env][date] !== undefined) {
+        countsByEnv[env][date]++;
+      }
+    });
+
+    // Convert to dataset arrays in correct order
+    const athiraWedsGowthamData = days.map(day => countsByEnv.athiraWedsGowtham[day]);
+    const gowthamWedsAthiraData = days.map(day => countsByEnv.gowthamWedsAthira[day]);
+
+    // Chart config with stacking
+    const chartConfig = {
+      type: 'bar',
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: 'Athira weds Gowtham',
+            data: athiraWedsGowthamData,
+            backgroundColor: '#3b82f6',
+          },
+          {
+            label: 'Gowtham weds Athira',
+            data: gowthamWedsAthiraData,
+            backgroundColor: '#10b981',
+          }
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { stepSize: 1 },
+            grid: { color: '#eee' },
+          },
+        },
+        plugins: {
+          legend: { position: 'top' },
+          title: {
+            display: true,
+            text: 'Daily RSVPs by Website Version (Last 30 Days)',
+            font: { size: 18 }
+          }
+        },
+        layout: {
+          padding: 10,
+        },
+      },
+    };
+
+    const quickChartUrl = `https://quickchart.io/chart?c=${encodeURIComponent(JSON.stringify(chartConfig))}&backgroundColor=white`;
+
+    // Build email with chart included
+    const emailContent = buildEmailContent(rsvps, quickChartUrl);
+
+    await sendEmail(
+      `Good Morning – Daily RSVP Summary (${new Date().toLocaleDateString()})`,
+      emailContent
+    );
+
     console.log('Email sent successfully.');
+  } catch (error) {
+    console.error('Error in RSVP report:', error);
+  }
+}
+
+(async () => {
+  try {
+    await generateRSVPReport();
   } catch (err) {
     console.error('Error sending RSVP summary:', err);
   }
