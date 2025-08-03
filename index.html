@@ -1134,7 +1134,21 @@
       function updateCountdown() {
         const now = new Date();
         const timeLeft = weddingDate - now;
-
+        
+        // Check if it's the day after the wedding (August 22, 2025)
+        const dayAfterWedding = new Date('2025-08-22T00:00:00');
+        const timeFromDayAfter = now - dayAfterWedding;
+        if (timeFromDayAfter >= 0) {
+          // It's August 22, 2025 or later - show congratulations
+          const envType = "<%- process.env.ENV_TYPE %>";
+          const congratsMessage = envType === '2' 
+            ? 'Congratulations Gowtham And Athira!' 
+            : 'Congratulations Athira and Gowtham!';
+          document.getElementById('countdown').textContent = congratsMessage;
+          clearInterval(timerInterval);
+          return;
+        }
+        
         if (timeLeft <= 0) {
           document.getElementById('countdown').textContent =
             'The Big Day is Here!';
