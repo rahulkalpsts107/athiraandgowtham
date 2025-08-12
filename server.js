@@ -1117,6 +1117,18 @@ const guestbookSchema = new mongoose.Schema({
 
 const Guestbook = mongoose.model('Guestbook', guestbookSchema);
 
+// Translation schema and model for multi-language support
+const translationSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true },
+  en: { type: String, required: true }, // English (default)
+  ml: { type: String, required: true }, // Malayalam
+  ta: { type: String, required: true }, // Tamil
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+const Translation = mongoose.model('Translation', translationSchema);
+
 // API endpoint to submit guestbook entry
 app.post('/api/guestbook', async (req, res) => {
   const { name, message, background } = req.body;
@@ -1203,6 +1215,52 @@ app.get('/api/guestbook', async (req, res) => {
   } catch (error) {
     log('error', 'Failed to fetch guestbook entries', { error: error.message });
     res.status(500).json({ error: 'Failed to fetch guestbook entries' });
+  }
+});
+
+// API endpoint to get translations for a specific language
+app.get('/api/translations/:lang', async (req, res) => {
+  try {
+    const { lang } = req.params;
+    
+    // Validate language
+    if (!['en', 'ml', 'ta'].includes(lang)) {
+      return res.status(400).json({ error: 'Invalid language. Supported: en, ml, ta' });
+    }
+    
+    const translations = await Translation.find({});
+    const result = {};
+    
+    translations.forEach(translation => {
+      result[translation.key] = translation[lang];
+    });
+    
+    res.json(result);
+  } catch (error) {
+    log('error', 'Failed to fetch translations', { error: error.message });
+    res.status(500).json({ error: 'Failed to fetch translations' });
+  }
+});
+
+// API endpoint to add/update translations (for admin use)
+app.post('/api/translations', async (req, res) => {
+  try {
+    const { key, en, ml, ta } = req.body;
+    
+    if (!key || !en || !ml || !ta) {
+      return res.status(400).json({ error: 'All fields (key, en, ml, ta) are required' });
+    }
+    
+    const translation = await Translation.findOneAndUpdate(
+      { key },
+      { key, en, ml, ta, updatedAt: new Date() },
+      { upsert: true, new: true }
+    );
+    
+    res.json({ success: true, translation });
+  } catch (error) {
+    log('error', 'Failed to save translation', { error: error.message });
+    res.status(500).json({ error: 'Failed to save translation' });
   }
 });
 

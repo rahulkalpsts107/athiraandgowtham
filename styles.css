@@ -976,6 +976,37 @@ form button {
   align-items: center;
 }
 
+.language-switcher {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.language-switcher select {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #617939;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'Abhaya Libre', serif;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.language-switcher select:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 8px rgba(97, 121, 57, 0.3);
+}
+
+.language-switcher select:focus {
+  border-color: #8DB255;
+  box-shadow: 0 0 0 2px rgba(141, 178, 85, 0.2);
+}
+
 .hamburger-menu {
   position: absolute;
   left: 15px;
@@ -1507,6 +1538,12 @@ form button {
 
   .copy-button:hover {
     transform: scale(1.05);
+  }
+
+  .language-switcher select {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 80px;
   }
 }
 
