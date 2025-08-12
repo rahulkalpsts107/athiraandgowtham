@@ -104,10 +104,17 @@
           >
             a & g
           </div>
+          <div class="language-switcher">
+            <select id="languageSelect" onchange="changeLanguage(this.value)">
+              <option value="en">English</option>
+              <option value="ml">മലയാളം</option>
+              <option value="ta">தமிழ்</option>
+            </select>
+          </div>
         </div>
         <h1 class="couple-name">Athira & Gowtham</h1>
         <div class="wedding-details">
-          <p class="date-location">
+          <p class="date-location" data-translate="wedding_date_location">
             Thursday, August 21, 2025 • Bengaluru, Karnataka, India
           </p>
           <p id="countdown" class="countdown-text"></p>
@@ -115,43 +122,43 @@
         <nav>
           <ul class="nav-menu">
             <li>
-              <a href="#" onclick="showSection('home'); return false;">Home</a>
+              <a href="#" onclick="showSection('home'); return false;" data-translate="nav_home">Home</a>
             </li>
             <li>
-              <a href="#" onclick="showSection('invite-image'); return false;"
+              <a href="#" onclick="showSection('invite-image'); return false;" data-translate="nav_invitation"
                 >View Invitation</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('story'); return false;"
+              <a href="#" onclick="showSection('story'); return false;" data-translate="nav_story"
                 >Our Story</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('location'); return false;"
+              <a href="#" onclick="showSection('location'); return false;" data-translate="nav_location"
                 >Location</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('rsvp'); return false;">RSVP</a>
+              <a href="#" onclick="showSection('rsvp'); return false;" data-translate="nav_rsvp">RSVP</a>
             </li>
             <li>
-              <a href="#" onclick="showSection('livestream'); return false;"
+              <a href="#" onclick="showSection('livestream'); return false;" data-translate="nav_livestream"
                 >Live Stream</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('photos'); return false;"
+              <a href="#" onclick="showSection('photos'); return false;" data-translate="nav_photos"
                 >Photos</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('share'); return false;"
+              <a href="#" onclick="showSection('share'); return false;" data-translate="nav_share"
                 >Share Photos</a
               >
             </li>
             <li>
-              <a href="#" onclick="showSection('guestbook'); return false;"
+              <a href="#" onclick="showSection('guestbook'); return false;" data-translate="nav_guestbook"
                 >Our Wedding Book</a
               >
             </li>
@@ -160,8 +167,8 @@
       </header>
 
       <div id="home" class="section">
-        <p class="welcome-text">Welcome!</p>
-        <p class="welcome-text-msg">
+        <p class="welcome-text" data-translate="welcome_message">Welcome!</p>
+        <p class="welcome-text-msg" data-translate="welcome_description">
           We are thrilled to invite you to our wedding celebration. Join us on
           this occasion for a day of love, laughter, and celebration!
         </p>
@@ -186,14 +193,14 @@
         <div class="add-to-calendar-wrapper">
           <button class="add-to-calendar-btn" onclick="toggleCalendarOptions()">
             <img src="images/calendar.png" alt="Calendar" class="calendar-icon" style="width: 20px; height: 20px; margin-right: 8px;">
-            Add to Calendar
+            <span data-translate="add_to_calendar">Add to Calendar</span>
           </button>
           <div class="calendar-options" id="calendarOptions">
-            <a href="#" class="calendar-option" data-calendar="google">Google Calendar</a>
-            <a href="#" class="calendar-option" data-calendar="apple">Apple Calendar</a>
-            <a href="#" class="calendar-option" data-calendar="outlook">Outlook</a>
-            <a href="#" class="calendar-option" data-calendar="yahoo">Yahoo Calendar</a>
-            <a href="#" class="calendar-option" data-calendar="ics">Download ICS</a>
+            <a href="#" class="calendar-option" data-calendar="google" data-translate="google_calendar">Google Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="apple" data-translate="apple_calendar">Apple Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="outlook" data-translate="outlook_calendar">Outlook</a>
+            <a href="#" class="calendar-option" data-calendar="yahoo" data-translate="yahoo_calendar">Yahoo Calendar</a>
+            <a href="#" class="calendar-option" data-calendar="ics" data-translate="download_ics">Download ICS</a>
           </div>
         </div>
       </div>
@@ -226,37 +233,37 @@
           <div class="about-person about-athira">
             <img src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749022251/PHOTO-2025-06-04-12-46-31_m58p8m.jpg" alt="Athira Revi" class="person-photo">
             <div class="details">
-              <h3>Athira Revi</h3>
-              <p>Athira was born in Trivandrum and raised in Bangalore, rooted in a traditional Kerala family where love, values, and home-cooked meals are woven into everyday life. She is the kind of person who never misses a family gathering and somehow remembers everyone's birthdays without needing a reminder.</p>
-              <p><em>She always enjoyed spending her vacations and time with her grandparents the late Mr. R. Vasudevan Nair and Mrs. Sabitha in Trivandrum, and the late Mr. N. Balakrishnan Pillai and the late Mrs. Sarasa B. Pillai in Kayamkulam.</em></p>
-              <p>Known for her warmth, compassion, and the way she lights up a room with her smile, Athira's love extends beyond people to animals especially her beloved fur baby, Joey (yes, named after that Joey from Friends) who's been her loyal shadow and constant companion.</p>
-              <p>Intelligent, stylish, and full of life, Athira has always struck a beautiful balance between academic excellence and effortless self-expression. Whether it's a big celebration or a quiet Sunday at home, she somehow always gets her look just right.</p>
-              <p>Driven by curiosity and a desire to grow, Athira moved to the UK to explore new horizons both in life and in her career. What started as a professional adventure turned into something much more meaningful when she met Gowtham. From the very beginning, their connection was effortless warm, genuine, and deeply grounding. In him, she found not just love, but a true partner someone who listens with intention, loves with gentleness, and shows up with quiet strength when it matters most.</p>
-              <p>She cherishes the way he notices the little things, how her eyes light up around puppies, or how much she loves ice skating. Together, they dream of a life filled with joy, shared growth, and a home overflowing with laughter, love, and of course a pack of adorable fur babies. 🐾❤️</p>
+              <h3 data-translate="athira_name">Athira Revi</h3>
+              <p data-translate="athira_paragraph1">Athira was born in Trivandrum and raised in Bangalore, rooted in a traditional Kerala family where love, values, and home-cooked meals are woven into everyday life. She is the kind of person who never misses a family gathering and somehow remembers everyone's birthdays without needing a reminder.</p>
+              <p data-translate="athira_paragraph2"><em>She always enjoyed spending her vacations and time with her grandparents the late Mr. R. Vasudevan Nair and Mrs. Sabitha in Trivandrum, and the late Mr. N. Balakrishnan Pillai and the late Mrs. Sarasa B. Pillai in Kayamkulam.</em></p>
+              <p data-translate="athira_paragraph3">Known for her warmth, compassion, and the way she lights up a room with her smile, Athira's love extends beyond people to animals especially her beloved fur baby, Joey (yes, named after that Joey from Friends) who's been her loyal shadow and constant companion.</p>
+              <p data-translate="athira_paragraph4">Intelligent, stylish, and full of life, Athira has always struck a beautiful balance between academic excellence and effortless self-expression. Whether it's a big celebration or a quiet Sunday at home, she somehow always gets her look just right.</p>
+              <p data-translate="athira_paragraph5">Driven by curiosity and a desire to grow, Athira moved to the UK to explore new horizons both in life and in her career. What started as a professional adventure turned into something much more meaningful when she met Gowtham. From the very beginning, their connection was effortless warm, genuine, and deeply grounding. In him, she found not just love, but a true partner someone who listens with intention, loves with gentleness, and shows up with quiet strength when it matters most.</p>
+              <p data-translate="athira_paragraph6">She cherishes the way he notices the little things, how her eyes light up around puppies, or how much she loves ice skating. Together, they dream of a life filled with joy, shared growth, and a home overflowing with laughter, love, and of course a pack of adorable fur babies. 🐾❤️</p>
             </div>
           </div>
           <div class="about-person about-gowtham">
             <img src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749019779/PHOTO-2025-06-04-12-17-44_ujqj7c.jpg" alt="Gowtham Vijaykumar" class="person-photo">
             <div class="details">
-              <h3>Gowtham Vijaykumar</h3>
-              <p>Gowtham was born in Pondicherry and spent his early years there with his parents. At the age of 12, he moved to a boarding school, where he spent the next five years of his life. There, he formed friendships with people from across India and the world, which broadened his worldview and taught him independence at a young age. As life unfolded, he learned to stay grounded—celebrating small wins and staying resilient through bigger losses.</p>
-              <p>Over time, he developed a natural acumen for risk management, which eventually shaped his career. He holds deep affection for his family and friends, each in his own quiet, meaningful way. He is grateful for the times they have been with him through thick and thin.</p>
-              <p>He met Athira through a conventional path, but their connection was instant and unmatched.</p>
-              <p>He admires how she effortlessly complements him in ways he never knew he needed. He said he can’t wait to begin a life together—one filled with love, laughter, and true partnership.</p>
+              <h3 data-translate="gowtham_name">Gowtham Vijaykumar</h3>
+              <p data-translate="gowtham_paragraph1">Gowtham was born in Pondicherry and spent his early years there with his parents. At the age of 12, he moved to a boarding school, where he spent the next five years of his life. There, he formed friendships with people from across India and the world, which broadened his worldview and taught him independence at a young age. As life unfolded, he learned to stay grounded—celebrating small wins and staying resilient through bigger losses.</p>
+              <p data-translate="gowtham_paragraph2">Over time, he developed a natural acumen for risk management, which eventually shaped his career. He holds deep affection for his family and friends, each in his own quiet, meaningful way. He is grateful for the times they have been with him through thick and thin.</p>
+              <p data-translate="gowtham_paragraph3">He met Athira through a conventional path, but their connection was instant and unmatched.</p>
+              <p data-translate="gowtham_paragraph4">He admires how she effortlessly complements him in ways he never knew he needed. He said he can’t wait to begin a life together—one filled with love, laughter, and true partnership.</p>
             </div>
           </div>
           <div class="couple-photo-container">
             <img src="https://res.cloudinary.com/dl4p1qeva/image/upload/v1749021237/af470de3-c37a-4f7b-82b8-8155e39b2e04_eb7zh0_goxveh.jpg" alt="Athira and Gowtham" class="couple-photo">
           </div>
           <div class="our-story">
-            <h3>Our Story</h3>
-            <p>
+            <h3 data-translate="our_story_title">Our Story</h3>
+            <p data-translate="our_story_paragraph1">
               Their story began in the heart of London — two souls brought together by destiny — in a city full of movement and noise, yet somehow, in the midst of it all, time stood still when they met. From the very first conversation, there was an undeniable spark. They spent hours together that day, and somehow, it felt like they had always known each other. No slow beginnings, no in-between — just an instant, effortless connection that felt like coming home in a place far from it.
             </p>
-            <p>
+            <p data-translate="our_story_paragraph2">
               From quiet strolls through cobbled streets to saying "yes" high above the city on the London Eye, every moment has been a chapter in their shared adventure. Together, they've built a tapestry of memories — full of laughter, wonder, and a love that feels both grounding and magical.
             </p>
-            <p>
+            <p data-translate="our_story_paragraph3">
               Now, they dream together — of a life filled with warmth, laughter, meaningful moments, and stories that will be told for years to come. Because sometimes, love doesn't take time. Sometimes, it just knows. 💫❤️
             </p>
           </div>
@@ -267,11 +274,11 @@
         <div class="location-container">
           <div class="location-details-map-wrapper">
             <div class="location-details">
-              <h2>Wedding Venue Address</h2>
+              <h2 data-translate="venue_address_title">Wedding Venue Address</h2>
               <p>Villa Kasu</p>
               <p>1, Kariyammana Agrahara Rd, Yemalur, Post 560037</p>
               <p>Bengaluru</p>
-              <button onclick="getDirections()" class="map-button">
+              <button onclick="getDirections()" class="map-button" data-translate="get_directions_btn">
                 Click to Get Directions
               </button>
             </div>
@@ -285,66 +292,66 @@
           </div>
 
           <div class="transportation-info">
-            <h3>Transportation Information</h3>
+            <h3 data-translate="transportation_info_title">Transportation Information</h3>
             
             <div class="transport-section">
-              <h4><span class="transport-icon">✈️</span> From Kempegowda International Airport (KIA)</h4>
+              <h4><span class="transport-icon">✈️</span> <span data-translate="from_airport_title">From Kempegowda International Airport (KIA)</span></h4>
               <ul>
-                <li><strong>Airport Bus (BMTC Vayu Vajra):</strong> Take the KIA-5 bus route to Marathahalli, then use a ride-sharing service to the venue (approx. 15 min). Buses run every 30 minutes.</li>
-                <li><strong>Airport Taxi:</strong> Direct taxis available at the airport, approx. 35-45 minutes to venue (depending on traffic).</li>
-                <li><strong>App-based Cabs:</strong> Uber and Ola are readily available from the airport.</li>
+                <li><strong data-translate="airport_bus_label">Airport Bus (BMTC Vayu Vajra):</strong> <span data-translate="airport_bus_desc">Take the KIA-5 bus route to Marathahalli, then use a ride-sharing service to the venue (approx. 15 min). Buses run every 30 minutes.</span></li>
+                <li><strong data-translate="airport_taxi_label">Airport Taxi:</strong> <span data-translate="airport_taxi_desc">Direct taxis available at the airport, approx. 35-45 minutes to venue (depending on traffic).</span></li>
+                <li><strong data-translate="app_cabs_label">App-based Cabs:</strong> <span data-translate="app_cabs_desc">Uber and Ola are readily available from the airport.</span></li>
               </ul>
             </div>
             
             <div class="transport-section">
-              <h4><span class="transport-icon">🚆</span> Nearby Train Stations</h4>
+              <h4><span class="transport-icon">🚆</span> <span data-translate="nearby_stations_title">Nearby Train Stations</span></h4>
               <ul>
-                <li><strong>Krishnarajapuram Railway Station:</strong> 8 km from venue. Convenient for guests from Kerala and Tamil Nadu.</li>
-                <li><strong>Bengaluru Cantonment:</strong> 12 km from venue. Serves many routes from Kerala.</li>
-                <li><strong>KSR Bengaluru (Majestic):</strong> 16 km from venue. Main railway station with connections to all major cities.</li>
+                <li><strong>Krishnarajapuram Railway Station:</strong> <span data-translate="kria_station_desc">8 km from venue. Convenient for guests from Kerala and Tamil Nadu.</span></li>
+                <li><strong>Bengaluru Cantonment:</strong> <span data-translate="cant_station_desc">12 km from venue. Serves many routes from Kerala.</span></li>
+                <li><strong>KSR Bengaluru (Majestic):</strong> <span data-translate="majestic_station_desc">16 km from venue. Main railway station with connections to all major cities.</span></li>
               </ul>
             </div>
             
             <div class="transport-section">
-              <h4><span class="transport-icon">🚕</span> Local Transportation</h4>
+              <h4><span class="transport-icon">🚕</span> <span data-translate="local_transport_title">Local Transportation</span></h4>
               <ul>
-                <li><strong>Metro:</strong> Nearest stations are Baiyappanahalli (Purple Line) and Indiranagar (Purple Line), both requiring a 15-20 min cab ride to venue.</li>
-                <li><strong>Bus:</strong> BMTC buses connect all parts of the city. Route numbers 335E, 500K stop near Marathahalli Bridge (2 km from venue).</li>
-                <li><strong>Auto Rickshaws:</strong> Available throughout the city, but use meter or negotiate fare before starting journey.</li>
-                <li><strong>Rideshare:</strong> Uber and Ola provide convenient and affordable options to reach the venue.</li>
-                <li><strong>Namma Yatri:</strong> Bengaluru's local auto-booking app that offers fair prices and direct payment to drivers. Great for shorter trips in the city.</li>
+                <li><strong data-translate="metro_label">Metro:</strong> <span data-translate="metro_desc">Nearest stations are Baiyappanahalli (Purple Line) and Indiranagar (Purple Line), both requiring a 15-20 min cab ride to venue.</span></li>
+                <li><strong data-translate="bus_label">Bus:</strong> <span data-translate="bus_desc">BMTC buses connect all parts of the city. Route numbers 335E, 500K stop near Marathahalli Bridge (2 km from venue).</span></li>
+                <li><strong data-translate="auto_label">Auto Rickshaws:</strong> <span data-translate="auto_desc">Available throughout the city, but use meter or negotiate fare before starting journey.</span></li>
+                <li><strong data-translate="rideshare_label">Rideshare:</strong> <span data-translate="rideshare_desc">Uber and Ola provide convenient and affordable options to reach the venue.</span></li>
+                <li><strong>Namma Yatri:</strong> <span data-translate="namma_yatri_desc">Bengaluru's local auto-booking app that offers fair prices and direct payment to drivers. Great for shorter trips in the city.</span></li>
               </ul>
             </div>
             
             <div class="transport-note">
-              <p>Note: Traffic in Bengaluru can be unpredictable. We recommend adding 30-45 minutes buffer time to your travel plans, especially during peak hours (9-11 AM and 5-8 PM).</p>
+              <p data-translate="traffic_note">Note: Traffic in Bengaluru can be unpredictable. We recommend adding 30-45 minutes buffer time to your travel plans, especially during peak hours (9-11 AM and 5-8 PM).</p>
             </div>
           </div>
 
           <div class="weather-widget">
-            <h3>Weather at Villa Kasu</h3>
+            <h3 data-translate="weather_title">Weather at Villa Kasu</h3>
             <div id="weather-container">
-              <div class="weather-loading">Loading weather...</div>
+              <div class="weather-loading" data-translate="weather_loading">Loading weather...</div>
             </div>
           </div>
         </div>
       </div>
 
       <div id="rsvp" class="section hidden">
-        <h2>RSVP</h2>
+        <h2 data-translate="rsvp_title">RSVP</h2>
         <div class="rsvp-intro">
-          <p>Please let us know if you'll be joining us on our special day!</p>
+          <p data-translate="rsvp_description">Please let us know if you'll be joining us on our special day!</p>
         </div>
         
         <form id="rsvpForm" class="rsvp-form">
-          <label for="name">Your Name:</label>
-          <input type="text" id="name" name="name" required placeholder="Enter your full name" />
+          <label for="name" data-translate="name_label">Your Name:</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your full name" data-translate="name_placeholder" />
           
-          <label for="email">Your Email:</label>
-          <input type="email" id="email" name="email" required placeholder="Enter your email address" />
+          <label for="email" data-translate="email_label">Your Email:</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email address" data-translate="email_placeholder" />
           
           <!-- Replace number input with select dropdown -->
-          <label for="numGuests">Number of Guests:</label>
+          <label for="numGuests" data-translate="guests_label">Number of Guests:</label>
           <select id="numGuests" name="numGuests" required>
             <!-- Add options from 1 to 50 -->
             <script>
@@ -360,20 +367,20 @@
             </script>
           </select>
           
-          <label for="attending" id="attending-label">Will you attend the soirée?</label>
+          <label for="attending" id="attending-label" data-translate="attending_label">Will you attend the soirée?</label>
           <select id="attending" name="attending">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
+            <option value="yes" data-translate="attending_yes">Yes</option>
+            <option value="no" data-translate="attending_no">No</option>
           </select>
           
-          <button type="submit">Submit RSVP</button>
+          <button type="submit" data-translate="submit_rsvp">Submit RSVP</button>
           <div id="rsvpStatus"></div>
         </form>
       </div>
 
       <div id="livestream" class="section hidden">
         <div class="livestream-container">
-          <h2>Watch Wedding Live</h2>
+          <h2 data-translate="livestream_title">Watch Wedding Live</h2>
           <div class="video-container">
             <iframe
               width="853"
@@ -385,7 +392,7 @@
             >
             </iframe>
           </div>
-          <p class="stream-note">Join us virtually for our special day!</p>
+          <p class="stream-note" data-translate="livestream_note">Join us virtually for our special day!</p>
         </div>
       </div>
 
@@ -456,52 +463,52 @@
       </div>
 
       <div id="guestbook" class="section hidden">
-        <h2>Our Wedding Book</h2>
+        <h2 data-translate="guestbook_title">Our Wedding Book</h2>
         <div class="guestbook-intro">
-          <p>Leave a message for the couple! Share your wishes, memories, or advice for their journey ahead.</p>
+          <p data-translate="guestbook_description">Leave a message for the couple! Share your wishes, memories, or advice for their journey ahead.</p>
         </div>
         
         <form id="guestbookForm" class="guestbook-form">
-          <label for="guestName">Your Name:</label>
-          <input type="text" id="guestName" name="name" required placeholder="Enter your name">
+          <label for="guestName" data-translate="guestbook_name_label">Your Name:</label>
+          <input type="text" id="guestName" name="name" required placeholder="Enter your name" data-translate="guestbook_name_placeholder">
           
-          <label for="guestMessage">Your Message:</label>
-          <textarea id="guestMessage" name="message" required placeholder="Write your message here..."></textarea>
+          <label for="guestMessage" data-translate="guestbook_message_label">Your Message:</label>
+          <textarea id="guestMessage" name="message" required placeholder="Write your message here..." data-translate="guestbook_message_placeholder"></textarea>
           
-          <label for="guestBackground">Choose a Background:</label>
+          <label for="guestBackground" data-translate="guestbook_background_label">Choose a Background:</label>
           <div class="background-options">
             <div class="background-option" data-background="default">
               <div class="bg-preview bg-default"></div>
-              <span>Default</span>
+              <span data-translate="bg_default">Default</span>
             </div>
             <div class="background-option" data-background="floral">
               <div class="bg-preview bg-floral"></div>
-              <span>Floral</span>
+              <span data-translate="bg_floral">Floral</span>
             </div>
             <div class="background-option" data-background="hearts">
               <div class="bg-preview bg-hearts"></div>
-              <span>Hearts</span>
+              <span data-translate="bg_hearts">Hearts</span>
             </div>
             <div class="background-option" data-background="confetti">
               <div class="bg-preview bg-confetti"></div>
-              <span>Confetti</span>
+              <span data-translate="bg_confetti">Confetti</span>
             </div>
             <div class="background-option" data-background="elegant">
               <div class="bg-preview bg-elegant"></div>
-              <span>Elegant</span>
+              <span data-translate="bg_elegant">Elegant</span>
             </div>
           </div>
           <input type="hidden" id="selectedBackground" name="background" value="default">
           
-          <button type="submit">Submit Message</button>
+          <button type="submit" data-translate="guestbook_submit">Submit Message</button>
           <div id="guestbookStatus"></div>
         </form>
         
         <div class="guestbook-messages">
-          <h3>Messages from Loved Ones</h3>
+          <h3 data-translate="guestbook_messages_title">Messages from Loved Ones</h3>
           <div id="entriesContainer" class="entries-container">
             <!-- Entries will be loaded here -->
-            <div class="guestbook-loading">Loading messages...</div>
+            <div class="guestbook-loading" data-translate="guestbook_loading">Loading messages...</div>
           </div>
         </div>
       </div>
@@ -509,30 +516,32 @@
       <div class="contact-popup" id="contactPopup">
         <div class="popup-content">
           <span class="close-popup">&times;</span>
-          <h3>Contact Us</h3>
-          <p class="contact-intro">
+          <h3 data-translate="contact_us_title">Contact Us</h3>
+          <p class="contact-intro" data-translate="contact_intro">
             We'd love to hear from you! Share your kind words, feedback, or
             reach out if you need any information about our website.
           </p>
           <form id="contactForm">
-            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="text" name="name" placeholder="Your Name" data-translate="contact_name_placeholder" required />
             <input
               type="email"
               name="email"
               placeholder="Your Email"
+              data-translate="contact_email_placeholder"
               required
             />
             <textarea
               name="message"
               placeholder="Your message, wishes, or questions..."
+              data-translate="contact_message_placeholder"
               required
             ></textarea>
-            <button type="submit">Send Message</button>
+            <button type="submit" data-translate="send_message">Send Message</button>
             <div id="contactStatus"></div>
           </form>
         </div>
       </div>
-      <button id="contactButton" class="contact-button">Contact Us</button>
+      <button id="contactButton" class="contact-button" data-translate="contact_button">Contact Us</button>
       <button id="muteButton" class="mute-button">
         <span class="mute-icon">🔈</span>
       </button>
@@ -540,7 +549,7 @@
       <!-- Unmute prompt to guide mobile users -->
       <div id="unmutePrompt" class="unmute-prompt">
         <span class="unmute-icon">🔊</span>
-        <span>Tap to unmute invitation</span>
+        <span data-translate="unmute_prompt">Tap to unmute invitation</span>
       </div>
 
       <!-- Lightbox for shared photos -->
@@ -559,6 +568,10 @@
       </footer>
     </div>
     <script>
+      // Global translations object (declared early to avoid ReferenceError)
+      let translations = {};
+      let currentLanguage = 'en';
+      
       // YouTube player control
       let invitationPlayer;
 
@@ -1141,24 +1154,25 @@
         if (timeFromDayAfter >= 0) {
           // It's August 22, 2025 or later - show congratulations
           const envType = "<%- process.env.ENV_TYPE %>";
-          const congratsMessage = envType === '2' 
+          let congratsKey = envType === '2' ? 'congratulations_gowtham_athira' : 'congratulations_athira_gowtham';
+          const congratsMessage = (translations && translations[congratsKey]) || (envType === '2' 
             ? 'Congratulations Gowtham And Athira!' 
-            : 'Congratulations Athira and Gowtham!';
+            : 'Congratulations Athira and Gowtham!');
           document.getElementById('countdown').textContent = congratsMessage;
           clearInterval(timerInterval);
           return;
         }
         
         if (timeLeft <= 0) {
-          document.getElementById('countdown').textContent =
-            'The Big Day is Here!';
+          const bigDayMessage = (translations && translations['big_day_here']) || 'The Big Day is Here!';
+          document.getElementById('countdown').textContent = bigDayMessage;
           clearInterval(timerInterval);
           return;
         }
 
         const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        document.getElementById('countdown').textContent =
-          `${days} DAYS TO GO!`;
+        const daysToGoMessage = (translations && translations['days_to_go']) || 'DAYS TO GO!';
+        document.getElementById('countdown').textContent = `${days} ${daysToGoMessage}`;
       }
 
       const timerInterval = setInterval(updateCountdown, 1000);
@@ -2391,6 +2405,78 @@
             setTimeout(() => menuHint.remove(), 300);
           }, 30000);
         }
+      });
+    </script>
+    <!-- Language Switching Functionality -->
+    <script>
+      // Load translations from API
+      async function loadTranslations(lang) {
+        try {
+          const response = await fetch(`/api/translations/${lang}`);
+          if (response.ok) {
+            translations = await response.json();
+            console.log('Translations loaded:', translations);
+            updatePageContent();
+          } else {
+            console.warn(`Failed to load translations for ${lang}. Status: ${response.status}`);
+            // Initialize with empty object if API fails
+            translations = {};
+          }
+        } catch (error) {
+          console.error('Error loading translations:', error);
+          // Initialize with empty object if fetch fails
+          translations = {};
+        }
+      }
+
+      // Update page content with current translations
+      function updatePageContent() {
+        // Only proceed if translations object exists
+        if (!translations) return;
+        
+        // Find all elements with data-translate attribute
+        const elements = document.querySelectorAll('[data-translate]');
+        elements.forEach(element => {
+          const key = element.getAttribute('data-translate');
+          if (translations[key]) {
+            if (element.tagName === 'INPUT' && element.type === 'submit') {
+              element.value = translations[key];
+            } else if ((element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') && element.placeholder !== undefined) {
+              element.placeholder = translations[key];
+            } else {
+              element.textContent = translations[key];
+            }
+          }
+        });
+        
+        // Update countdown with new language
+        updateCountdown();
+      }
+
+      // Change language function
+      async function changeLanguage(lang) {
+        if (lang === currentLanguage) return;
+        
+        currentLanguage = lang;
+        localStorage.setItem('selectedLanguage', lang);
+        
+        // Update select value
+        document.getElementById('languageSelect').value = lang;
+        
+        // Load translations for the selected language
+        await loadTranslations(lang);
+      }
+
+      // Initialize language system
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get saved language from localStorage or default to 'en'
+        const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        
+        // Set select value
+        document.getElementById('languageSelect').value = savedLanguage;
+        
+        // Load initial translations
+        changeLanguage(savedLanguage);
       });
     </script>
     <!-- Initialize Eruda (conditionally) -->
