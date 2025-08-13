@@ -652,7 +652,112 @@ form button {
 .livestream-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 5px 20px;
+}
+
+.livestream-container h2 {
+  font-family: 'Abhaya Libre', serif;
+  color: #617939;
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 15px;
+  margin-top: 0;
+  font-weight: 700;
+}
+
+/* Stream Tab Navigation */
+.stream-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.stream-tab {
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  position: relative;
+  min-width: 140px;
+  text-align: center;
+}
+
+.stream-tab:hover {
+  background: #f0f0f0;
+  border-color: #617939;
+  color: #333;
+}
+
+.stream-tab.active {
+  background: #617939;
+  border-color: #617939;
+  color: white;
+  box-shadow: 0 2px 8px rgba(97, 121, 57, 0.3);
+}
+
+/* Stream Content */
+.stream-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.stream-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile responsive styles for stream tabs */
+@media screen and (max-width: 768px) {
+  .livestream-container {
+    padding: 3px 15px;
+  }
+  
+  .livestream-container h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  
+  .stream-tabs {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  
+  .stream-tab {
+    min-width: 120px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .livestream-container {
+    padding: 2px 10px;
+  }
+  
+  .livestream-container h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .stream-tabs {
+    margin-bottom: 6px;
+  }
+  
+  .stream-tab {
+    min-width: 110px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
 }
 
 .video-container {
