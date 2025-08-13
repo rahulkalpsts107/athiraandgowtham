@@ -381,18 +381,50 @@
       <div id="livestream" class="section hidden">
         <div class="livestream-container">
           <h2 data-translate="livestream_title">Watch Wedding Live</h2>
-          <div class="video-container">
-            <iframe
-              width="853"
-              height="480"
-              src="https://www.youtube.com/embed/6rVi9NBLpEc?autoplay=1&live=1"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            >
-            </iframe>
+          
+          <!-- Stream Tab Navigation -->
+          <div class="stream-tabs">
+            <% if (process.env.ENV_TYPE !== '1') { %>
+            <button class="stream-tab active" data-stream="reception" data-translate="livestream_tab_reception">
+              Evening Reception
+            </button>
+            <% } %>
+            <button class="stream-tab<% if (process.env.ENV_TYPE === '1') { %> active<% } %>" data-stream="marriage" data-translate="livestream_tab_marriage">
+              Wedding Ceremony
+            </button>
           </div>
-          <p class="stream-note" data-translate="livestream_note">Join us virtually for our special day!</p>
+
+          <!-- Reception Stream Content -->
+          <% if (process.env.ENV_TYPE !== '1') { %>
+          <div class="stream-content active" id="reception-stream">
+            <div class="video-container">
+              <iframe
+                width="853"
+                height="480"
+                src="https://www.youtube.com/embed/CYySuc_YjG0?autoplay=0&mute=0&live=1&enablejsapi=1"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              >
+              </iframe>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Marriage Stream Content -->
+          <div class="stream-content<% if (process.env.ENV_TYPE === '1') { %> active<% } %>" id="marriage-stream">
+            <div class="video-container">
+              <iframe
+                width="853"
+                height="480"
+                src="https://www.youtube.com/embed/CYySuc_YjG0?autoplay=0&mute=0&live=1&enablejsapi=1"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              >
+              </iframe>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1079,6 +1111,40 @@
         }, 30000);
       });
       
+      // Helper function to stop wedding invite video
+      function stopWeddingInviteVideo() {
+        // Stop invitation video if it exists and is playing
+        if (window.invitationPlayer && typeof window.invitationPlayer.pauseVideo === 'function') {
+          try {
+            window.invitationPlayer.pauseVideo();
+          } catch (e) {
+            // Silently handle any player errors
+          }
+        }
+        
+        // Stop any other iframes in invite-image section
+        const inviteIframes = document.querySelectorAll('#invite-image iframe');
+        inviteIframes.forEach(iframe => {
+          const currentSrc = iframe.getAttribute('src');
+          if (currentSrc) {
+            iframe.setAttribute('src', '');
+            iframe.setAttribute('src', currentSrc);
+          }
+        });
+      }
+      
+      // Helper function to stop livestream videos
+      function stopLivestreamVideos() {
+        const livestreamIframes = document.querySelectorAll('#livestream iframe');
+        livestreamIframes.forEach(iframe => {
+          const currentSrc = iframe.getAttribute('src');
+          if (currentSrc) {
+            iframe.setAttribute('src', '');
+            iframe.setAttribute('src', currentSrc);
+          }
+        });
+      }
+      
       // Moved showSection outside DOMContentLoaded to make it globally accessible
       function showSection(sectionId) {
         if (!sectionId) return;
@@ -1102,6 +1168,12 @@
         if (selectedSection) {
           selectedSection.classList.remove('hidden');
 
+          // Scroll to top when changing sections for better UX
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+
           const url = new URL(window.location);
           url.searchParams.set('section', sectionId);
           window.history.pushState({ sectionId }, '', url);
@@ -1111,6 +1183,15 @@
             document.body.classList.add('invitation-active');
           } else {
             document.body.classList.remove('invitation-active');
+          }
+
+          // Smart video management based on section
+          if (sectionId === 'livestream') {
+            // When entering livestream: Stop wedding invite video
+            stopWeddingInviteVideo();
+          } else if (sectionId !== 'invite-image') {
+            // When exiting livestream to any section except invite: Stop all livestream videos
+            stopLivestreamVideos();
           }
 
           if (sectionId === 'photos') {
@@ -1139,6 +1220,79 @@
           'invite-image'; // Default to invite-image
         showSection(section); // Calls the now global showSection
       });
+
+      // Stream tab switching functionality
+      function initializeStreamTabs() {
+        const streamTabs = document.querySelectorAll('.stream-tab');
+        const streamContents = document.querySelectorAll('.stream-content');
+
+        streamTabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const targetStream = this.getAttribute('data-stream');
+            
+            // STOP ALL LIVESTREAM VIDEOS (regardless of active state) to prevent dual playback
+            streamContents.forEach(content => {
+              const iframe = content.querySelector('iframe');
+              if (iframe) {
+                // Store the src and reload the iframe to stop video
+                const currentSrc = iframe.getAttribute('src');
+                if (currentSrc) {
+                  iframe.setAttribute('src', '');
+                  iframe.setAttribute('src', currentSrc);
+                }
+              }
+            });
+            
+            // Remove active class from all tabs and contents
+            streamTabs.forEach(t => t.classList.remove('active'));
+            streamContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Show corresponding content with smooth transition
+            const targetContent = document.getElementById(targetStream + '-stream');
+            if (targetContent) {
+              setTimeout(() => {
+                targetContent.classList.add('active');
+              }, 100);
+            }
+
+            // Track stream selection
+            gtag('event', 'stream_tab_click', {
+              event_category: 'Livestream',
+              event_label: targetStream,
+            });
+          });
+        });
+      }
+
+      // Initialize stream tabs when DOM is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        initializeStreamTabs();
+        
+        // Safety check: Ensure only one stream content is active at initialization
+        ensureSingleStreamActive();
+      });
+      
+      // Safety function to ensure only one stream is active
+      function ensureSingleStreamActive() {
+        const activeStreams = document.querySelectorAll('.stream-content.active');
+        if (activeStreams.length > 1) {
+          // If multiple streams are active, keep only the first one
+          for (let i = 1; i < activeStreams.length; i++) {
+            activeStreams[i].classList.remove('active');
+            const iframe = activeStreams[i].querySelector('iframe');
+            if (iframe) {
+              const currentSrc = iframe.getAttribute('src');
+              if (currentSrc) {
+                iframe.setAttribute('src', '');
+                iframe.setAttribute('src', currentSrc);
+              }
+            }
+          }
+        }
+      }
 
       // Existing countdown code
       const weddingDate = new Date('2025-08-21T00:00:00');
