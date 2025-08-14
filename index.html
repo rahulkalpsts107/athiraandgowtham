@@ -848,7 +848,6 @@
         const playerDiv = document.createElement('div');
         playerDiv.id = 'youtube-player'; // The YT API will use this ID
         videoContainerParent.appendChild(playerDiv);
-
         invitationPlayer = new YT.Player('youtube-player', { // YT.Player targets the div by its ID
           height: '800',
           width: '100%',
@@ -865,6 +864,12 @@
           },
           events: {
             onReady: function (event) {
+              // Early exit if invitation section isn't currently active
+              if (!document.body.classList.contains('invitation-active')) {
+                try { event.target.pauseVideo(); } catch(e) {}
+                console.log('Invitation player ready (ignored - section not active)');
+                return;
+              }
               console.log('Invitation player ready');
               event.target.playVideo();
               event.target.mute(); // Ensure video starts muted
@@ -1253,7 +1258,8 @@
 
           // If we enter livestream section and there is an active player, resume it
             if (sectionId === 'livestream' && window.activeLiveStreamId && window.liveStreamPlayers[window.activeLiveStreamId]) {
-              try { window.liveStreamPlayers[window.activeLiveStreamId].playVideo(); } catch(e) {}
+              try {
+                window.liveStreamPlayers[window.activeLiveStreamId].playVideo(); } catch(e) {}
             }
 
           window.currentSectionId = sectionId;
@@ -2760,6 +2766,9 @@
 
     <style>
         /* Guestbook scrapbook styling */
+  /* Hide mute button on all sections except invitation (body.invitation-active added in showSection) */
+  body:not(.invitation-active) .mute-button { display: none !important; }
+
         .entries-container {
           max-width: 1200px;
           margin: 0 auto;
