@@ -391,7 +391,15 @@ const Contact = mongoose.model('Contact', contactSchema);
 
 // Handle RSVP form submission
 app.post('/submit-rsvp', async (req, res) => {
-  const { name, email, attending, numGuests } = req.body;
+  let { name, email, attending, numGuests } = req.body;
+  // Normalize attending values:
+  // Existing values ("yes"/"no") -> convert to 1 (marriage+soirée) / 0 (marriage only)
+  // New values: "0" = marriage, "1" = marriage+soirée, "2" = soirée only
+  if (attending === 'yes') attending = '1';
+  if (attending === 'no') attending = '0';
+  if (!['0','1','2'].includes(attending)) attending = '1'; // default safe fallback
+  // If site version ENV_TYPE=1 (marriage only site), override to '0'
+  if (process.env.ENV_TYPE === '1') attending = '0';
   const envType = process.env.ENV_TYPE || '0';
   log('info', 'RSVP submission received', { name, email, attending, numGuests, envType })
   try {
@@ -426,17 +434,25 @@ app.post('/submit-rsvp', async (req, res) => {
         websiteIdentifier = "Gowtham weds Athira";
       }
       
+      // Human readable attending description
+      const attendingMap = {
+        '0': 'Marriage Only',
+        '1': 'Marriage + Soirée',
+        '2': 'Soirée Only'
+      };
+      const attendingDesc = attendingMap[attending] || 'Marriage + Soirée';
+
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: recipientEmails,
         subject: `New RSVP Submission from ${websiteIdentifier}`,
-        text: `New RSVP from ${name}\nEmail: ${email}\nAttending: ${attending}\nNumber of Guests: ${numGuests}\nFrom website: ${websiteIdentifier}`,
+        text: `New RSVP from ${name}\nEmail: ${email}\nAttending: ${attendingDesc} (code: ${attending})\nNumber of Guests: ${numGuests}\nFrom website: ${websiteIdentifier}`,
         html: `
           <h3>New RSVP Submission</h3>
           <p><strong>From Website:</strong> ${websiteIdentifier}</p>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Attending Soirée:</strong> ${attending}</p>
+          <p><strong>Attendance Selection:</strong> ${attendingDesc} (code: ${attending})</p>
           <p><strong>Number of Guests:</strong> ${numGuests}</p>
         `,
       };
@@ -445,10 +461,15 @@ app.post('/submit-rsvp', async (req, res) => {
       log('success', 'RSVP email sent successfully', { name, email, website: websiteIdentifier, recipients: recipientEmails });
     }
 
+    // Build label for confirmation email (only show soirée wording when relevant)
     let attendingLabel = '';
-    if(envType === '0' || envType === '2') {
-      attendingLabel = `<li><strong>Attending Soirée:</strong> ${attending === 'yes' ? 'Yes' : 'No'}</li>`;
-    }
+    const attendingMap = {
+      '0': 'Marriage Only',
+      '1': 'Marriage + Soirée',
+      '2': 'Soirée Only'
+    };
+    const attendingDesc = attendingMap[attending] || 'Marriage + Soirée';
+    attendingLabel = `<li><strong>Attendance:</strong> ${attendingDesc}</li>`;
     // Send confirmation email to the guest
     try {
       // Determine website URL based on ENV_TYPE
@@ -467,7 +488,7 @@ app.post('/submit-rsvp', async (req, res) => {
       }
       
       // Construct thank you message based on attending status
-      const thankYouMessage = `Thank you for accepting our invitation! We're delighted that you'll be joining us on our special day.`;
+  const thankYouMessage = `Thank you for your RSVP! We're delighted that you'll be joining us for: ${attendingDesc}.`;
       
       const guestMailOptions = {
         from: process.env.EMAIL_USER,
@@ -481,7 +502,7 @@ ${thankYouMessage}
 Here's a summary of your RSVP details:
 - Name: ${name}
 - Number of Guests: ${numGuests}
-- Attending Soirée: ${attending === 'yes' ? 'Yes' : 'No'}
+- Attendance: ${attendingDesc} (code: ${attending})
 
 You can always refer back to our wedding website for updates and information:
 ${websiteUrl}

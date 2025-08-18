@@ -56,15 +56,22 @@ function buildEmailContent(rsvps, chartUrl) {
     return `${websiteName}: ${count} guests`;
   }).join('<br/>');
 
+  const attendanceLabel = (val) => {
+    if (val === '0' || val === 0 || val === 'no') return 'Marriage Only';
+    if (val === '2' || val === 2) return 'Soirée Only';
+    if (val === '1' || val === 1 || val === 'yes') return 'Marriage + Soirée';
+    return 'Marriage + Soirée'; // fallback
+  };
+
   const rows = rsvps.map((rsvp, index) => `
     <tr>
       <td>${index + 1}</td>
-      <td>${rsvp.name}</td>
-      <td>${rsvp.email}</td>
-      <td>${rsvp.attending}</td>
+      <td>${rsvp.name || ''}</td>
+      <td>${rsvp.email || ''}</td>
+      <td>${attendanceLabel(rsvp.attending)}</td>
       <td>${rsvp.numGuests || 1}</td>
       <td>${rsvp.envType === '2' ? 'Gowtham weds Athira' : 'Athira weds Gowtham'}</td>
-      <td>${new Date(rsvp.createdAt).toLocaleString()}</td>
+      <td>${rsvp.createdAt ? new Date(rsvp.createdAt).toLocaleString() : ''}</td>
     </tr>
   `).join('');
 
@@ -92,7 +99,7 @@ function buildEmailContent(rsvps, chartUrl) {
           <th>#</th>
           <th>Name</th>
           <th>Email</th>
-          <th>Attending Soirée</th>
+          <th>Attending Function</th>
           <th>No. of Guests</th>
           <th>Website Version</th>
           <th>RSVP date</th>
