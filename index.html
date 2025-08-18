@@ -367,10 +367,11 @@
             </script>
           </select>
           
-          <label for="attending" id="attending-label" data-translate="attending_label">Will you attend the soirée?</label>
-          <select id="attending" name="attending">
-            <option value="yes" data-translate="attending_yes">Yes</option>
-            <option value="no" data-translate="attending_no">No</option>
+          <label for="attending" id="attending-label">Select which events you'll attend</label>
+          <select id="attending" name="attending" required>
+            <option value="2">Soirée Only</option>
+            <option value="1" <%- process.env.ENV_TYPE === '1' ? '' : 'selected' %>>Marriage + Soirée</option>
+            <option value="0" <%- process.env.ENV_TYPE === '1' ? 'selected' : '' %>>Marriage Only</option>
           </select>
           
           <button type="submit" data-translate="submit_rsvp">Submit RSVP</button>
